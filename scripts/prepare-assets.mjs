@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { mkdir,writeFile } from 'node:fs/promises';
+import { mkdir,writeFile,readFile,rename,stat } from 'node:fs/promises';
 import path from 'node:path';
 const source='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const assets=[
@@ -28,7 +28,7 @@ const assets=[
  ['exec-435058dd-89d7-4983-8052-9c6e64dd3e34.png','closeups/bag/closed.webp'],
  ['exec-a3155e0d-03ce-4db0-870f-688750b0950c.png','closeups/route-case/closed.webp'],
  ['exec-4e9e39e4-8a39-4ad2-baee-65ea5229be34.png','parts/document/paper.png'],
- ['exec-f6a3ec6a-d734-4f4d-a904-396b3bc34c30.png','scenes/office/main.webp'],
+ ['exec-bb35aec0-e38b-4480-8238-2ffe8173f5b1.png','scenes/office/main.webp'],
  ['exec-98498657-375e-4e34-8a69-171729d15a21.png','scenes/lost/main.webp'],
  ['exec-369d0059-b9ab-485c-b50e-3800fe498100.png','scenes/store/main.webp'],
  ['exec-f2ebd853-bda6-4be2-89f9-36c304717fce.png','closeups/bag/latch.webp'],
@@ -51,13 +51,42 @@ const assets=[
  ['exec-93cbdc4d-168e-483d-ba16-1b0216846737.png','ending/false-station.webp'],
  ['exec-fbd152fa-0a44-462c-b520-9eb5bab2cef9.png','scenes/closed/boardable.webp'],
  ['exec-1f75ae23-4f39-4bac-a8c6-ebbbcb98228c.png','closeups/locks/numeric.webp'],
+ ['exec-7017abdc-8f03-4363-bf5e-c4ad0024b02a.png','scenes/waiting/open.webp'],
+ ['exec-6e5f7b05-6324-4847-9e32-bc3f10a8aef2.png','scenes/office/changed.webp'],
+ ['exec-d68549bd-7cc4-4e77-91bc-0ddb610a9146.png','scenes/lost/open.webp'],
+ ['exec-a7528792-2636-42b2-8cbc-dee00b7fe5a2.png','scenes/store/open.webp'],
+ ['exec-030a7ce0-f911-4aa3-ac03-cb00ceeb3c18.png','items/managementTag/back.webp'],
+ ['exec-e6918aed-aaf4-44ff-b385-081219e23a60.png','scenes/closed/arrived.webp'],
+ ['exec-de6db1dd-9a05-4863-9c75-c295cc111436.png','ending/home.webp'],
+ ['exec-d22b491f-2412-476d-a7f8-d83b2c5dc5ae.png','scenes/lamp/open.webp'],
+ ['exec-993ed596-0db2-43b2-8ee3-d4d8bf6efea4.png','items/hook/main.webp'],
+ ['exec-23e797fe-7c28-4917-840e-d8a28fa2dd10.png','items/knob/main.webp'],
+ ['exec-abcaa897-ecf2-443f-aa6c-39ecc03acfa3.png','items/bracket/main.webp'],
+ ['exec-59157371-081a-4877-ba73-7f29a10afc69.png','scenes/platform/cleared.webp'],
+ ['exec-e69b696c-9ece-4117-8ab7-eb1f1ee8f3f7.png','scenes/train/case-open.webp'],
+ ['exec-1dc11673-f786-44d2-b1a4-5add91504069.png','scenes/closed/drawer.webp'],
+ ['exec-d796bf7d-2082-4b3c-b32a-8df4a826e3d7.png','closeups/train/steps-open.webp'],
+ ['exec-1e80e25b-4662-43c2-abad-e24696e3f45b.png','items/punch/main.webp'],
+ ['exec-63f89946-a7cc-484d-928a-c47f3d70692a.png','items/bridgePin/main.webp'],
+ ['exec-454cc7b8-89a7-45c5-ae3e-f4df8e54cf20.png','closeups/train/steps-closed.webp'],
+ ['exec-d42b6a85-5190-40af-b1bf-81f1b5c87f8b.png','closeups/gate/latch.webp'],
+ ['exec-053f6427-f2cb-4b8c-826e-8e8452253e43.png','scenes/train/stabled.webp'],
+ ['exec-c5cb0c8c-4cf9-493a-986a-910eea6a0241.png','scenes/office/tray.webp'],
+ ['exec-0cdc16e6-9889-4963-a356-09328e6608d0.png','closeups/signal/box.webp'],
 ];
 const manifest=[];
+let prior=[];try{prior=JSON.parse(await readFile('docs/assets/manifest.json','utf8'))}catch{}
 for(const [from,to] of assets){
  const out=path.resolve('public/assets',to);await mkdir(path.dirname(out),{recursive:true});
- const pipeline=sharp(path.join(source,from));if(to.startsWith('items/'))pipeline.resize({width:768,height:768,fit:'inside',withoutEnlargement:true});
- await (to.endsWith('.png')?pipeline.png():pipeline.webp({quality:91})).toFile(out);
- const {width,height,size}=await sharp(out).metadata();manifest.push({source:from,path:`/assets/${to}`,width,height,bytes:size,method:'built-in image_gen; WebP encoding only'});
+ const previous=prior.find(a=>a.path===`/assets/${to}`&&a.source===from);let reusable=false;
+ if(previous){try{const m=await sharp(out).metadata();await sharp(out).stats();reusable=m.width===previous.width&&m.height===previous.height}catch{}}
+ if(!reusable){
+  const pipeline=sharp(path.join(source,from));if(to.startsWith('items/'))pipeline.resize({width:768,height:768,fit:'inside',withoutEnlargement:true});
+  const temporary=`${out}.tmp-${process.pid}`;
+  await (to.endsWith('.png')?pipeline.png():pipeline.webp({quality:91})).toFile(temporary);
+  for(let retry=0;;retry++){try{await rename(temporary,out);break}catch(error){if(retry===5)throw error;await new Promise(resolve=>setTimeout(resolve,200))}}
+ }
+ const {width,height}=await sharp(out).metadata();const bytes=(await stat(out)).size;manifest.push({source:from,path:`/assets/${to}`,width,height,bytes,method:'built-in image_gen; encoding and inventory-size reduction only'});
 }
 await mkdir('docs/assets',{recursive:true});await writeFile('docs/assets/manifest.json',JSON.stringify(manifest,null,2));
 console.log(`${manifest.length} image assets prepared`);

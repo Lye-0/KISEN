@@ -1,5 +1,5 @@
 import { expect,it } from 'vitest';
-import { moveCargo,moveGrille,turnClock,holdCatch,shuttersOpen } from '../src/game/mechanics';
+import { moveCargo,moveGrille,turnClock,holdCatch,shuttersOpen,shutterLight } from '../src/game/mechanics';
 function shortest(start:number[],isGoal:(v:number[])=>boolean,next:(v:number[])=>Array<number[]|null>){const queue=[{v:start,moves:0}];const seen=new Set([start.join(',')]);while(queue.length){const {v,moves}=queue.shift()!;if(isGoal(v))return moves;for(const n of next(v)){if(n&&!seen.has(n.join(','))){seen.add(n.join(','));queue.push({v:n,moves:moves+1})}}}return -1;}
 it('格子は横棒の移動と引き手の経路を組み合わせれば脱出できる',()=>{
  const start=[0,4,1,3];expect(moveGrille(start,1,-1)).toBe(null);
@@ -20,4 +20,7 @@ it('受け金具がないと押さえを同時に保持できない',()=>{
 });
 it('羽根の重なりから、二つの停車窓が通る位置が一意に決まる',()=>{
  const solutions=[];for(let a=0;a<5;a++)for(let b=0;b<5;b++)if(shuttersOpen([a,b]))solutions.push([a,b]);expect(solutions).toEqual([[2,1]]);
+});
+it('窓の端だけに届く光は描画できるが、停車位置としては成立しない',()=>{
+ expect(shutterLight([4,3],350)).toEqual([[-32,-5]]);expect(shuttersOpen([4,3])).toBe(false);expect(shutterLight([2,1],150)).toEqual([[-32,32]]);
 });

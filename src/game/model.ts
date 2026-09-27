@@ -6,7 +6,7 @@ export const SHAPES: Shape[] = ['cross','tower','water','shed','tunnel','home'];
 export const shapeNames: Record<Shape,string>={cross:'踏切',tower:'鉄塔',water:'給水槽',shed:'小屋',tunnel:'トンネル',home:'白沢'};
 export const itemNames: Record<Item,string>={smallKey:'乗務用の小鍵',photos:'車窓の写真',knob:'記録機のつまみ',officeKey:'駅務室の鍵',hook:'鉤付きの棒',routeTag:'路線札',bridgePin:'解除片',bracket:'短い金具',plate:'接続板',punch:'改札鋏',lamp:'交換灯具',handle:'進路のハンドル',paper:'乗車券用紙',stub:'区間の控え',ticket:'帰りの切符',managementTag:'重い管理札',tracingMap:'薄い見取り図'};
 export type Punch = {column:number; row:0|1; shape:Shape};
-export interface Ticket { id:number; holes:Punch[]; service:number; back:boolean }
+export interface Ticket { id:number; holes:Punch[]; service:number; back:boolean; returnMark?:boolean }
 export interface GameState {
   version:1; started:boolean; room:Room; view:number; visited:Room[];
   opened:string[]; inventory:Item[]; taken:string[]; installed:Item[];
@@ -25,7 +25,7 @@ export function missing(s:GameState,id:string){return (prerequisites[id]??[]).fi
 export const junctions=[
   {id:'W',label:'給水槽',at:[250,280], exits:['A','S','T']},
   {id:'T',label:'鉄塔',at:[430,150], exits:['N','B','S']},
-  {id:'N',label:'隧道',at:[625,245], exits:['T','O','C']},
+  {id:'N',label:'トンネル',at:[625,245], exits:['T','O','C']},
   {id:'S',label:'小屋',at:[390,415], exits:['A','W','T']},
 ] as const;
 export function traceRoute(route:GameState['route'],hasPlate=true):string[]{
@@ -103,7 +103,7 @@ export function reduce(s:GameState,a:Action):GameState{
     case 'sound':return {...s,sound:!s.sound};
     case 'callTrain':return s.room!=='closed'||s.trainAt===0||!routeReady(s)?s:{...s,trainAt:a.service===2&&signalsReady(s)?2:3,values:{...s.values,activeService:[a.service]}};
     case 'train':return {...s,trainAt:a.value};
-    case 'end':return s.room==='return'?{...s,ending:true}:s;
+    case 'end':return s.room==='return'?{...s,ending:true,ticket:{...s.ticket,returnMark:true}}:s;
     case 'tick':return {...s,elapsed:s.elapsed+a.seconds};
   }
 }
@@ -115,7 +115,7 @@ export function validateSave(value:unknown):GameState|null {
   if(s.version!==1||!rooms.includes(s.room)||!Array.isArray(s.opened)||!Array.isArray(s.inventory)||!Array.isArray(s.installed)||!Array.isArray(s.visited)||!Array.isArray(s.taken)||!Array.isArray(s.notes)||!s.values||typeof s.values!=='object'||!s.route||!Array.isArray(s.route.switches)||!s.ticket||!Array.isArray(s.ticket.holes)||!Array.isArray(s.discarded)||!s.hints)return null;
   if(![s.opened,s.taken,s.notes,s.inventory,s.installed].every(a=>a.length<400&&a.every(n=>typeof n==='string'&&n.length<80))||!s.visited.every(r=>rooms.includes(r)))return null;
   if(![...s.inventory,...s.installed].every(i=>Object.hasOwn(itemNames,i))||!s.route.switches.every(n=>Number.isInteger(n)&&n>=0&&n<=2)||s.route.switches.length!==4||![0,1].includes(s.route.start)||![0,1].includes(s.route.plateTurn))return null;
-  const validTicket=(t:Ticket)=>!!t&&Number.isInteger(t.id)&&t.id>0&&typeof t.back==='boolean'&&[0,1,2,3].includes(t.service)&&Array.isArray(t.holes)&&t.holes.length<=60&&t.holes.every(h=>h&&SHAPES.includes(h.shape)&&Number.isInteger(h.column)&&h.column>=0&&h.column<5&&[0,1].includes(h.row));
+  const validTicket=(t:Ticket)=>!!t&&Number.isInteger(t.id)&&t.id>0&&typeof t.back==='boolean'&&(t.returnMark===undefined||typeof t.returnMark==='boolean')&&[0,1,2,3].includes(t.service)&&Array.isArray(t.holes)&&t.holes.length<=60&&t.holes.every(h=>h&&SHAPES.includes(h.shape)&&Number.isInteger(h.column)&&h.column>=0&&h.column<5&&[0,1].includes(h.row));
   if(!validTicket(s.ticket)||s.mountedTicket&&!validTicket(s.mountedTicket)||s.discarded.length>8||!s.discarded.every(validTicket))return null;
   if(!Object.values(s.values).every(v=>Array.isArray(v)&&v.length<100&&v.every(n=>Number.isFinite(n)&&Math.abs(n)<10000)))return null;
   if(s.observations&&(!Object.values(s.observations).every(v=>Array.isArray(v)&&v.length<100&&v.every(n=>Number.isFinite(n)&&Math.abs(n)<10000))))return null;

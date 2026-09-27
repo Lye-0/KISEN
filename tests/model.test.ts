@@ -1,6 +1,16 @@
 import { describe,it,expect } from 'vitest';
-import { initialState,reduce,traceRoute,routeReady,requiredHoles,ticketValid,validateSave,gateTicketValid,canEnter } from '../src/game/model';
+import { initialState,reduce,traceRoute,routeReady,requiredHoles,ticketValid,validateSave,gateTicketValid,canEnter,signalsReady } from '../src/game/model';
 describe('現在の物理状態が進路と切符を決める',()=>{
+  it('停車位置は灯具・薄紙・羽根で成立し、外しても停止済みの車両は消えない',()=>{
+    let s=initialState();s.room='closed';s.trainAt=1;s.installed=['plate','handle','lamp','tracingMap'];s.route={switches:[2,0,1,2],start:1,plateTurn:1};s.values.P28=[2,1];
+    expect(signalsReady(s)).toBe(true);s=reduce(s,{type:'callTrain',service:1});expect(s.trainAt).toBe(3);
+    s=reduce(s,{type:'callTrain',service:2});expect(s.trainAt).toBe(2);s=reduce(s,{type:'remove',item:'lamp'});expect(s.trainAt).toBe(2);expect(signalsReady(s)).toBe(false);
+    s=reduce(s,{type:'callTrain',service:2});expect(s.trainAt).toBe(3);expect(canEnter(s,'return')).not.toBe(null);
+  });
+  it('過去に乗車条件が揃っていても、現在の列車と足場が欠けると乗れない',()=>{
+    const s=initialState();s.room='closed';s.installed=['plate','handle','ticket'];s.route={switches:[2,0,1,2],start:1,plateTurn:1};s.values.P36=[0,0];s.mountedTicket={id:2,holes:requiredHoles(s),service:2,back:true};s.opened=['P16','P36','P37'];s.trainAt=2;
+    expect(canEnter(s,'return')).not.toBe(null);s.opened.push('P32');expect(canEnter(s,'return')).toBe(null);s.trainAt=3;expect(canEnter(s,'return')).not.toBe(null);
+  });
   it('資料既読や問題履歴なしで帰路を構成できる',()=>{
     const s=initialState();s.installed=['plate','handle'];s.route={switches:[2,0,1,2],start:1,plateTurn:1};
     expect(traceRoute(s.route)).toEqual(['H','W','T','N','O']);expect(routeReady(s)).toBe(true);

@@ -1,10 +1,15 @@
+import {shutterLight} from '../game/mechanics';
 import type { GameState } from '../game/model';
 import { BalanceArtwork } from './BalanceArtwork';
+import {beam,plaqueLit} from '../game/geometry';
 export function SceneDynamics({s}:{s:GameState}){
- if(s.room==='lamp')return <svg className="scene-dynamics" viewBox="0 0 1672 941" aria-hidden="true"><g transform="translate(273 394) scale(.54) translate(-360 -120)"><BalanceArtwork v={s.values.P23??[4,4]} leftPresent={s.installed.includes('managementTag')} stand={false}/></g></svg>;
+ if(s.room==='lamp'){
+ const v=s.values.P22??[0,0],mounted=s.installed.includes('bracket'),b=beam(v),lit=mounted&&plaqueLit(v);const end={x:1168-(b.end.x-100)*1.114,y:263+(b.end.y-210)*.717};
+ return <svg className="scene-dynamics" viewBox="0 0 1672 941" aria-hidden="true"><g transform="translate(273 394) scale(.54) translate(-360 -120)"><BalanceArtwork v={s.values.P23??[4,4]} leftPresent={s.installed.includes('managementTag')} stand={false}/></g><rect x="662" y="195" width="85" height="49" fill={lit?'#b6aa77':'#3f4435'} stroke="#706e4f" strokeWidth="2"/>{lit&&<text x="704" y="226" fill="#393e2d" fontSize="18" textAnchor="middle">ヘ → ニ</text>}{mounted&&<><path d={`M1168 263L${end.x} ${end.y-26}L${end.x} ${end.y+26}Z`} fill="#dbcda0" opacity=".12"/><image href="/assets/items/bracket/main.webp" x="1180" y="388" width="71" height="41"/><ellipse cx="1168" cy="263" rx="17" ry="33" fill="#e0c993" opacity=".65"/></>}</svg>;
+ }
  if(s.room==='closed'){
   const powered=s.installed.includes('lamp');const v=s.values.P28??[0,0];
-  return <svg className="scene-dynamics" viewBox="0 0 1672 941" aria-hidden="true"><defs><filter id="signalBloom"><feGaussianBlur stdDeviation="8"/></filter></defs>{powered&&<><rect x="1015" y="295" width="50" height="32" rx="5" fill="#353e30" stroke="#979978" strokeWidth="2"/><circle cx="1040" cy="308" r="12" fill="#ead599"/>{[0,1,2].map(n=>{const x=[150,350,550][n];const on=(s.installed.includes('tracingMap')||n===1)&&[-10+v[0]*80,390+v[0]*80].some(a=>Math.abs(x-a)<35)&&[70+v[1]*80,470+v[1]*80].some(a=>Math.abs(x-a)<35);return on&&<g key={n}><path d={`M${1024+n*44} 238l30-2v25l-30 2Z`} fill="#e7c885" opacity=".55" filter="url(#signalBloom)"/><path d={`M${1026+n*44} 241l26-2v19l-26 2Z`} fill="#decc91" opacity=".7"/></g>})}</>}</svg>;
+  return <svg className="scene-dynamics" viewBox="0 0 1672 941" aria-hidden="true"><defs><filter id="signalBloom"><feGaussianBlur stdDeviation="8"/></filter></defs>{s.installed.includes('tracingMap')&&<path d="M1018 284l96-6v10l-96 6Z" fill="#bdaf87" stroke="#696b4e"/>}{powered&&<><image href="/assets/items/lamp/main.webp" x="1017" y="286" width="65" height="79"/><circle cx="1050" cy="331" r="10" fill="#ead599" opacity=".7"/>{[0,1,2].map(n=>{const ranges=s.installed.includes('tracingMap')||n===1?shutterLight(v,[150,350,550][n]):[];return ranges.map(([a,b],i)=>{const left=1026+n*44+(a+32)*26/64,width=(b-a)*26/64;return <g key={n+'-'+i}><rect x={left} y="240" width={width} height="21" fill="#e7c885" opacity=".4" filter="url(#signalBloom)"/><rect x={left} y="240" width={width} height="20" fill="#decc91" opacity=".7"/></g>})})}</>}</svg>;
  }
  return null;
 }

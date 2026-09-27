@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { Action,GameState,Shape } from '../game/model';
 import { SHAPES,junctions,owns,traceRoute } from '../game/model';
-import { Hole,PaperTicket,symbols,shapeLabels } from './Figures';
+import { ItemEvidence } from './ItemEvidence';
+import { Hole,PaperTicket,sampleTicket,symbols,shapeLabels } from './Figures';
 import { tapeEvents } from '../game/recordings';
 export interface WorkProps {s:GameState;dispatch:(a:Action)=>void;message:(m:string)=>void;}
 const point:Record<string,number[]>={H:[110,380],K:[110,110],W:[250,280],T:[430,150],N:[625,245],S:[390,415],O:[720,85],A:[55,250],B:[450,30],C:[725,425]};
@@ -22,28 +23,30 @@ export function RouteWorkspace({s,dispatch,message}:WorkProps){
      {junctions.map((j,i)=><path key={j.id} markerEnd="url(#direction)" d={`M${point[j.id]}L${point[j.exits[s.route.switches[i]]]}`}/>)}
      {s.installed.includes('plate')&&<path d={`M110 380L${point[s.route.plateTurn?'W':'S']}`}/>}<path d="M110 110L250 280"/>
     </g>
-    {Object.entries(point).map(([id,[x,y]])=><g key={id}><circle cx={x} cy={y} r="15" fill="#222925" stroke="#b9aa81" strokeWidth="2"/><text x={x} y={y-27} textAnchor="middle" fill="#d4c9ad" fontSize="22">{glyph[id]}</text></g>)}
+    {Object.entries(point).map(([id,[x,y]])=><g key={id}><circle cx={x} cy={y} r="15" fill="#222925" stroke="#b9aa81" strokeWidth="2"/><text x={x} y={id==='B'?y+37:y-27} textAnchor="middle" fill="#d4c9ad" fontSize="22">{glyph[id]}</text></g>)}
     {scan.length>0&&<path d={scan.filter(n=>point[n]).map((n,i)=>`${i?'L':'M'}${point[n]}`).join(' ')} stroke="#d29e5d" fill="none" strokeWidth="5" className="scan-line"/>}
     {junctions.map((j,i)=><g key={j.id} className="rail-switch" role="button" tabIndex={0} aria-label={`分岐${glyph[j.id]}を切り替える`} onClick={()=>change(i)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();change(i)}}} transform={`translate(${point[j.id]})`}><circle r="24" fill="#3d4138" stroke="#897e60" strokeWidth="3"/><path d="M-13 0H13" stroke="#e1d0a1" strokeWidth="5" transform={`rotate(${Math.atan2(point[j.exits[s.route.switches[i]]][1]-point[j.id][1],point[j.exits[s.route.switches[i]]][0]-point[j.id][0])*180/Math.PI})`}/></g>)}
-    <g className="rail-switch" tabIndex={0} role="button" aria-label="出発側を切り替える" onClick={()=>{dispatch({type:'route',value:{start:s.route.start?0:1}});setScan([])}} onKeyDown={e=>e.key==='Enter'&&dispatch({type:'route',value:{start:s.route.start?0:1}})}><path d={`M48 ${s.route.start?380:110}H78`} stroke="#d3a367" strokeWidth="8"/><rect x="22" y="215" width="77" height="46" rx="8" fill="#555343" stroke="#b2a781"/><text x="60" y="246" fill="#e1d6b7" textAnchor="middle" fontSize="22">始点</text></g>
+    <path d={`M48 ${s.route.start?380:110}H78`} stroke="#d3a367" strokeWidth="8"/><g className="rail-switch" tabIndex={0} role="button" aria-label="出発側を切り替える" onClick={()=>{dispatch({type:'route',value:{start:s.route.start?0:1}});setScan([])}} onKeyDown={e=>e.key==='Enter'&&dispatch({type:'route',value:{start:s.route.start?0:1}})}><rect x="12" y="15" width="105" height="44" rx="8" fill="#555343" stroke="#b2a781"/><text x="65" y="45" fill="#e1d6b7" textAnchor="middle" fontSize="22">始点</text></g>
    </svg>
-   {s.installed.includes('plate')&&<button className="installed-plate" onClick={()=>{dispatch({type:'route',value:{plateTurn:s.route.plateTurn?0:1}});setScan([])}} aria-label="接続板を裏返す"><svg viewBox="0 0 140 60"><path d={s.route.plateTurn?'M10 50L70 10L130 10':'M10 50L70 50L130 10'} stroke="#c8bb98" strokeWidth="5" fill="none"/></svg></button>}
+   {s.installed.includes('plate')&&<button className="installed-plate" onClick={()=>{dispatch({type:'route',value:{plateTurn:s.route.plateTurn?0:1}});setScan([])}} aria-label="接続板を裏返す"><svg viewBox="0 0 140 60"><image href="/assets/items/plate/main.webp" width="140" height="60" preserveAspectRatio="none"/><path d={s.route.plateTurn?'M10 50L70 10L130 10':'M10 50L70 50L130 10'} stroke="#c8bb98" strokeWidth="5" fill="none"/></svg></button>}
    {s.installed.includes('handle')&&<button className="installed-handle" aria-label="進路を走査する" onClick={()=>{setScan(path);if(s.installed.includes('plate')&&s.trainAt===0){dispatch({type:'train',value:1});message('分岐が動いた。到着した車両が、留置線へゆっくり下がった。')}else message(path.at(-1)==='loop'?'走査灯が、同じ場所へ戻った。':path.at(-1)==='gap'?'空所で走査灯が止まった。':'走査灯が、盤の端の接点まで進んだ。')}}><span/></button>}
   </div>
-  <div className="work-controls"><span>可動部を回す</span>{(['plate','handle'] as const).map(item=>s.installed.includes(item)?<button key={item} onClick={()=>{dispatch({type:'remove',item});setScan([])}}>{item==='plate'?'接続板':'ハンドル'}を外す</button>:<button key={item} disabled={!owns(s,item)} onClick={()=>dispatch({type:'install',item})}>{item==='plate'?'接続板':'ハンドル'}を取り付ける</button>)}</div>
+  <div className="small-route-controls"><button onClick={()=>dispatch({type:'route',value:{start:s.route.start?0:1}})}>始点 {s.route.start?'ロ':'イ'}</button>{junctions.map((j,i)=><button key={j.id} onClick={()=>change(i)}>分岐 {glyph[j.id]}</button>)}{s.installed.includes('plate')&&<button onClick={()=>dispatch({type:'route',value:{plateTurn:s.route.plateTurn?0:1}})}>板を裏返す</button>}</div><div className="work-controls"><span>可動部を回す</span><button onClick={()=>{dispatch({type:'values',id:'P30',value:[...s.route.switches,s.route.start,s.route.plateTurn,s.installed.includes('plate')?1:0]});dispatch({type:'note',id:'P30'});message('今の盤の線を記録した。')}}>盤を記録する</button>{(['plate','handle'] as const).map(item=>s.installed.includes(item)?<button key={item} onClick={()=>{dispatch({type:'remove',item});setScan([])}}>{item==='plate'?'接続板':'ハンドル'}を外す</button>:<button key={item} disabled={!owns(s,item)} onClick={()=>dispatch({type:'install',item})}>{item==='plate'?'接続板':'ハンドル'}を取り付ける</button>)}</div>
  </div>;
 }
 export function PunchWorkspace({s,dispatch,message}:WorkProps){
  const shape:Shape=SHAPES[s.values.P34Blade?.[0]??0];const setShape=(value:Shape)=>dispatch({type:'values',id:'P34Blade',value:[SHAPES.indexOf(value)]});
+ const [compare,setCompare]=useState(false);
  const ready=owns(s,'punch')&&owns(s,'paper');
- return <div className="punch-workspace"><div className="ticket-desk">
+ return <div className="punch-workspace"><div className="desk-scroll" tabIndex={0} aria-label="券の作業面。狭い画面では横に動かせます"><div className="ticket-desk">
   {owns(s,'paper')&&<img className="desk-layer stock-present" src="/assets/closeups/ticket/desk.webp" alt="持ってきた乗車券用紙"/>}
   {owns(s,'punch')&&<img className="desk-layer plier-present" src="/assets/closeups/ticket/desk.webp" alt="持ってきた改札鋏"/>}
   {owns(s,'paper')&&<PaperTicket ticket={s.ticket} onPunch={ready?(column,row)=>{dispatch({type:'punch',value:{column,row,shape}});message(`${column+1}列の${row===0?'上':'下'}に、${shapeLabels[shape]}の印を切った。`)}:undefined}/>}
-  <div className="punch-tools" aria-label="改札鋏の刃">{SHAPES.map(v=><button key={v} className={v===shape?'selected':''} aria-label={`${shapeLabels[v]}の鋏`} onClick={()=>setShape(v)}><svg viewBox="-25 -25 50 50"><Hole shape={v}/></svg><small>{shapeLabels[v]}</small></button>)}</div>
- </div><div className="work-controls"><span>便</span>{[1,2,3].map(n=><button key={n} className={s.ticket.service===n?'selected':''} onClick={()=>dispatch({type:'ticketService',value:n})}>{n}</button>)}<button onClick={()=>dispatch({type:'flipTicket'})}>裏返す</button><button disabled={!owns(s,'paper')} onClick={()=>dispatch({type:'newTicket'})}>新しい紙</button><button disabled={!ready||!s.ticket.holes.length} onClick={()=>{dispatch({type:'keepTicket'});message('加工した切符を手元に置いた。')}}>切符を持つ</button></div>
+  </div></div><div className="punch-tools" aria-label="改札鋏の刃">{SHAPES.map(v=><button key={v} className={v===shape?'selected':''} aria-label={`${shapeLabels[v]}の鋏`} onClick={()=>setShape(v)}><svg viewBox="-25 -25 50 50"><Hole shape={v}/></svg><small>{shapeLabels[v]}</small></button>)}</div>
+ <div className="work-controls"><span>便</span>{[1,2,3].map(n=><button key={n} className={s.ticket.service===n?'selected':''} onClick={()=>dispatch({type:'ticketService',value:n})}>{n}</button>)}<button onClick={()=>dispatch({type:'flipTicket'})}>裏返す</button><button disabled={!owns(s,'paper')} onClick={()=>dispatch({type:'newTicket'})}>新しい紙</button><button disabled={!ready||!s.ticket.holes.length} onClick={()=>{dispatch({type:'keepTicket'});message('加工した切符を手元に置いた。')}}>切符を持つ</button></div>
  {!ready&&<p className="world-feedback">{!owns(s,'punch')?'紙を切る鋏がない。':'未使用の紙がない。'}</p>}
- {s.discarded.length>0&&<details className="old-tickets"><summary>前に作った券と比べる（{s.discarded.length}）</summary><div>{s.discarded.map(t=><PaperTicket key={t.id} ticket={t} compact/>)}</div></details>}
+ <div className="work-controls"><button onClick={()=>setCompare(!compare)}>{compare?'資料をしまう':'手元の資料を並べる'}</button></div>{compare&&<div className="ticket-reference-table">{s.notes.includes('ownTicket')&&<section><p>駅へ来た券</p><PaperTicket ticket={sampleTicket(600,[{column:0,row:0,shape:'water'},{column:1,row:0,shape:'tower'}])} compact/></section>}{owns(s,'stub')&&<ItemEvidence item="stub"/>}{!s.notes.includes('ownTicket')&&!owns(s,'stub')&&<p>比較する券や区間の控えは、まだ手元にない。</p>}</div>}
+ {s.discarded.length>0&&<details className="old-tickets"><summary>最近作った券と比べる（{s.discarded.length}）</summary><div>{s.discarded.map(t=><PaperTicket key={t.id} ticket={t} compact/>)}</div></details>}
  </div>;
 }
 const tapeA=[{at:2,label:'足音',kind:'soft'},{at:6,label:'閉鎖',kind:'cross'},{at:11,label:'通過',kind:'train'},{at:16,label:'停止',kind:'stop'},{at:18,label:'閉鎖・欠灯',kind:'broken'}];

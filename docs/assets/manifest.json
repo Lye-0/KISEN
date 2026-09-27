@@ -4,335 +4,559 @@
     "path": "/assets/scenes/train/arrival.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 262696,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-22e3f359-ebbc-4da5-ae8a-d8cfa24af0d1.png",
     "path": "/assets/scenes/train/explored.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 265816,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-8d50a23f-df9b-4357-ab29-0307990a7e8c.png",
     "path": "/assets/closeups/route/board.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 241338,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-ce4fa08c-e01a-41f1-a26b-61c9621ced10.png",
     "path": "/assets/closeups/ticket/desk.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 298024,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-80ed5608-1419-4b91-a75b-9f21e82e6eba.png",
     "path": "/assets/closeups/metal/box.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 315150,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-a5bc01c9-dd01-4ab6-bf9a-8e637ee4ab9c.png",
     "path": "/assets/closeups/metal/box-open.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 298072,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-7202a1d9-58f2-4af3-8513-e76dc539ed74.png",
     "path": "/assets/closeups/metal/box-empty.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 301986,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-9933eab4-070d-4a5d-92ef-f80b18f30eb3.png",
     "path": "/assets/scenes/platform/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 397008,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-9f059b78-c96a-4f1d-b102-612ebf38dd9d.png",
     "path": "/assets/scenes/waiting/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 390750,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-fa926ec2-ae9d-4037-bb59-03dd61c7b71e.png",
     "path": "/assets/closeups/ticket/empty.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 317954,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-0e741a76-a0a8-4f92-8e15-dc64d8a60f84.png",
     "path": "/assets/parts/ticket/paper.png",
     "width": 1882,
     "height": 836,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 2431005,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-60aad8c4-7b06-43ca-84d8-a5936bfba8c5.png",
     "path": "/assets/documents/home-photo.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 432292,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-203b8636-4fd3-45b6-a9c2-a396fa5887af.png",
     "path": "/assets/documents/window/frame-4.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 229344,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-885d8e1d-e160-4658-8de9-0df8dbda1153.png",
     "path": "/assets/documents/window/frame-2.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 262562,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-9752b2da-0156-4cfe-a33e-17b48a177c6a.png",
     "path": "/assets/documents/window/frame-3.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 251360,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-36050091-8e7c-43ba-b37d-841e8fd61ea6.png",
     "path": "/assets/documents/window/frame-1.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 244728,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-1418e6d2-8bea-452c-8a69-bcafaa6f6a82.png",
     "path": "/assets/documents/window/frame-0.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 313294,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-03c06c2e-809e-4236-be6f-c3afb1768609.png",
     "path": "/assets/scenes/forecourt/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 469118,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-03c06c2e-809e-4236-be6f-c3afb1768609.png",
     "path": "/assets/documents/wall.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 469118,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-7c86e901-5db1-41b1-94cd-af43afc996bb.png",
     "path": "/assets/scenes/bridge/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 408488,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-be335911-cd7f-40ad-8bca-584677dd67dd.png",
     "path": "/assets/scenes/forecourt/loop.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 376068,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-e95328c4-85c1-4541-b575-daa25bc6d5f9.png",
     "path": "/assets/scenes/train/box-open.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 234740,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-435058dd-89d7-4983-8052-9c6e64dd3e34.png",
     "path": "/assets/closeups/bag/closed.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 275162,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-a3155e0d-03ce-4db0-870f-688750b0950c.png",
     "path": "/assets/closeups/route-case/closed.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 191080,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-4e9e39e4-8a39-4ad2-baee-65ea5229be34.png",
     "path": "/assets/parts/document/paper.png",
     "width": 1706,
     "height": 922,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 2682721,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
-    "source": "exec-f6a3ec6a-d734-4f4d-a904-396b3bc34c30.png",
+    "source": "exec-bb35aec0-e38b-4480-8238-2ffe8173f5b1.png",
     "path": "/assets/scenes/office/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 272326,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-98498657-375e-4e34-8a69-171729d15a21.png",
     "path": "/assets/scenes/lost/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 291178,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-369d0059-b9ab-485c-b50e-3800fe498100.png",
     "path": "/assets/scenes/store/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 403096,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-f2ebd853-bda6-4be2-89f9-36c304717fce.png",
     "path": "/assets/closeups/bag/latch.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 454842,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-e6367e6e-89fb-4e32-b611-9110e51b0bd0.png",
     "path": "/assets/closeups/route-case/open.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 186268,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-c1703170-2ac7-42c5-9ab5-514c3673ba23.png",
     "path": "/assets/closeups/route-case/empty.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 173036,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-404ed63f-9ee6-456b-9710-5346f1756f34.png",
     "path": "/assets/closeups/bag/open.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 209706,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-7fd437ac-fe06-4af3-b275-d4d6496eb06f.png",
     "path": "/assets/closeups/bag/empty.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 191964,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-b5f9921e-5a2c-4f52-8e73-057f80bb8e5e.png",
     "path": "/assets/scenes/lamp/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 256372,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-5b307bc3-8dda-4e8a-95e0-9df037d51ccb.png",
     "path": "/assets/scenes/tunnel/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 404822,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-bb3ffe8f-bdf2-48b6-950f-f2bd69d8f739.png",
     "path": "/assets/scenes/closed/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 351882,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-3ec1b179-da00-4d10-9bd0-c9fb1032ccd8.png",
     "path": "/assets/scenes/return/main.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 262634,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-18b6d34e-6b73-45ed-9e1e-c124af568767.png",
     "path": "/assets/ending/home-early.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 377822,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-5102ee61-ef99-472e-a1fe-abd6f9ba100d.png",
     "path": "/assets/items/smallKey/main.webp",
     "width": 768,
     "height": 432,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 40504,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-991ac0c9-7a60-4b77-a4a5-523ca2dd4e11.png",
     "path": "/assets/items/officeKey/main.webp",
     "width": 658,
     "height": 768,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 63150,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-e96ceb8d-51aa-452d-9412-ed97c1fab50f.png",
     "path": "/assets/items/lamp/main.webp",
     "width": 718,
     "height": 768,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 118300,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-8a5e5d70-7639-481b-b063-b5320801941c.png",
     "path": "/assets/items/plate/main.webp",
     "width": 768,
     "height": 447,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 108682,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-8d7fd9d2-bb11-4a32-999a-53d702f07868.png",
     "path": "/assets/items/handle/main.webp",
     "width": 768,
     "height": 576,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 63274,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-50c80aeb-cea3-4c51-b388-805423bac341.png",
     "path": "/assets/items/managementTag/main.webp",
     "width": 537,
     "height": 768,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 128414,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-5b638880-5feb-4feb-9c4f-31451e0e1677.png",
     "path": "/assets/ending/home-late.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 371378,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-93cbdc4d-168e-483d-ba16-1b0216846737.png",
     "path": "/assets/ending/false-station.webp",
     "width": 1448,
     "height": 1086,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 367430,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-fbd152fa-0a44-462c-b520-9eb5bab2cef9.png",
     "path": "/assets/scenes/closed/boardable.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 364524,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   },
   {
     "source": "exec-1f75ae23-4f39-4bac-a8c6-ebbbcb98228c.png",
     "path": "/assets/closeups/locks/numeric.webp",
     "width": 1672,
     "height": 941,
-    "method": "built-in image_gen; WebP encoding only"
+    "bytes": 532440,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-7017abdc-8f03-4363-bf5e-c4ad0024b02a.png",
+    "path": "/assets/scenes/waiting/open.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 320742,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-6e5f7b05-6324-4847-9e32-bc3f10a8aef2.png",
+    "path": "/assets/scenes/office/changed.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 264164,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-d68549bd-7cc4-4e77-91bc-0ddb610a9146.png",
+    "path": "/assets/scenes/lost/open.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 267366,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-a7528792-2636-42b2-8cbc-dee00b7fe5a2.png",
+    "path": "/assets/scenes/store/open.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 314406,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-030a7ce0-f911-4aa3-ac03-cb00ceeb3c18.png",
+    "path": "/assets/items/managementTag/back.webp",
+    "width": 537,
+    "height": 768,
+    "bytes": 111248,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-e6918aed-aaf4-44ff-b385-081219e23a60.png",
+    "path": "/assets/scenes/closed/arrived.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 347570,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-de6db1dd-9a05-4863-9c75-c295cc111436.png",
+    "path": "/assets/ending/home.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 554604,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-d22b491f-2412-476d-a7f8-d83b2c5dc5ae.png",
+    "path": "/assets/scenes/lamp/open.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 217230,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-993ed596-0db2-43b2-8ee3-d4d8bf6efea4.png",
+    "path": "/assets/items/hook/main.webp",
+    "width": 768,
+    "height": 512,
+    "bytes": 27272,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-23e797fe-7c28-4917-840e-d8a28fa2dd10.png",
+    "path": "/assets/items/knob/main.webp",
+    "width": 768,
+    "height": 702,
+    "bytes": 94436,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-abcaa897-ecf2-443f-aa6c-39ecc03acfa3.png",
+    "path": "/assets/items/bracket/main.webp",
+    "width": 768,
+    "height": 622,
+    "bytes": 87740,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-59157371-081a-4877-ba73-7f29a10afc69.png",
+    "path": "/assets/scenes/platform/cleared.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 364718,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-e69b696c-9ece-4117-8ab7-eb1f1ee8f3f7.png",
+    "path": "/assets/scenes/train/case-open.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 231110,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-1dc11673-f786-44d2-b1a4-5add91504069.png",
+    "path": "/assets/scenes/closed/drawer.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 332392,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-d796bf7d-2082-4b3c-b32a-8df4a826e3d7.png",
+    "path": "/assets/closeups/train/steps-open.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 432172,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-1e80e25b-4662-43c2-abad-e24696e3f45b.png",
+    "path": "/assets/items/punch/main.webp",
+    "width": 768,
+    "height": 512,
+    "bytes": 91718,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-63f89946-a7cc-484d-928a-c47f3d70692a.png",
+    "path": "/assets/items/bridgePin/main.webp",
+    "width": 512,
+    "height": 768,
+    "bytes": 93504,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-454cc7b8-89a7-45c5-ae3e-f4df8e54cf20.png",
+    "path": "/assets/closeups/train/steps-closed.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 447528,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-d42b6a85-5190-40af-b1bf-81f1b5c87f8b.png",
+    "path": "/assets/closeups/gate/latch.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 347012,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-053f6427-f2cb-4b8c-826e-8e8452253e43.png",
+    "path": "/assets/scenes/train/stabled.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 255926,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-c5cb0c8c-4cf9-493a-986a-910eea6a0241.png",
+    "path": "/assets/scenes/office/tray.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 253650,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
+  },
+  {
+    "source": "exec-0cdc16e6-9889-4963-a356-09328e6608d0.png",
+    "path": "/assets/closeups/signal/box.webp",
+    "width": 1672,
+    "height": 941,
+    "bytes": 287906,
+    "method": "built-in image_gen; encoding and inventory-size reduction only"
   }
 ]

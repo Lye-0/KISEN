@@ -27,4 +27,11 @@ export function holdCatch(v:number[],part:number):number[]{
  if(v[2]===2||v[2]===1&&part===0)return v;
  const n=[...v];n[part]=1-n[part];if(v[2]===0)n[1-part]=0;return n;
 }
-export function shuttersOpen(v:number[]){return [150,550].every(x=>[-10+v[0]*80,390+v[0]*80].some(a=>Math.abs(x-a)<35)&&[70+v[1]*80,470+v[1]*80].some(b=>Math.abs(x-b)<35));}
+export function shutterLight(v:number[],x:number):[number,number][]{
+ const ranges:[number,number][]=[];
+ for(const a of [-10+v[0]*80,390+v[0]*80])for(const b of [70+v[1]*80,470+v[1]*80]){
+  const left=Math.max(x-32,a-35,b-35),right=Math.min(x+32,a+35,b+35);if(right>left)ranges.push([left-x,right-x]);
+ }
+ return ranges;
+}
+export function shuttersOpen(v:number[]){return [150,550].every(x=>shutterLight(v,x).some(([a,b])=>b-a>=64));}
