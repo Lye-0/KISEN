@@ -1,0 +1,58 @@
+[
+  {
+    "source": "exec-fc05535d-2cd7-450e-aff6-fb1fd03fa561.png",
+    "path": "/assets/scenes/train/arrival.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "source": "exec-22e3f359-ebbc-4da5-ae8a-d8cfa24af0d1.png",
+    "path": "/assets/scenes/train/explored.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "source": "exec-8d50a23f-df9b-4357-ab29-0307990a7e8c.png",
+    "path": "/assets/closeups/route/board.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "source": "exec-2730d26e-532d-4992-b456-f8ceaacf2c95.png",
+    "path": "/assets/closeups/ticket/desk.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "source": "exec-80ed5608-1419-4b91-a75b-9f21e82e6eba.png",
+    "path": "/assets/closeups/metal/box.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "source": "exec-a5bc01c9-dd01-4ab6-bf9a-8e637ee4ab9c.png",
+    "path": "/assets/closeups/metal/box-open.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "source": "exec-7202a1d9-58f2-4af3-8513-e76dc539ed74.png",
+    "path": "/assets/closeups/metal/box-empty.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "source": "exec-f6fc244d-748f-4940-931d-e4861cfc914f.png",
+    "path": "/assets/scenes/platform/main.webp",
+    "width": 1672,
+    "height": 941,
+    "method": "built-in image_gen; WebP encoding only"
+  }
+]
