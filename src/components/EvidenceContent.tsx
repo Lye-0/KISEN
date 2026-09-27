@@ -1,0 +1,9 @@
+import type { Puzzle } from '../game/content';
+export function EvidenceContent({p}:{p:Puzzle}){
+ if(p.id==='P10')return <><p>受取場所の時計で記入する。</p><div className="receipt-grid">{[{color:'青',time:'23:10',place:'駅務'},{color:'赤',time:'23:17',place:'ホーム'},{color:'透明',time:'23:13',place:'駅務'},{color:'黒',time:'23:19',place:'ホーム'}].map(r=><div className="receipt-slip" key={r.color}><small>忘れ物　受取票</small><strong>{r.color}の傘</strong><time>{r.time}</time><span className="receipt-stamp">{r.place}</span></div>)}</div></>;
+ if(p.id==='P18')return <><p>処理の順に、到着扱いの荷番号を記入。路線札と同じ行先のみ。</p><div className="parcel-slips">{[{digit:8,event:'ベル',mode:'in',shape:'○'},{digit:3,event:'扉閉',mode:'out',shape:'○'},{digit:6,event:'扉閉',mode:'in',shape:'○'},{digit:4,event:'停止',mode:'in',shape:'○'},{digit:9,event:'列車通過',mode:'in',shape:'△'},{digit:2,event:'列車通過',mode:'in',shape:'○'}].map(r=><div className="parcel-slip" key={r.digit}><div className={`postal-frame ${r.mode}`}><span>{r.shape}</span></div><strong>{r.digit}</strong><small>{r.event}</small></div>)}</div><p className="document-footnote">受領例：枠内に印。<br/>通過例：枠をまたいで印。</p></>;
+ if(p.id==='P29')return <><p>折返し運行の控え</p><table className="paper-table"><thead><tr><th>便</th><th>向き</th><th>停止</th></tr></thead><tbody><tr><td>一</td><td>駅 → 塔</td><td>戻りは通過</td></tr><tr><td>二</td><td>塔 → 駅</td><td>ベルの後</td></tr><tr><td>三</td><td>駅 → 塔</td><td>ベルの前</td></tr></tbody></table><p className="document-footnote">北側の乗り場には、戻りの便だけが止まる。</p></>;
+ if(p.id==='P05')return <><p>本日：九月八日</p><table className="paper-table"><thead><tr><th>八月一日改訂</th><th>九月一日改訂</th></tr></thead><tbody>{[['20:16','20:28'],['21:40','21:36'],['22:15','22:08']].map(([a,b])=><tr key={a}><td>{a}</td><td>{b}</td></tr>)}</tbody></table><div className="paper-notice">九月八日<br/>最終便 運休</div></>;
+ return <p>{p.clue}</p>;
+}
+

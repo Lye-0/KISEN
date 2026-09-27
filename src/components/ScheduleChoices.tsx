@@ -1,0 +1,2 @@
+const fields=[{label:'便',options:['一便','二便','三便']},{label:'停車側',options:['南側','北側']}];
+export function ScheduleChoices({v,set}:{v:number[];set:(v:number[])=>void}){return <div className="schedule-choices">{fields.map((f,i)=><section key={f.label}><h3>{f.label}</h3>{f.options.map((name,n)=><button key={name} className={v[i]===n?'selected':''} onClick={()=>set(v.map((m,j)=>i===j?n:m))}>{name}</button>)}</section>)}</div>}

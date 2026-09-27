@@ -1,0 +1,7 @@
+import { useState } from 'react';
+export const photoDescriptions=['給水槽の水面に赤い尾灯','下り切った遮断機','上がった遮断機','太い無傷の柱が塔の左を隠す。白く欠けた柱は細く遠い。','太い白く欠けた柱が塔の右を隠す。無傷の柱は細く遠い。'];
+export function WindowPhotos({order,setOrder}:{order:number[];setOrder?:(n:number[])=>void}){
+ const [selected,setSelected]=useState(0);const [dragged,setDragged]=useState<number|null>(null);
+ const move=(d:number)=>{if(!setOrder)return;const target=selected+d;if(target<0||target>=order.length)return;const v=[...order];[v[selected],v[target]]=[v[target],v[selected]];setOrder(v);setSelected(target)};
+ return <div className="window-photos"><figure><img src={`/assets/documents/window/frame-${order[selected]}.webp`} alt={photoDescriptions[order[selected]]}/><figcaption>{selected+1}枚目</figcaption></figure><div className="photo-strip">{order.map((n,i)=><button key={i} aria-label={`${i+1}枚目を大きく見る`} className={i===selected?'selected':''} draggable={!!setOrder} onDragStart={()=>setDragged(i)} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();if(dragged===null||!setOrder)return;const v=[...order];[v[i],v[dragged]]=[v[dragged],v[i]];setOrder(v);setSelected(i);setDragged(null)}} onClick={()=>setSelected(i)}><img src={`/assets/documents/window/frame-${n}.webp`} alt={photoDescriptions[n]}/></button>)}</div>{setOrder&&<div className="work-controls"><button disabled={selected===0} onClick={()=>move(-1)}>この写真を前へ</button><button disabled={selected===order.length-1} onClick={()=>move(1)}>この写真を後へ</button></div>}</div>;
+}
