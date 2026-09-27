@@ -1,10 +1,11 @@
 import sharp from 'sharp';
-const root='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/';
-for(const [name,file,fx,fy] of [
- ['office','exec-f6a3ec6a-d734-4f4d-a904-396b3bc34c30.png',.333,.154],
- ['platform','exec-9933eab4-070d-4a5d-92ef-f80b18f30eb3.png',.468,.113],
- ['bridge','exec-7c86e901-5db1-41b1-94cd-af43afc996bb.png',.206,.197],
+const root='public/assets/scenes/';
+for(const [name,fx,fy] of [
+ ['office',.333,.154],
+ ['platform',.468,.113],
+ ['bridge',.206,.197],
 ]){
+ const file=`${name}/main.webp`;
  const {width,height}=await sharp(root+file).metadata();
  const radius=Math.round(width*.007);const left=Math.round(width*fx)-radius,top=Math.round(height*fy)-radius;
  const {data,info}=await sharp(root+file).extract({left,top,width:radius*2,height:radius*2}).greyscale().removeAlpha().raw().toBuffer({resolveWithObject:true});

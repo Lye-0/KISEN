@@ -76,6 +76,6 @@ describe('現在の物理状態が進路と切符を決める',()=>{
   it('乗車時に券が戻り、走行中は駅へ瞬間移動したり盤を操作したりできない',()=>{
     let s=initialState();s.room='closed';s.inventory=['punch','paper','ticket'];s.installed=['plate','handle'];s.route={switches:[2,0,1,2],start:1,plateTurn:1};s.values.P36=[0,0];s.ticket.holes=requiredHoles(s);s.ticket.service=2;s.opened=['P16','P32','P36','P37'];s.trainAt=2;
     s=reduce(s,{type:'install',item:'ticket'});s=reduce(s,{type:'move',room:'return'});expect(s.room).toBe('return');expect(s.inventory).toContain('ticket');expect(s.mountedTicket).toBe(null);
-    expect(canEnter(s,'closed')).not.toBe(null);expect(reduce(s,{type:'route',value:{start:0}})).toEqual(s);
+    expect(canEnter(s,'closed')).not.toBe(null);expect(canEnter(s,'return')).toBe(null);expect(reduce(s,{type:'route',value:{start:0}})).toEqual(s);
   });
 });

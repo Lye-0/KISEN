@@ -10,5 +10,5 @@ export const exitPoses:Partial<Record<Room,Partial<Record<Room,[number,number,st
  lamp:{store:[5,62,'‹']},
  bridge:{platform:[12,82,'↓'],closed:[87,33,'↑']},
  tunnel:{store:[6,42,'‹'],closed:[62,47,'↑']},
- closed:{bridge:[68,36,'↑'],tunnel:[92,44,'↑'],return:[83,70,'↑']},
+ closed:{bridge:[74,38,'↑'],tunnel:[77,57,'↑'],return:[83,70,'↑']},
 };

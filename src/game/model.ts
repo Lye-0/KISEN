@@ -58,6 +58,7 @@ export const signalsReady=(s:GameState)=>s.installed.includes('lamp')&&s.install
 const nextTicketId=(s:GameState)=>Math.max(s.ticket.id,s.mountedTicket?.id??0,...s.discarded.map(t=>t.id))+1;
 const keepAside=(s:GameState,t:Ticket)=>t.holes.length||t.service?[...s.discarded.filter(v=>v.id!==t.id).slice(-7),t]:s.discarded;
 export function canEnter(s:GameState,room:Room):string|null{
+  if(s.room===room)return null;
   if(s.room==='return'&&room!=='return')return '列車は、もう駅を離れている。';
   if(['office','lost','store','lamp','tunnel'].includes(room)&&!owns(s,'officeKey'))return '駅務室の戸に鍵がかかっている。';
   if(room==='bridge'&&!open(s,'P15'))return '橋の柵が留まっている。';

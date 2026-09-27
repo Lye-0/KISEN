@@ -17,7 +17,7 @@ export function WorldItems({s}:{s:GameState}){return <><svg className="scene-dyn
   {s.opened.includes('P08')&&!s.taken.includes('P08')&&<image href={itemArt.officeKey} x="1515" y="212" width="32" height="88"/>}
   {s.opened.includes('P02')&&!s.taken.includes('P02')&&<image href="/assets/documents/window/frame-2.webp" x="270" y="720" width="77" height="47" transform="rotate(-8 305 742)"/>}
  </>}
- {s.room==='closed'&&s.mountedTicket&&<g transform="translate(888 471) rotate(-4)"><svg width="84" height="38"><PaperTicket ticket={s.mountedTicket} compact/></svg></g>}
+ {s.room==='closed'&&s.mountedTicket&&<g transform="translate(888 471) rotate(-4) scale(1 .38)"><svg width="84" height="38"><PaperTicket ticket={s.mountedTicket} compact/></svg></g>}
  {s.room==='platform'&&s.trainAt>0&&!s.taken.includes('P31')&&!s.opened.includes('P31')&&<path d="M138 671l39-9 5 21-37 10Z" fill="#b2a481" stroke="#d1bea0"/>}
  {s.room==='platform'&&s.opened.includes('P31')&&!s.taken.includes('P31')&&<path d="M311 660l41-4 3 22-40 6Z" fill="#b2a481" stroke="#d1bea0"/>}
  {s.room==='office'&&s.opened.includes('P12')&&!s.taken.includes('P12')&&<g><path d="M410 420h39v15h-39Z" fill="#b9ab88"/><circle cx="430" cy="427" r="4" fill="none" stroke="#484737"/></g>}
