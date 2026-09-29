@@ -1,3 +1,4 @@
+import {Train} from './Train';
 import { Bag } from './Bag';
 import { Photos } from './Photos';
 import { Recorder } from './Recorder';
@@ -14,7 +15,7 @@ import { Photo } from './Photo';
 import { Clock } from './Clock';
 import type { Focus } from './World';
 import type { Action, Item, State } from './model';
-export const itemArt: Partial<Record<Item, string>> = { officeKey: '/assets/remake/parts/office-key.png', knob: '/assets/remake/parts/reel-cap.png', punch: '/assets/remake/parts/punch-open.png', counterRecords: '/assets/remake/parts/counter-folder.png' };
+export const itemArt: Partial<Record<Item, string>> = { envelope:'/assets/remake/parts/seat-envelope.png',officeKey: '/assets/remake/parts/office-key.png', knob: '/assets/remake/parts/reel-cap.png', punch: '/assets/remake/parts/punch-open.png', counterRecords: '/assets/remake/parts/counter-folder.png' };
 export function FocusView({ focus, s, dispatch, say, selected, onSelect, close }: {
     focus: Focus;
     s: State;
@@ -25,6 +26,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close }
     close: () => void;
 }) {
     switch (focus) {
+        case 'seat': return <Train s={s} dispatch={dispatch} closeSeat={s.values.seatFocus?.[0]??2} inspect={()=>{}} inspectCase={()=>{}} say={say}/>;
         case 'bag': return <Bag s={s} dispatch={dispatch} say={say}/>;
         case 'photos': return <Photos s={s} dispatch={dispatch} say={say}/>;
         case 'recorder': return <Recorder s={s} dispatch={dispatch} say={say} selected={selected} onSelect={onSelect}/>;

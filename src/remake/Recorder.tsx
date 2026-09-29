@@ -5,7 +5,7 @@ import { Photo, Patch, Touch, decode } from './Photo';
 import { tapes, duration } from './recordings';
 import type { Tape, EventKind } from './recordings';
 const root = '/assets/remake/recorder/';
-const names: Record<EventKind, string> = { footsteps: '足音', gate: '閉鎖', door: '扉', passing: '通過', bell: 'ベル', stop: '停止' };
+const names: Record<EventKind, string> = { gate: '閉鎖', door: '扉', passing: '通過', bell: 'ベル', stop: '停止' };
 export function RecordingStrips({ offset, onOffset }: {
     offset: number;
     heard: [

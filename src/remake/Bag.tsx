@@ -24,7 +24,7 @@ export function Bag({ s, dispatch, say }: {
         dispatch({ type: 'bagMouth' });
     };
     const strap = () => dispatch({ type: 'bagStrap', position: s.bag.strap > .8 ? 0 : 1 });
-    return <Photo src={bagPhoto(s)} label="座席に置かれた革の鞄">
+    return <Photo src={root + 'closed.webp'} view={[285, 100, 1100, 780]} label="座席に置かれた革の鞄"><Patch src={bagPhoto(s)} rect={[19, 11, 63, 81]}/>
   {s.bag.mouth && s.locations.photos !== 'bag' && <Patch src={root + 'empty.webp'} rect={[36, 38, 26, 14]}/>}
   {s.locations.receipt === 'inventory' && <Patch src={root + 'empty.webp'} rect={[54.3, 15.5, 9.4, 16.5]}/>}
   {!s.bag.mouth && <><Touch name="肩の帯" rect={s.bag.strap > .8 ? [72, 49, 7, 38] : [47, 28, 8, 59]} act={strap} drag={dx => dispatch({ type: 'bagStrap', position: dx > 0 ? 1 : 0 })}/><Touch name="真鍮の留め" rect={s.bag.clasp ? [40, 24, 9, 14] : [40, 39, 8, 14]} act={() => dispatch({ type: 'bagClasp' })}/></>}

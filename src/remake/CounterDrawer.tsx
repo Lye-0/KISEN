@@ -22,7 +22,7 @@ export function CounterDrawer({ s, dispatch, say }: {
         number,
         number,
         number
-    ] | undefined = !compact ? undefined : open ? [740, 330, 460, 300] : detail ? [630, 365, 340, 235] : [560, 305, 920, 360];
+    ] | undefined = !compact ? [0, 100, 1672, 841] : open ? [740, 330, 460, 300] : detail ? [630, 365, 340, 235] : [560, 305, 920, 360];
     function turn(i: number, d = 1) { dispatch({ type: 'values', id: 'drawerDigits', values: values.map((n, j) => i === j ? (n + d + 10) % 10 : n) }); }
     function pull() { if (!open && !values.every((n, i) => n === [2, 1, 4, 6][i])) {
         say('留めが残っている。');

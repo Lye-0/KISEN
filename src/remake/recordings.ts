@@ -1,5 +1,5 @@
 export type Tape = 'A' | 'B';
-export type EventKind = 'footsteps' | 'gate' | 'door' | 'passing' | 'bell' | 'stop';
+export type EventKind = 'gate' | 'door' | 'passing' | 'bell' | 'stop';
 export interface TapeEvent {
     at: number;
     kind: EventKind;
@@ -7,8 +7,8 @@ export interface TapeEvent {
 }
 export const duration = 20;
 export const tapes: Record<Tape, TapeEvent[]> = {
-    A: [{ at: 1.2, kind: 'footsteps' }, { at: 4, kind: 'gate', lamps: 2 }, { at: 9, kind: 'passing' }, { at: 14, kind: 'stop' }, { at: 16, kind: 'gate', lamps: 1 }],
-    B: [{ at: 1, kind: 'gate', lamps: 2 }, { at: 3, kind: 'door' }, { at: 9, kind: 'bell' }, { at: 13, kind: 'gate', lamps: 1 }, { at: 17, kind: 'footsteps' }],
+    A: [{ at: 4, kind: 'gate', lamps: 2 }, { at: 9, kind: 'passing' }, { at: 14, kind: 'stop' }, { at: 16, kind: 'gate', lamps: 1 }],
+    B: [{ at: 1, kind: 'gate', lamps: 2 }, { at: 3, kind: 'door' }, { at: 9, kind: 'bell' }, { at: 13, kind: 'gate', lamps: 1 }],
 };
 export function syncCandidates(useLamps = true) {
     return Array.from({ length: 31 }, (_, i) => i - 12).filter(shift => {
@@ -61,9 +61,6 @@ export function tapeSamples(which: Tape, rate = 22050) {
         }
         if (e.kind === 'stop')
             sound(e.at, 1.3, t => (noise() * .09 + Math.sin(2 * Math.PI * (370 * t - 90 * t * t)) * .025) * (1 - t / 1.3));
-        if (e.kind === 'footsteps')
-            for (const d of [0, .48, .95])
-                sound(e.at + d, .2, t => (Math.sin(t * 75 * 2 * Math.PI) * .075 + noise() * .05) * Math.exp(-t * 28));
     }
     return out;
 }
