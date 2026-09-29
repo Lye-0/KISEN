@@ -3,6 +3,12 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['parts/return-car-closed','14df9097-4e18-4e8e-942b-f9a61d48c052'],
+ ['north/platform','aaee33d8-9fc1-4052-b106-fe810fb66fd4'],
+ ['signal/housing','d2cda9d3-692d-4d3c-b440-9bcfd33bff1c'],
+ ['parts/shutter-blade','2375f3de-4b8b-4eff-88ca-2610c9736992'],
+ ['parts/marker-lamp','ef3cb65a-99a4-4b2b-8c8e-5ed8b375963e'],
+ ['parts/return-car','f9204ca9-0838-40cc-9936-ff12b2f07ad5'],
  ['office/desk-clear','e1aaf862-e6ef-4add-b63e-fec086ec7346'],
  ['office/socket-source','f0fa5d4d-7b1b-45c9-af02-78d0672538f0'],
  ["train/forward","98be95f5-1d34-443c-b6f0-1acfcbde5e84"],
@@ -70,6 +76,6 @@ const entries=[
  ['bag/empty','576ac99e-3630-4ab4-95f2-784c208449a0'],
 ];
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||['parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||['parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 await mkdir('docs/remake',{recursive:true});await writeFile('docs/remake/assets.json',JSON.stringify(manifest,null,2)+'\n');
 console.log('Encoded '+manifest.length+' representative assets.');

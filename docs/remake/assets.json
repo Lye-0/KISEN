@@ -1,5 +1,47 @@
 [
   {
+    "id": "parts/return-car-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-14df9097-4e18-4e8e-942b-f9a61d48c052.png",
+    "file": "public/assets/remake/parts/return-car-closed.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "north/platform",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-aaee33d8-9fc1-4052-b106-fe810fb66fd4.png",
+    "file": "public/assets/remake/north/platform.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "signal/housing",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-d2cda9d3-692d-4d3c-b440-9bcfd33bff1c.png",
+    "file": "public/assets/remake/signal/housing.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/shutter-blade",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2375f3de-4b8b-4eff-88ca-2610c9736992.png",
+    "file": "public/assets/remake/parts/shutter-blade.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "parts/marker-lamp",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ef3cb65a-99a4-4b2b-8c8e-5ed8b375963e.png",
+    "file": "public/assets/remake/parts/marker-lamp.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "parts/return-car",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f9204ca9-0838-40cc-9936-ff12b2f07ad5.png",
+    "file": "public/assets/remake/parts/return-car.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
     "id": "office/desk-clear",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e1aaf862-e6ef-4add-b63e-fec086ec7346.png",
     "file": "public/assets/remake/office/desk-clear.webp",

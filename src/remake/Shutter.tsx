@@ -1,0 +1,49 @@
+import { useId, useRef, useState } from 'react';
+import { Photo, Touch } from './Photo';
+import { shutterSlotCenters } from './stopping';
+import type { Action, State } from './model';
+const unit = 10.25, origin = 322.5;
+export function ShutterImage({ s, controls = false, dispatch }: {
+    s: State;
+    controls?: boolean;
+    dispatch?: (a: Action) => void;
+}) {
+    const id = useId().replace(/:/g, ''), drag = useRef<{
+        x: number;
+        step: number;
+        scale: number;
+    } | null>(null);
+    const fitted = s.locations.hood === 'signal';
+    return <svg viewBox="0 0 1672 941" className="rm-object-overlay" style={{ touchAction: controls ? 'none' : undefined }} aria-label="二枚の遮光羽根">
+ <text x="733" y="647" textAnchor="middle" fontSize="30" fill="#c3bfae">{s.values.callService?.[0] ?? 1}</text><text x="970" y="591" textAnchor="middle" fontSize="17" fill="#999b8c">呼出</text><defs><clipPath id={id + 'cavity'}><rect x="381" y="281" width="909" height="226"/></clipPath>
+ {[0, 1].map(plate => <mask key={plate} id={id + plate} maskUnits="userSpaceOnUse" x="300" y="270" width="1040" height="270"><rect x="300" y="270" width="1040" height="270" fill="white"/>{shutterSlotCenters(plate, s.signals.shutters[plate]).map(x => <rect key={x} x={origin + x * unit - 52} y="352" width="104" height="100" rx="4" fill="black"/>)}</mask>)}
+ <linearGradient id={id + 'grip'} x2="0" y2="1"><stop stopColor="#818481"/><stop offset=".4" stopColor="#383c39"/><stop offset="1" stopColor="#161b19"/></linearGradient></defs>
+ {fitted && <><g clipPath={'url(#' + id + 'cavity)'}>{[0, 1].map(plate => <g key={plate} mask={'url(#' + id + plate + ')'}><rect x="380" y="280" width="920" height="230" fill={plate ? '#343a39' : '#171c1c'}/><svg x={-230 + s.signals.shutters[plate] * unit * 10} y="280" width="1640" height="230" viewBox="60 205 2040 315" preserveAspectRatio="none" opacity={plate ? .75 : .5}><image href="/assets/remake/parts/shutter-blade.png" width="2172" height="724"/></svg></g>)}</g>
+ {[0, 1].map(plate => {
+                const step = s.signals.shutters[plate], x = origin + (18 + step * 10) * unit, y = plate ? 509 : 264;
+                return <g key={plate} role={controls ? 'slider' : undefined} tabIndex={controls ? 0 : undefined} aria-label={plate ? '手前の羽根' : '奥の羽根'} aria-valuemin={0} aria-valuemax={4} aria-valuenow={step} style={{ pointerEvents: controls ? 'auto' : 'none', cursor: 'ew-resize', touchAction: 'none' }} onKeyDown={e => {
+                        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+                            e.preventDefault();
+                            dispatch?.({ type: 'shutter', plate: plate as 0 | 1, step: e.key === 'Home' ? 0 : e.key === 'End' ? 4 : Math.max(0, Math.min(4, step + (e.key === 'ArrowRight' ? 1 : -1))) });
+                        }
+                    }} onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); drag.current = { x: e.clientX, step, scale: e.currentTarget.ownerSVGElement!.getBoundingClientRect().width / 1672 }; }} onPointerMove={e => {
+                        if (drag.current) {
+                            const d = drag.current;
+                            dispatch?.({ type: 'shutter', plate: plate as 0 | 1, step: Math.max(0, Math.min(4, d.step + Math.round((e.clientX - d.x) / (unit * 10 * d.scale)))) });
+                        }
+                    }} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}>
+ <rect x={x - 70} y={y - 56} width="140" height="112" fill="transparent"/><rect x={x - 48} y={y - 10} width="96" height="20" rx="8" fill={'url(#' + id + 'grip)'} stroke="#828079" strokeWidth="1.5"/>{[0, 1, 2].map(n => <path key={n} d={`M${x - 10 + n * 10},${y - 5}v10`} stroke="#131817" strokeWidth="2"/>)}</g>;
+            })}</>}
+ </svg>;
+}
+export function Shutter({ s, dispatch, reader }: {
+    s: State;
+    dispatch: (a: Action) => void;
+    reader: () => void;
+}) {
+    const [detail, setDetail] = useState(false), fitted = s.locations.hood === 'signal';
+    const service = s.values.callService?.[0] ?? 1;
+    return <div className="rm-shutter"><Photo src="/assets/remake/signal/housing.webp" label="停車灯へつながる遮光器" view={detail ? [330, 220, 1000, 360] : undefined}><ShutterImage s={s} controls dispatch={dispatch}/>{!fitted && <Touch name="覆いを取り付ける" rect={[24, 30, 52, 26]} act={() => dispatch({ type: 'signalHood' })}/>}{!detail && <><Touch name="呼び出す便を選ぶ" rect={[40, 61, 8, 12]} act={() => dispatch({ type: 'values', id: 'callService', values: [service % 6 + 1] })}/><Touch name="呼出ボタンを押す" rect={[55, 62, 7, 10]} act={() => dispatch({ type: 'call', service })}/></>}</Photo>
+ <div className="rm-document-controls"><button onClick={() => setDetail(!detail)}>{detail ? '全体を見る' : '羽根を近くで見る'}</button><button onClick={() => dispatch({ type: 'signalHood' })}>{fitted ? '覆いを取り外す' : '覆いを取り付ける'}</button><button onClick={reader}>切符受けを見る</button></div>
+ </div>;
+}

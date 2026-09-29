@@ -1,3 +1,4 @@
+import { NorthPlatform } from './NorthPlatform';
 import { ToolScene } from './ToolScene';
 import { Photo, Touch } from './Photo';
 import { Train } from './Train';
@@ -7,12 +8,12 @@ import { DrawerImage } from './CounterDrawer';
 import { RecordCard } from './ServiceRecords';
 import { RecorderImage } from './Recorder';
 import type { Action, Item, Room, State } from './model';
-export type Focus = 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
+export type Focus = 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
 export const availableViews: Partial<Record<Room, string[]>> = { train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前'], office: ['机と南の窓', '北の保管区画'] };
 function CounterObjects({ s }: {
     s: State;
 }) { const open = s.values.drawerOpen?.[0] === 1; return <svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="978" y="254" width="256" height="275" viewBox="436 166 784 632" preserveAspectRatio="none"><HatchImage s={s}/></svg><svg x={open ? 945 : 965} y={open ? 552 : 557} width={open ? 339 : 299} height={open ? 139 : 76} viewBox={open ? '55 252 1555 638' : '125 296 1415 350'} preserveAspectRatio="none"><DrawerImage s={s}/></svg><foreignObject x="690" y="275" width="100" height="195"><RecordCard id={0} inkOnly/></foreignObject><foreignObject x="800" y="310" width="72" height="141"><RecordCard id={1} inkOnly/></foreignObject></svg>; }
-export function World({ s, dispatch, inspect }: {
+export function World({ s, dispatch, inspect, selected, say }: {
     s: State;
     dispatch: (a: Action) => void;
     inspect: (f: Focus) => void;
@@ -21,6 +22,8 @@ export function World({ s, dispatch, inspect }: {
 }) {
     const move = (room: Room, camera = 0) => dispatch({ type: 'move', room, camera });
     const image = (src: string, label: string, children?: React.ReactNode) => <Photo src={'/assets/remake/' + src + '.webp'} label={label}>{children}</Photo>;
+    if (s.room === 'north')
+        return <NorthPlatform s={s} dispatch={dispatch} inspect={inspect} selected={selected} say={say}/>;
     if (s.room === 'train')
         return <Train s={s} dispatch={dispatch} inspect={() => inspect('bag')} inspectCase={() => inspect('case')} inspectSeat={i => { dispatch({ type: 'values', id: 'seatFocus', values: [i] }); inspect('seat'); }} exit={() => move('platform', 0)}/>;
     if (s.room === 'platform')

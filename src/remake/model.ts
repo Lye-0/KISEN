@@ -1,8 +1,10 @@
 import { sameOpening } from './ticketGeometry';
 import { arrivalCaseSides } from './arrivalPhotos';
 import { duration as tapeDuration } from './recordings';
+import { freshSignals, freshTrain, mounts, stopAt, boardingGeometry, validSignals, validTrain } from './stopping';
+import type { SignalState, TrainState } from './stopping';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'lamp' | 'tunnel' | 'north' | 'return';
-export type Item = 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
+export type Item = 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
 export type Place = 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 export type Side = 'white' | 'black';
@@ -52,15 +54,13 @@ export interface State {
     draft: Ticket;
     mounted: Ticket | null;
     savedTickets: Ticket[];
-    train: {
-        service: number;
-        position: 'absent' | 'passing' | 'stopped' | 'departed';
-    };
+    signals: SignalState;
+    train: TrainState;
     elapsed: number;
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: {}, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], train: { service: 0, position: 'absent' }, elapsed: 0, sound: false, ended: false });
+export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: {}, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
 export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, lamp: 2, tunnel: 2, north: 3, return: 2 };
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
 export const done = (s: State, id: string) => s.flags.includes(id);
@@ -99,6 +99,23 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'trainAdvance';
+    seconds: number;
+} | {
+    type: 'signalMount';
+    lamp: 0 | 1;
+    mark: number | null;
+} | {
+    type: 'signalHood';
+} | {
+    type: 'shutter';
+    plate: 0 | 1;
+    step: number;
+} | {
+    type: 'trainArrive';
+} | {
+    type: 'releaseTrain';
+} | {
     type: 'toolCut';
     tool: number;
     die: number;
@@ -195,7 +212,32 @@ export type Action = {
     seconds: number;
 };
 export function reduce(s: State, a: Action): State {
+    if (s.room === 'return' && !['look', 'end', 'sound', 'tick', 'record'].includes(a.type))
+        return s;
     switch (a.type) {
+        case 'trainAdvance': {
+            if (!['approaching', 'passing', 'leaving'].includes(s.train.position) || !Number.isFinite(a.seconds) || a.seconds <= 0)
+                return s;
+            const progress = (s.train.progress ?? 0) + Math.min(a.seconds, 1) / (s.train.position === 'approaching' ? 4 : 3);
+            return progress < 1 ? { ...s, train: { ...s.train, progress } } : { ...s, train: s.train.position === 'approaching' ? stopAt(s.train.service, s.signals, s.locations.hood === 'signal', trace(s.route).end === 'O') : freshTrain() };
+        }
+        case 'signalMount': {
+            if (s.room !== 'north' || ![0, 1].includes(a.lamp) || a.mark !== null && (!mounts.some(m => m === a.mark) || s.signals.mounts[1 - a.lamp] === a.mark))
+                return s;
+            const item = a.lamp === 0 ? 'lamp' : 'spareLamp';
+            if (!owns(s, item) && s.locations[item] !== 'signal')
+                return s;
+            const positions = [...s.signals.mounts] as SignalState['mounts'];
+            positions[a.lamp] = a.mark;
+            return { ...s, signals: { ...s.signals, mounts: positions }, locations: { ...s.locations, [item]: a.mark === null ? 'inventory' : 'signal' } };
+        }
+        case 'signalHood': return s.room !== 'north' || !owns(s, 'hood') && s.locations.hood !== 'signal' ? s : { ...s, locations: { ...s.locations, hood: s.locations.hood === 'signal' ? 'inventory' : 'signal' } };
+        case 'shutter': return s.room !== 'north' || s.locations.hood !== 'signal' || ![0, 1].includes(a.plate) || !Number.isInteger(a.step) || a.step < 0 || a.step > 4 ? s : { ...s, signals: { ...s.signals, shutters: s.signals.shutters.map((v, i) => i === a.plate ? a.step : v) as [
+                    number,
+                    number
+                ] } };
+        case 'trainArrive': return s.train.position !== 'approaching' ? s : { ...s, train: stopAt(s.train.service, s.signals, s.locations.hood === 'signal', trace(s.route).end === 'O') };
+        case 'releaseTrain': return s.train.position !== 'stopped' || s.room !== 'north' ? s : { ...s, train: { ...s.train, position: 'leaving', progress: 0 } };
         case 'toolTake': return s.room !== 'office' || owns(s, 'punch') || ![0, 1, 2].includes(a.tool) ? s : { ...s, locations: { ...s.locations, punch: 'inventory' }, values: { ...s.values, punchTool: [a.tool] } };
         case 'toolReturn': return s.room !== 'office' || !owns(s, 'punch') ? s : { ...s, locations: { ...s.locations, punch: 'toolBench' } };
         case 'toolCut': {
@@ -241,13 +283,15 @@ export function reduce(s: State, a: Action): State {
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
             const at = s.locations[a.item];
+            if (at === 'signal')
+                return s;
             if (a.item === 'punch' && at === 'toolBench' || a.item === 'paper' && at === 'toolBench' && s.room !== 'office')
                 return s;
             if (!at || at === 'counter' && !s.window.open || at === 'cashDrawer' && s.values.drawerOpen?.[0] !== 1 || at === 'inventory' || at === 'case' && s.values.caseOpen?.[0] !== 1 || at === 'bag' && !s.bag.mouth || at === 'seat' && s.seats[2] !== 1)
                 return s;
             return { ...s, locations: { ...s.locations, [a.item]: 'inventory' } };
         }
-        case 'put': return !s.locations[a.item] ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
+        case 'put': return !s.locations[a.item] || a.place === 'signal' || s.locations[a.item] === 'signal' ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
         case 'seat': return { ...s, seats: s.seats.map((v, i) => i === a.index ? 1 - v : v) };
         case 'heard': {
             if (!Number.isFinite(a.seconds))
@@ -259,7 +303,7 @@ export function reduce(s: State, a: Action): State {
         case 'values': return { ...s, values: { ...s.values, [a.id]: a.values } };
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
-        case 'route': return s.room === 'return' || !nodes[a.index] || !connections[nodes[a.index]][a.value] ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
+        case 'route': return !nodes[a.index] || !connections[nodes[a.index]][a.value] || ['approaching', 'passing', 'leaving', 'stopped'].includes(s.train.position) && trace(s.route).path.includes(nodes[a.index]) ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
         case 'punch': return !owns(s, 'punch') || !owns(s, 'paper') || !Number.isInteger(a.hole.column) || a.hole.column < 0 || a.hole.column > 4 || !nodes.includes(a.hole.node) || !['white', 'black'].includes(a.hole.side) || s.draft.holes.some(h => h.column === a.hole.column && h.side === a.hole.side && h.node === a.hole.node && (h.tool ?? 1) === (s.values.punchTool?.[0] ?? 1)) ? s : { ...s, draft: { ...s.draft, holes: [...s.draft.holes, { ...a.hole, tool: s.values.punchTool?.[0] ?? 1 }] } };
         case 'flipTicket': return { ...s, draft: { ...s.draft, back: !s.draft.back } };
         case 'ticketService': {
@@ -273,8 +317,8 @@ export function reduce(s: State, a: Action): State {
         case 'readerClamp': return (s.values.readerDepth?.[0] ?? 0) > 0 && (s.values.readerDepth?.[0] ?? 0) < 1 ? s : { ...s, values: { ...s.values, readerClamp: [s.values.readerClamp?.[0] === 1 ? 0 : 1] } };
         case 'mountTicket': return s.mounted || !owns(s, 'paper') || s.draft.back || s.values.readerClamp?.[0] !== 1 || s.values.readerDepth?.[0] !== .65 ? s : { ...s, values: { ...s.values, readerDepth: [1] }, mounted: structuredClone(s.draft), draft: { id: s.draft.id + 1, holes: [], service: 0, back: false } };
         case 'removeTicket': return !s.mounted || s.values.readerClamp?.[0] !== 1 ? s : { ...s, values: { ...s.values, readerDepth: [0] }, draft: s.mounted, mounted: null, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets, s.draft] : s.savedTickets };
-        case 'call': return { ...s, train: { service: a.service, position: trace(s.route).end === 'O' && a.service === 2 && done(s, 'signal') ? 'stopped' : 'passing' } };
-        case 'board': return !validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0 || s.train.position !== 'stopped' || !done(s, 'footing') ? s : { ...s, room: 'return', camera: 0, train: { ...s.train, position: 'departed' } };
+        case 'call': return s.room !== 'north' || s.train.position !== 'absent' || !Number.isInteger(a.service) || a.service < 1 || a.service > 6 ? s : { ...s, train: { service: a.service, position: 'approaching', firstDoor: null } };
+        case 'board': return s.room !== 'north' || !validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0 || trace(s.route).end !== 'O' || !boardingGeometry(s.train, s.signals, s.locations.hood === 'signal') ? s : { ...s, room: 'return', camera: 0, train: { ...s.train, position: 'departed' } };
         case 'end': return s.room === 'return' ? { ...s, ended: true } : s;
         case 'sound': return { ...s, sound: !s.sound };
         case 'tick': return { ...s, elapsed: s.elapsed + a.seconds };
@@ -284,6 +328,13 @@ export function restore(value: unknown): State | null {
     if (!value || typeof value !== 'object')
         return null;
     const s = value as State;
+    const legacy = s.signals === undefined;
+    const signals = legacy ? freshSignals() : s.signals;
+    const train = legacy ? (s.room === 'return' ? { service: 2, position: 'departed' as const, firstDoor: 7 } : freshTrain()) : s.train;
+    if (!validSignals(signals) || !validTrain(train))
+        return null;
+    if (!legacy && ['lamp', 'spareLamp'].some((item, i) => (signals.mounts[i] !== null) !== (s.locations?.[item as Item] === 'signal')))
+        return null;
     if (s.version !== 2 || !Object.hasOwn(cameraCounts, s.room) || !Number.isInteger(s.camera) || s.camera < 0 || s.camera >= cameraCounts[s.room] || typeof s.started !== 'boolean' || !s.locations || !s.bag || !Array.isArray(s.seats) || s.seats.length !== 3 || !s.seats.every(n => n === 0 || n === 1) || !Array.isArray(s.flags) || !Array.isArray(s.visited) || !s.values || !Array.isArray(s.notes) || !Number.isFinite(s.elapsed) || s.elapsed < 0 || !Array.isArray(s.route) || s.route.length !== 6 || !s.route.every((n, i) => Number.isInteger(n) && n >= 0 && n < connections[nodes[i]].length))
         return null;
     if (!Number.isFinite(s.bag.strap) || s.bag.strap < 0 || s.bag.strap > 1 || typeof s.bag.clasp !== 'boolean' || typeof s.bag.mouth !== 'boolean')
@@ -315,5 +366,10 @@ export function restore(value: unknown): State | null {
     if (!s.notes.every(n => n && typeof n.id === 'string' && numeric(n.values) && (n.id !== 'arrivalPhotos' || order(n.values))))
         return null;
     const notes = s.notes.filter(n => n.id !== 'toolTrial' || !s.notes.some(other => other.id.startsWith('toolTrial-') && other.values.length === n.values.length && other.values.every((v, i) => v === n.values[i])));
-    return { ...s, notes, values: s.values.toolDie && !s.values.ticketDie ? { ...s.values, ticketDie: s.values.toolDie } : s.values, locations: { punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } };
+    const locations = { punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } as State['locations'];
+    if (legacy)
+        for (const item of ['lamp', 'spareLamp', 'hood'] as Item[])
+            if (locations[item] === 'signal')
+                locations[item] = 'inventory';
+    return { ...s, signals, train, notes, values: s.values.toolDie && !s.values.ticketDie ? { ...s.values, ticketDie: s.values.toolDie } : s.values, locations };
 }

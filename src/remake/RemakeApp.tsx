@@ -11,7 +11,7 @@ import { ServiceRecordNote } from './ServiceRecords';
 import { useModal } from './useModal';
 import './remake.css';
 const fixture = new URLSearchParams(location.search).get('remake');
-const group = fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : '';
+const group = fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : '';
 const saveKey = 'kisen-remake-v2' + (group ? ':' + group : '');
 const initialFocus: Focus = fixture === 'reader' ? 'reader' : fixture === 'ticket' ? 'ticket' : null;
 function seed() {
@@ -35,6 +35,15 @@ function seed() {
         s.room = 'waiting';
         s.camera = 1;
     }
+    if (group === 'stopping') {
+        s.room = 'north';
+        s.locations.lamp = 'inventory';
+        s.locations.spareLamp = 'inventory';
+        s.locations.hood = 'inventory';
+        s.locations.paper = 'inventory';
+        s.locations.punch = 'inventory';
+        s.route = [0, 1, 0, 1, 1, 1];
+    }
     s.visited = [s.room + ':' + s.camera];
     return s;
 }
@@ -46,7 +55,7 @@ function load() {
         return seed();
     }
 }
-const labels: Record<Item, string> = { photos: '写真', receipt: '受取票', envelope: '封筒', ownTicket: '到着券', officeKey: '駅務室の鍵', knob: '黒いつまみ', hook: '鉤付き棒', pin: '薄い片', support: '支え', lamp: '灯具', punch: '鋏', paper: '用紙', fragments: '券の断片', hood: '覆い', ticket: '切符', counterRecords: '帳票' };
+const labels: Record<Item, string> = { spareLamp: '交換灯具', photos: '写真', receipt: '受取票', envelope: '封筒', ownTicket: '到着券', officeKey: '駅務室の鍵', knob: '黒いつまみ', hook: '鉤付き棒', pin: '薄い片', support: '支え', lamp: '灯具', punch: '鋏', paper: '用紙', fragments: '券の断片', hood: '覆い', ticket: '切符', counterRecords: '帳票' };
 const documentFocus: Partial<Record<Item, Focus>> = { photos: 'photos', receipt: 'receipt', envelope: 'map', paper: 'paperView', counterRecords: 'notices' };
 const roomLabels: Record<Room, string> = { train: '到着車内', platform: '南ホーム', waiting: '待合室', forecourt: '駅前', office: '駅務室', lost: '忘れ物室', bridge: '跨線橋', cargo: '荷物室', lamp: '灯具小屋', tunnel: 'トンネル側道', north: '北ホーム', return: '帰りの車内' };
 export default function RemakeApp() {
@@ -97,6 +106,12 @@ export default function RemakeApp() {
         if (timer.current)
             clearTimeout(timer.current);
     }, []);
+    useEffect(() => {
+        if (!['approaching', 'passing', 'leaving'].includes(s.train.position))
+            return;
+        const id = setInterval(() => dispatch({ type: 'trainAdvance', seconds: .1 }), 100);
+        return () => clearInterval(id);
+    }, [s.train.position, dispatch]);
     const exportSave = () => { const url = URL.createObjectURL(new Blob([JSON.stringify(s)], { type: 'application/json' })); const a = document.createElement('a'); a.href = url; a.download = 'KISEN-remake.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 500); };
     const inv = (Object.keys(s.locations) as Item[]).filter(i => owns(s, i)), views = availableViews[s.room] ?? [];
     const showSelected = selected && owns(s, selected) && focus !== (documentFocus[selected] ?? 'item');
@@ -136,6 +151,6 @@ export default function RemakeApp() {
                     }
                     e.target.value = '';
                 }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
- <span className="rm-dev-label">代表場面の検証 / {group === 'ticket' ? 'Q31–32' : group === 'recorder' ? 'Q12' : group === 'counter' ? 'Q04–05' : '探索一巡'}</span>
+ <span className="rm-dev-label">代表場面の検証 / {group === 'stopping' ? 'Q28–30' : group === 'ticket' ? 'Q31–32' : group === 'recorder' ? 'Q12' : group === 'counter' ? 'Q04–05' : '探索一巡'}</span>
  </main>;
 }
