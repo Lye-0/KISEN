@@ -3,10 +3,11 @@ import { arrivalCaseSides } from './arrivalPhotos';
 import { duration as tapeDuration } from './recordings';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'lamp' | 'tunnel' | 'north' | 'return';
 export type Item = 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
-export type Place = 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
+export type Place = 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 export type Side = 'white' | 'black';
 export type Hole = {
+    tool?: number;
     column: number;
     node: Node;
     side: Side;
@@ -59,7 +60,7 @@ export interface State {
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: {}, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], train: { service: 0, position: 'absent' }, elapsed: 0, sound: false, ended: false });
+export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: {}, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], train: { service: 0, position: 'absent' }, elapsed: 0, sound: false, ended: false });
 export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, lamp: 2, tunnel: 2, north: 3, return: 2 };
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
 export const done = (s: State, id: string) => s.flags.includes(id);
@@ -95,9 +96,21 @@ export function validTicket(s: State, t: Ticket | null) {
     if (!t || trace(s.route).end !== 'O' || t.service !== 2 || t.stamps?.some(n => n !== 2) || t.marks?.some(m => m.service !== 2))
         return false;
     const expected = expectedHoles(s.route);
-    return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side).map(h => h.node), e.node));
+    return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'toolCut';
+    tool: number;
+    die: number;
+    slot: number;
+} | {
+    type: 'toolTake';
+    tool: number;
+} | {
+    type: 'toolReturn';
+} | {
+    type: 'newTrialPaper';
+} | {
     type: 'start';
 } | {
     type: 'look';
@@ -183,6 +196,22 @@ export type Action = {
 };
 export function reduce(s: State, a: Action): State {
     switch (a.type) {
+        case 'toolTake': return s.room !== 'office' || owns(s, 'punch') || ![0, 1, 2].includes(a.tool) ? s : { ...s, locations: { ...s.locations, punch: 'inventory' }, values: { ...s.values, punchTool: [a.tool] } };
+        case 'toolReturn': return s.room !== 'office' || !owns(s, 'punch') ? s : { ...s, locations: { ...s.locations, punch: 'toolBench' } };
+        case 'toolCut': {
+            if (s.room !== 'office' || ![0, 1, 2].includes(a.tool) || !Number.isInteger(a.die) || a.die < 0 || a.die > 5 || !Number.isInteger(a.slot) || a.slot < 0 || a.slot > 11)
+                return s;
+            const cuts = s.values.toolCuts ?? [];
+            if (cuts.length >= 648 || cuts.some((n, i) => i % 3 === 0 && n === a.tool && cuts[i + 1] === a.die && cuts[i + 2] === a.slot))
+                return s;
+            return { ...s, values: { ...s.values, toolCuts: [...cuts, a.tool, a.die, a.slot] } };
+        }
+        case 'newTrialPaper': {
+            const cuts = s.values.toolCuts ?? [], page = s.values.toolPage?.[0] ?? 0;
+            if (!cuts.length)
+                return s;
+            return { ...s, values: { ...s.values, toolCuts: [], toolPage: [page + 1] }, notes: [...s.notes.filter(n => n.id !== 'toolTrial' || n.values.length !== cuts.length || n.values.some((v, i) => v !== cuts[i])), { id: 'toolTrial-' + page, values: [...cuts], at: s.elapsed }] };
+        }
         case 'start': return { ...s, started: true };
         case 'look': {
             const camera = (a.camera + cameraCounts[s.room]) % cameraCounts[s.room];
@@ -212,6 +241,8 @@ export function reduce(s: State, a: Action): State {
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
             const at = s.locations[a.item];
+            if (a.item === 'punch' && at === 'toolBench' || a.item === 'paper' && at === 'toolBench' && s.room !== 'office')
+                return s;
             if (!at || at === 'counter' && !s.window.open || at === 'cashDrawer' && s.values.drawerOpen?.[0] !== 1 || at === 'inventory' || at === 'case' && s.values.caseOpen?.[0] !== 1 || at === 'bag' && !s.bag.mouth || at === 'seat' && s.seats[2] !== 1)
                 return s;
             return { ...s, locations: { ...s.locations, [a.item]: 'inventory' } };
@@ -229,7 +260,7 @@ export function reduce(s: State, a: Action): State {
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return s.room === 'return' || !nodes[a.index] || !connections[nodes[a.index]][a.value] ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
-        case 'punch': return !owns(s, 'punch') || !owns(s, 'paper') || !Number.isInteger(a.hole.column) || a.hole.column < 0 || a.hole.column > 4 || !nodes.includes(a.hole.node) || !['white', 'black'].includes(a.hole.side) || s.draft.holes.some(h => h.column === a.hole.column && h.side === a.hole.side && h.node === a.hole.node) ? s : { ...s, draft: { ...s.draft, holes: [...s.draft.holes, a.hole] } };
+        case 'punch': return !owns(s, 'punch') || !owns(s, 'paper') || !Number.isInteger(a.hole.column) || a.hole.column < 0 || a.hole.column > 4 || !nodes.includes(a.hole.node) || !['white', 'black'].includes(a.hole.side) || s.draft.holes.some(h => h.column === a.hole.column && h.side === a.hole.side && h.node === a.hole.node && (h.tool ?? 1) === (s.values.punchTool?.[0] ?? 1)) ? s : { ...s, draft: { ...s.draft, holes: [...s.draft.holes, { ...a.hole, tool: s.values.punchTool?.[0] ?? 1 }] } };
         case 'flipTicket': return { ...s, draft: { ...s.draft, back: !s.draft.back } };
         case 'ticketService': {
             if (!Number.isInteger(a.service) || a.service < 1 || a.service > 6)
@@ -238,10 +269,10 @@ export function reduce(s: State, a: Action): State {
             const mark = { service: a.service, back: s.draft.back };
             return { ...s, draft: { ...s.draft, service: a.service, stamps: undefined, marks: marks.some(m => m.service === mark.service && m.back === mark.back) ? marks : [...marks, mark] } };
         }
-        case 'newTicket': return !owns(s, 'paper') ? s : { ...s, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets.slice(-7), s.draft] : s.savedTickets, draft: { id: Math.max(s.draft.id, s.mounted?.id ?? 0, ...s.savedTickets.map(t => t.id)) + 1, holes: [], service: 0, back: false } };
+        case 'newTicket': return !owns(s, 'paper') ? s : { ...s, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets, s.draft] : s.savedTickets, draft: { id: Math.max(s.draft.id, s.mounted?.id ?? 0, ...s.savedTickets.map(t => t.id)) + 1, holes: [], service: 0, back: false } };
         case 'readerClamp': return (s.values.readerDepth?.[0] ?? 0) > 0 && (s.values.readerDepth?.[0] ?? 0) < 1 ? s : { ...s, values: { ...s.values, readerClamp: [s.values.readerClamp?.[0] === 1 ? 0 : 1] } };
         case 'mountTicket': return s.mounted || !owns(s, 'paper') || s.draft.back || s.values.readerClamp?.[0] !== 1 || s.values.readerDepth?.[0] !== .65 ? s : { ...s, values: { ...s.values, readerDepth: [1] }, mounted: structuredClone(s.draft), draft: { id: s.draft.id + 1, holes: [], service: 0, back: false } };
-        case 'removeTicket': return !s.mounted || s.values.readerClamp?.[0] !== 1 ? s : { ...s, values: { ...s.values, readerDepth: [0] }, draft: s.mounted, mounted: null, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets.slice(-7), s.draft] : s.savedTickets };
+        case 'removeTicket': return !s.mounted || s.values.readerClamp?.[0] !== 1 ? s : { ...s, values: { ...s.values, readerDepth: [0] }, draft: s.mounted, mounted: null, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets, s.draft] : s.savedTickets };
         case 'call': return { ...s, train: { service: a.service, position: trace(s.route).end === 'O' && a.service === 2 && done(s, 'signal') ? 'stopped' : 'passing' } };
         case 'board': return !validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0 || s.train.position !== 'stopped' || !done(s, 'footing') ? s : { ...s, room: 'return', camera: 0, train: { ...s.train, position: 'departed' } };
         case 'end': return s.room === 'return' ? { ...s, ended: true } : s;
@@ -257,11 +288,24 @@ export function restore(value: unknown): State | null {
         return null;
     if (!Number.isFinite(s.bag.strap) || s.bag.strap < 0 || s.bag.strap > 1 || typeof s.bag.clasp !== 'boolean' || typeof s.bag.mouth !== 'boolean')
         return null;
-    const ticket = (t: Ticket) => t && Number.isInteger(t.id) && t.id > 0 && Array.isArray(t.holes) && t.holes.length <= 60 && [0, 1, 2, 3, 4, 5, 6].includes(t.service) && typeof t.back === 'boolean' && (t.marks === undefined || Array.isArray(t.marks) && t.marks.length <= 12 && t.marks.every(m => m && Number.isInteger(m.service) && m.service >= 1 && m.service <= 6 && typeof m.back === 'boolean')) && (t.stamps === undefined || Array.isArray(t.stamps) && t.stamps.length <= 6 && t.stamps.every(n => Number.isInteger(n) && n >= 1 && n <= 6)) && t.holes.every(h => Number.isInteger(h.column) && h.column >= 0 && h.column < 5 && nodes.includes(h.node) && ['white', 'black'].includes(h.side));
-    if (!ticket(s.draft) || s.mounted && !ticket(s.mounted) || !Array.isArray(s.savedTickets) || s.savedTickets.length > 8 || !s.savedTickets.every(ticket))
+    const ticket = (t: Ticket) => t && Number.isInteger(t.id) && t.id > 0 && Array.isArray(t.holes) && t.holes.length <= 180 && [0, 1, 2, 3, 4, 5, 6].includes(t.service) && typeof t.back === 'boolean' && (t.marks === undefined || Array.isArray(t.marks) && t.marks.length <= 12 && t.marks.every(m => m && Number.isInteger(m.service) && m.service >= 1 && m.service <= 6 && typeof m.back === 'boolean')) && (t.stamps === undefined || Array.isArray(t.stamps) && t.stamps.length <= 6 && t.stamps.every(n => Number.isInteger(n) && n >= 1 && n <= 6)) && t.holes.every(h => Number.isInteger(h.column) && h.column >= 0 && h.column < 5 && nodes.includes(h.node) && (h.tool === undefined || [0, 1, 2].includes(h.tool)) && ['white', 'black'].includes(h.side));
+    if (!ticket(s.draft) || s.mounted && !ticket(s.mounted) || !Array.isArray(s.savedTickets) || !s.savedTickets.every(ticket))
         return null;
-    const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 100 && v.every(n => typeof n === 'number' && Number.isFinite(n));
+    const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 768 && v.every(n => typeof n === 'number' && Number.isFinite(n));
     if (!Object.values(s.values).every(numeric))
+        return null;
+    const trials = (v: number[]) => v.length <= 648 && v.length % 3 === 0 && v.every((n, i) => Number.isInteger(n) && n >= 0 && n <= (i % 3 === 0 ? 2 : i % 3 === 1 ? 5 : 11));
+    if (s.values.toolCuts && !trials(s.values.toolCuts))
+        return null;
+    for (const name of ['punchTool', 'toolSelected'])
+        if (s.values[name] && (s.values[name].length !== 1 || ![0, 1, 2].includes(s.values[name][0])))
+            return null;
+    for (const name of ['toolDie', 'ticketDie'])
+        if (s.values[name] && (s.values[name].length !== 1 || !Number.isInteger(s.values[name][0]) || s.values[name][0] < 0 || s.values[name][0] > 5))
+            return null;
+    if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('toolTrial') && (!numeric(n.values) || !trials(n.values))))
+        return null;
+    if (s.values.toolPage && (s.values.toolPage.length !== 1 || !Number.isInteger(s.values.toolPage[0]) || s.values.toolPage[0] < 0))
         return null;
     const order = (v: number[]) => v.length === 4 && new Set(v).size === 4 && v.every(n => Number.isInteger(n) && n >= 0 && n < 4);
     if (s.values.photoOrder && !order(s.values.photoOrder))
@@ -270,5 +314,6 @@ export function restore(value: unknown): State | null {
         return null;
     if (!s.notes.every(n => n && typeof n.id === 'string' && numeric(n.values) && (n.id !== 'arrivalPhotos' || order(n.values))))
         return null;
-    return { ...s, locations: { counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } };
+    const notes = s.notes.filter(n => n.id !== 'toolTrial' || !s.notes.some(other => other.id.startsWith('toolTrial-') && other.values.length === n.values.length && other.values.every((v, i) => v === n.values[i])));
+    return { ...s, notes, values: s.values.toolDie && !s.values.ticketDie ? { ...s.values, ticketDie: s.values.toolDie } : s.values, locations: { punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } };
 }

@@ -3,6 +3,8 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['office/desk-clear','e1aaf862-e6ef-4add-b63e-fec086ec7346'],
+ ['office/socket-source','f0fa5d4d-7b1b-45c9-af02-78d0672538f0'],
  ["train/forward","98be95f5-1d34-443c-b6f0-1acfcbde5e84"],
  ["train/west-end","388c26ae-0bee-4cbb-a3d4-c7b4d13e0ec8"],
  ["train/near-empty-normal","a4aaf781-c9c4-4391-a901-546b542afe4d"],
@@ -51,7 +53,7 @@ const entries=[
  ['recorder/bare','15ae367f-d6a5-4e47-a593-44d9f3be39a4'],
  ['recorder/fitted','f7c2f179-06bd-49a9-ad9b-59e9cc808456'],
  ['parts/paper-strip','5322533d-4660-4315-8f3c-8c1e786f34cb'],
- ['office/south','fcdcff79-107c-431b-bfeb-1d55ebf98830'],
+ ['office/south','daff9231-aad2-41ad-b967-5393e490051a'],
  ['documents/tower-west','22a1d291-e3b4-4a7d-b7e9-96b4bd9d48a8'],
  ['documents/tower-east','8c1f0721-e033-4f11-af78-7c3a11f91eeb'],
  ['train/north','48e0b9d7-64e4-441f-beaf-e234216143e8'],

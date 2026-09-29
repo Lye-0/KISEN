@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 export function Surface({ children }: {
     children: ReactNode;
 }) {
     const ref = useRef<HTMLDivElement>(null), [scale, setScale] = useState(1);
-    useEffect(() => {
+    useLayoutEffect(() => {
         const el = ref.current;
         if (!el)
             return;

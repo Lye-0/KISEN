@@ -33,21 +33,34 @@ export function insideCut(node: Node, x: number, y: number): boolean {
 }
 // Optical comparison at a fixed 0.2 design-unit sampling pitch. Repeated cuts are a union.
 // It recognises the resulting opening, including a smaller cut subsequently swallowed by a larger one.
-const signatures = new Map<Node, Uint8Array>();
-function signature(node: Node) {
-    let a = signatures.get(node);
+export type PhysicalCut = {
+    node: Node;
+    tool?: number;
+};
+export function insidePhysicalCut(cut: PhysicalCut, x: number, y: number) {
+    const ordinary = insideCut(cut.node, x, y);
+    if (cut.tool === 0)
+        return ordinary && !(Math.abs(x) < 3 && y > 0);
+    if (cut.tool === 2)
+        return ordinary || insideCut(cut.node, x - 5, y);
+    return ordinary;
+}
+const signatures = new Map<string, Uint8Array>();
+function signature(cut: PhysicalCut) {
+    const key = `${cut.node}:${cut.tool ?? 1}`;
+    let a = signatures.get(key);
     if (!a) {
-        a = new Uint8Array(201 * 201);
-        for (let y = 0; y < 201; y++)
-            for (let x = 0; x < 201; x++)
-                a[y * 201 + x] = insideCut(node, -20 + x * .2, -20 + y * .2) ? 1 : 0;
-        signatures.set(node, a);
+        a = new Uint8Array(251 * 251);
+        for (let y = 0; y < 251; y++)
+            for (let x = 0; x < 251; x++)
+                a[y * 251 + x] = insidePhysicalCut(cut, -25 + x * .2, -25 + y * .2) ? 1 : 0;
+        signatures.set(key, a);
     }
     return a;
 }
-export function sameOpening(cuts: Node[], expected: Node) {
+export function sameOpening(cuts: (Node | PhysicalCut)[], expected: Node) {
     if (!cuts.length)
         return false;
-    const target = signature(expected), actual = [...new Set(cuts)].map(signature);
+    const target = signature({ node: expected }), actual = cuts.map(c => signature(typeof c === 'string' ? { node: c } : c));
     return target.every((v, i) => v === Number(actual.some(s => s[i] === 1)));
 }
