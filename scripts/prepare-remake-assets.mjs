@@ -3,6 +3,24 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ["platform/station","a375e70a-a981-4cff-bd3d-c86002751147"],
+ ["platform/train","273d7e49-3d0d-4628-b233-3ca33e8415cc"],
+ ["waiting/south","7367cfd9-ea47-44e8-b6d8-0c974df064f0"],
+ ["waiting/east","2dbc731e-bbb7-4748-bf72-55db93c4c242"],
+ ["waiting/north","dfef0b46-9e5a-4166-b41f-eb45d38ba50f"],
+ ["forecourt/station","06709203-98b5-4ac1-8102-d5261638735b"],
+ ["office/north","9b1fe8c1-11fc-4349-804b-28bba2237ed2"],
+ ["office/lock","10e894ee-80b6-457d-9ed9-78af42ceda6b"],
+ ["hatch/closed","1b9c905a-aaa3-4f1b-884c-fc3c287b1491"],
+ ["hatch/raised","866e691d-8165-4e4a-b7b3-8e7b191070df"],
+ ["hatch/released","72b3be66-b9c1-4acd-a8c1-cc725e21f97d"],
+ ["hatch/released-raised","05029089-9828-4382-a339-6961795af087"],
+ ["hatch/empty","5366ae9a-5af0-42d3-aa31-c9202aff917c"],
+ ["counter/closed","01c4b416-9a7f-4e0a-ab15-8c2ca361c727"],
+ ["counter/open","5978a176-7bf0-4a67-80d7-23a17aaa763d"],
+ ["parts/reel-cap","cb808cad-2602-4c83-af63-15fe505c544a"],
+ ["parts/office-key","c8cb10a6-afb6-40ea-a9ee-43d42b7636d3"],
+ ["parts/counter-folder","f63129a0-78ac-4c21-ba60-c3ae3f53753f"],
  ['reader/closed','1672d7af-035a-422e-8d65-81d104aa710f'],
  ['reader/open','45e895e1-4edf-4cb7-8eb0-7b5029eeaf7f'],
  ['ticket/empty-stamp','17fc24ea-e157-46c5-bf52-c465ef7dc537'],
@@ -41,6 +59,6 @@ const entries=[
  ['bag/empty','4d73b2a4-be36-49c0-9a1d-7b73202a8c67'],
 ];
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const transparent=id==='parts/paper-strip'||id==='parts/service-stamp'||id.startsWith('parts/punch-');const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(id.startsWith('parts/punch-'))await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||['parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 await mkdir('docs/remake',{recursive:true});await writeFile('docs/remake/assets.json',JSON.stringify(manifest,null,2)+'\n');
 console.log('Encoded '+manifest.length+' representative assets.');

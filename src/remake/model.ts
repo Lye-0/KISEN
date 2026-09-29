@@ -2,8 +2,8 @@ import { sameOpening } from './ticketGeometry';
 import { arrivalCaseSides } from './arrivalPhotos';
 import { duration as tapeDuration } from './recordings';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'lamp' | 'tunnel' | 'north' | 'return';
-export type Item = 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
-export type Place = 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
+export type Item = 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
+export type Place = 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 export type Side = 'white' | 'black';
 export type Hole = {
@@ -59,7 +59,7 @@ export interface State {
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: {}, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], train: { service: 0, position: 'absent' }, elapsed: 0, sound: false, ended: false });
+export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: {}, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], train: { service: 0, position: 'absent' }, elapsed: 0, sound: false, ended: false });
 export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, lamp: 2, tunnel: 2, north: 3, return: 2 };
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
 export const done = (s: State, id: string) => s.flags.includes(id);
@@ -109,6 +109,14 @@ export type Action = {
 } | {
     type: 'bagStrap';
     position: number;
+} | {
+    type: 'windowLift';
+} | {
+    type: 'windowBolt';
+} | {
+    type: 'windowOpen';
+} | {
+    type: 'counterDrawer';
 } | {
     type: 'caseDoor';
 } | {
@@ -185,6 +193,14 @@ export function reduce(s: State, a: Action): State {
             return { ...s, room: a.room, camera, visited: append(s.visited, a.room + ':' + camera) };
         }
         case 'bagStrap': return s.bag.mouth ? s : { ...s, bag: { ...s.bag, strap: Math.max(0, Math.min(1, a.position)) } };
+        case 'windowLift': return s.window.open ? s : { ...s, window: { ...s.window, supported: !s.window.supported } };
+        case 'windowBolt': return s.window.open || !s.window.supported && !s.window.latch ? s : { ...s, window: { ...s.window, latch: !s.window.latch } };
+        case 'windowOpen': return !s.window.open && !s.window.latch ? s : { ...s, window: { ...s.window, open: !s.window.open, supported: !s.window.open } };
+        case 'counterDrawer': {
+            const open = s.values.drawerOpen?.[0] === 1;
+            const v = s.values.drawerDigits ?? [0, 0, 0, 0];
+            return !open && (v.length !== 4 || !v.every((n, i) => n === [2, 1, 4, 6][i])) ? s : { ...s, values: { ...s.values, drawerOpen: [open ? 0 : 1] } };
+        }
         case 'caseDoor': {
             const open = s.values.caseOpen?.[0] === 1;
             const wheels = s.values.caseWheels ?? [0, 0, 0, 0];
@@ -196,7 +212,7 @@ export function reduce(s: State, a: Action): State {
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
             const at = s.locations[a.item];
-            if (!at || at === 'inventory' || at === 'case' && s.values.caseOpen?.[0] !== 1 || at === 'bag' && !s.bag.mouth || at === 'seat' && s.seats[2] !== 1)
+            if (!at || at === 'counter' && !s.window.open || at === 'cashDrawer' && s.values.drawerOpen?.[0] !== 1 || at === 'inventory' || at === 'case' && s.values.caseOpen?.[0] !== 1 || at === 'bag' && !s.bag.mouth || at === 'seat' && s.seats[2] !== 1)
                 return s;
             return { ...s, locations: { ...s.locations, [a.item]: 'inventory' } };
         }
@@ -254,5 +270,5 @@ export function restore(value: unknown): State | null {
         return null;
     if (!s.notes.every(n => n && typeof n.id === 'string' && numeric(n.values) && (n.id !== 'arrivalPhotos' || order(n.values))))
         return null;
-    return s;
+    return { ...s, locations: { counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } };
 }

@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { Action, Item, State } from './model';
 import { owns } from './model';
-import { Photo, Patch, Touch } from './Photo';
+import { Photo, Patch, Touch, decode } from './Photo';
 import { tapes, duration } from './recordings';
 import type { Tape, EventKind } from './recordings';
 const root = '/assets/remake/recorder/';
 const names: Record<EventKind, string> = { footsteps: '足音', gate: '閉鎖', door: '扉', passing: '通過', bell: 'ベル', stop: '停止' };
-export function RecordingStrips({ offset, heard, onOffset }: {
+export function RecordingStrips({ offset, onOffset }: {
     offset: number;
     heard: [
         number,
@@ -24,12 +24,15 @@ export function RecordingStrips({ offset, heard, onOffset }: {
   <text x="-8" y="52" fill="#58462f" fontSize="28" fontFamily="serif">{tape}</text>
   <path d="M40 35H640" stroke="#77674d" strokeWidth="1.5" opacity=".65"/>
   {Array.from({ length: 21 }, (_, i) => <path key={i} d={`M${50 + i * 28} 29v${i % 4 === 0 ? 13 : 8}`} stroke="#796e55" strokeWidth="1" opacity=".65"/>)}
-  {tapes[tape].filter(e => e.at <= heard[tape === 'A' ? 0 : 1]).map((e, i) => <g key={i} transform={`translate(${50 + e.at * 28} 0)`}><path d="M0 23v29" stroke="#534634" strokeWidth="2"/>{e.kind === 'gate' && <><circle cx="-9" cy="20" r="5" fill="#6e6046"/><circle cx="9" cy="20" r="5" fill={e.lamps === 2 ? '#6e6046' : 'none'} stroke="#6e6046" strokeWidth="1.5"/></>}<text y={e.kind === 'gate' && e.at > 12 ? 110 : 78} textAnchor="middle" fontSize="28" fill="#50432f" fontFamily="Yu Mincho,serif">{names[e.kind]}</text></g>)}
+  {tapes[tape].map((e, i) => <g key={i} transform={`translate(${50 + e.at * 28} 0)`}><path d="M0 23v29" stroke="#534634" strokeWidth="2"/>{e.kind === 'gate' && <><circle cx="-9" cy="20" r="5" fill="#6e6046"/><circle cx="9" cy="20" r="5" fill={e.lamps === 2 ? '#6e6046' : 'none'} stroke="#6e6046" strokeWidth="1.5"/></>}<text y={e.kind === 'gate' && e.at > 12 ? 110 : 78} textAnchor="middle" fontSize="28" fill="#50432f" fontFamily="Yu Mincho,serif">{names[e.kind]}</text></g>)}
   {onOffset && tape === 'B' && <g className="rm-strip-grip" role="slider" tabIndex={0} aria-label="Bの記録紙" aria-valuemin={-12} aria-valuemax={18} aria-valuenow={offset} onPointerDown={e => { e.currentTarget.setPointerCapture(e.pointerId); const width = e.currentTarget.ownerSVGElement!.getBoundingClientRect().width; grip.current = { x: e.clientX, offset, unit: 28 * width / 1500 }; }} onPointerMove={e => {
                 if (grip.current)
                     onOffset(Math.max(-12, Math.min(18, Math.round(grip.current.offset + (e.clientX - grip.current.x) / grip.current.unit))));
-            }} onPointerUp={e => { grip.current = null; if (e.currentTarget.hasPointerCapture(e.pointerId))
-            e.currentTarget.releasePointerCapture(e.pointerId); }} onPointerCancel={() => { grip.current = null; }} onKeyDown={e => {
+            }} onPointerUp={e => {
+                grip.current = null;
+                if (e.currentTarget.hasPointerCapture(e.pointerId))
+                    e.currentTarget.releasePointerCapture(e.pointerId);
+            }} onPointerCancel={() => { grip.current = null; }} onKeyDown={e => {
                 if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                     e.preventDefault();
                     onOffset(Math.max(-12, Math.min(18, offset + (e.key === 'ArrowRight' ? 1 : -1))));
@@ -38,6 +41,14 @@ export function RecordingStrips({ offset, heard, onOffset }: {
  </g>;
     return <svg className="rm-record-strips" viewBox="0 0 1500 300" role="group" aria-label="二本の記録紙">{paper('A', 10, 0)}{paper('B', 160, offset)}</svg>;
 }
+export function recorderPhoto(s: State) { return root + (s.locations.knob === 'recorder' ? 'fitted' : 'bare') + '.webp'; }
+export function ReelDiscs({ src, seconds }: {
+    src: string;
+    seconds: number;
+}) { const id = useId().replaceAll(':', ''), angle = seconds * 80; return <g>{[[433, 174, 165, 168], [858, 174, 162, 166]].map(([x, y, rx, ry], i) => <g key={i}><defs><clipPath id={id + i}><ellipse cx={x} cy={y} rx={rx} ry={ry}/></clipPath></defs><g clipPath={`url(#${id + i})`}><image href={src} width="1672" height="941" transform={`rotate(${angle} ${x} ${y})`}/></g></g>)}</g>; }
+export function RecorderImage({ s }: {
+    s: State;
+}) { const id = useId().replaceAll(':', ''), tape = s.values.loadedTape?.[0] === 1 ? 'B' : 'A'; return <><image href={root + 'bare.webp'} width="1672" height="941"/>{s.locations.knob === 'recorder' && <><defs><clipPath id={id}><rect x="814" y="119" width="106" height="114"/></clipPath></defs><image href={root + 'fitted.webp'} width="1672" height="941" clipPath={`url(#${id})`}/></>}<ReelDiscs src={recorderPhoto(s)} seconds={s.values['playhead' + tape]?.[0] ?? 0}/></>; }
 export function Recorder({ s, dispatch, say, selected, onSelect }: {
     s: State;
     dispatch: (a: Action) => void;
@@ -45,10 +56,11 @@ export function Recorder({ s, dispatch, say, selected, onSelect }: {
     selected: Item | null;
     onSelect: (i: Item | null) => void;
 }) {
-    const [tape, setTape] = useState<Tape>('A'), [time, setTime] = useState(0), [playing, setPlaying] = useState(false), [paperOpen, setPaperOpen] = useState(false);
+    const [tape, setTape] = useState<Tape>(s.values.loadedTape?.[0] === 1 ? 'B' : 'A'), [time, setTime] = useState(s.values['playhead' + (s.values.loadedTape?.[0] === 1 ? 'B' : 'A')]?.[0] ?? 0), [playing, setPlaying] = useState(false), [paperOpen, setPaperOpen] = useState(false);
     const player = useRef<HTMLAudioElement>(null), tapeRef = useRef<Tape>(tape);
     tapeRef.current = tape;
     const fitted = s.locations.knob === 'recorder';
+    useEffect(() => { void decode(root + 'fitted.webp').catch(() => { }); }, []);
     const heardA = s.values.heardA?.[0] ?? 0, heardB = s.values.heardB?.[0] ?? 0;
     const heard: [
         number,
@@ -77,14 +89,21 @@ export function Recorder({ s, dispatch, say, selected, onSelect }: {
         if (player.current)
             player.current.currentTime = 0;
         setTime(0);
+        dispatch({ type: 'values', id: 'playhead' + tape, values: [0] });
     };
     const choose = (next: Tape) => {
         if (next === tape)
             return;
         stop();
         setTape(next);
-        setTime(0);
+        dispatch({ type: 'values', id: 'loadedTape', values: [next === 'A' ? 0 : 1] });
+        setTime(s.values['playhead' + next]?.[0] ?? 0);
     };
+    useEffect(() => { if (!playing)
+        return; let id = 0, last = 0; const frame = (now: number) => { if (now - last >= 32) {
+        setTime(player.current?.currentTime ?? 0);
+        last = now;
+    } id = requestAnimationFrame(frame); }; id = requestAnimationFrame(frame); return () => cancelAnimationFrame(id); }, [playing]);
     useEffect(() => {
         if (!fitted) {
             player.current?.pause();
@@ -123,9 +142,9 @@ export function Recorder({ s, dispatch, say, selected, onSelect }: {
             setTime(current);
             if (tapes[tape].some(e => e.at <= current && e.at > (s.values['heard' + tape]?.[0] ?? 0)))
                 dispatch({ type: 'heard', tape, seconds: current });
-        }} onEnded={() => { setPlaying(false); dispatch({ type: 'heard', tape, seconds: duration }); }}/>
+        }} onEnded={() => { setPlaying(false); dispatch({ type: 'heard', tape, seconds: duration }); dispatch({ type: 'values', id: 'playhead' + tape, values: [duration] }); }}/>
   <Photo src={root + 'bare.webp'} label="机の録音機と二つのテープケース">
-   {fitted && <Patch src={root + 'fitted.webp'} rect={[48.7, 12.7, 6.3, 12]}/>}
+   {fitted && <Patch src={root + 'fitted.webp'} rect={[48.7, 12.7, 6.3, 12]}/>}<svg className="rm-object-overlay" viewBox="0 0 1672 941"><ReelDiscs src={root + (fitted ? 'fitted' : 'bare') + '.webp'} seconds={time}/></svg>
    <Touch name="右の巻軸" rect={[49, 12, 6, 12]} act={() => {
             if (fitted) {
                 stop();

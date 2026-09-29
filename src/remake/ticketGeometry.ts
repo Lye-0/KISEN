@@ -34,12 +34,20 @@ export function insideCut(node: Node, x: number, y: number): boolean {
 // Optical comparison at a fixed 0.2 design-unit sampling pitch. Repeated cuts are a union.
 // It recognises the resulting opening, including a smaller cut subsequently swallowed by a larger one.
 const signatures = new Map<Node, Uint8Array>();
-function signature(node: Node) { let a = signatures.get(node); if (!a) {
-    a = new Uint8Array(201 * 201);
-    for (let y = 0; y < 201; y++)
-        for (let x = 0; x < 201; x++)
-            a[y * 201 + x] = insideCut(node, -20 + x * .2, -20 + y * .2) ? 1 : 0;
-    signatures.set(node, a);
-} return a; }
-export function sameOpening(cuts: Node[], expected: Node) { if (!cuts.length)
-    return false; const target = signature(expected), actual = [...new Set(cuts)].map(signature); return target.every((v, i) => v === Number(actual.some(s => s[i] === 1))); }
+function signature(node: Node) {
+    let a = signatures.get(node);
+    if (!a) {
+        a = new Uint8Array(201 * 201);
+        for (let y = 0; y < 201; y++)
+            for (let x = 0; x < 201; x++)
+                a[y * 201 + x] = insideCut(node, -20 + x * .2, -20 + y * .2) ? 1 : 0;
+        signatures.set(node, a);
+    }
+    return a;
+}
+export function sameOpening(cuts: Node[], expected: Node) {
+    if (!cuts.length)
+        return false;
+    const target = signature(expected), actual = [...new Set(cuts)].map(signature);
+    return target.every((v, i) => v === Number(actual.some(s => s[i] === 1)));
+}
