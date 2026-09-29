@@ -1,0 +1,325 @@
+{
+  "date": "2026-09-29",
+  "scope": "机上の有限モデル。写真の読解・初見難度・所要時間を検証しない。",
+  "route": {
+    "exits": {
+      "A": [
+        "B",
+        "C"
+      ],
+      "B": [
+        "D",
+        "E"
+      ],
+      "C": [
+        "E",
+        "F"
+      ],
+      "D": [
+        "O",
+        "C"
+      ],
+      "E": [
+        "F",
+        "B"
+      ],
+      "F": [
+        "R",
+        "D"
+      ]
+    },
+    "blocked": [
+      "B>D",
+      "C>F"
+    ],
+    "tested": 64,
+    "legal": [
+      {
+        "bits": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": [
+          "A",
+          "C",
+          "E",
+          "F",
+          "D",
+          "O"
+        ],
+        "end": "O"
+      },
+      {
+        "bits": [
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": [
+          "A",
+          "B",
+          "E",
+          "F",
+          "D",
+          "O"
+        ],
+        "end": "O"
+      },
+      {
+        "bits": [
+          1,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": [
+          "A",
+          "C",
+          "E",
+          "F",
+          "D",
+          "O"
+        ],
+        "end": "O"
+      },
+      {
+        "bits": [
+          0,
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "path": [
+          "A",
+          "B",
+          "E",
+          "F",
+          "D",
+          "O"
+        ],
+        "end": "O"
+      }
+    ],
+    "distinctPaths": [
+      "A-C-E-F-D-O",
+      "A-B-E-F-D-O"
+    ],
+    "withoutBDEvidence": 14,
+    "withoutCFEvidence": 8
+  },
+  "tickets": [
+    {
+      "path": "A-C-E-F-D-O",
+      "holes": [
+        {
+          "column": 1,
+          "shape": "A",
+          "side": "white"
+        },
+        {
+          "column": 2,
+          "shape": "C",
+          "side": "black"
+        },
+        {
+          "column": 3,
+          "shape": "E",
+          "side": "white"
+        },
+        {
+          "column": 4,
+          "shape": "F",
+          "side": "white"
+        },
+        {
+          "column": 5,
+          "shape": "D",
+          "side": "black"
+        }
+      ]
+    },
+    {
+      "path": "A-B-E-F-D-O",
+      "holes": [
+        {
+          "column": 1,
+          "shape": "A",
+          "side": "white"
+        },
+        {
+          "column": 2,
+          "shape": "B",
+          "side": "white"
+        },
+        {
+          "column": 3,
+          "shape": "E",
+          "side": "black"
+        },
+        {
+          "column": 4,
+          "shape": "F",
+          "side": "white"
+        },
+        {
+          "column": 5,
+          "shape": "D",
+          "side": "black"
+        }
+      ]
+    },
+    {
+      "path": "A-C-E-F-D-O",
+      "holes": [
+        {
+          "column": 1,
+          "shape": "A",
+          "side": "white"
+        },
+        {
+          "column": 2,
+          "shape": "C",
+          "side": "black"
+        },
+        {
+          "column": 3,
+          "shape": "E",
+          "side": "white"
+        },
+        {
+          "column": 4,
+          "shape": "F",
+          "side": "white"
+        },
+        {
+          "column": 5,
+          "shape": "D",
+          "side": "black"
+        }
+      ]
+    },
+    {
+      "path": "A-B-E-F-D-O",
+      "holes": [
+        {
+          "column": 1,
+          "shape": "A",
+          "side": "white"
+        },
+        {
+          "column": 2,
+          "shape": "B",
+          "side": "white"
+        },
+        {
+          "column": 3,
+          "shape": "E",
+          "side": "black"
+        },
+        {
+          "column": 4,
+          "shape": "F",
+          "side": "white"
+        },
+        {
+          "column": 5,
+          "shape": "D",
+          "side": "black"
+        }
+      ]
+    }
+  ],
+  "timeline": {
+    "withLampIdentity": [
+      3
+    ],
+    "withoutLampIdentity": [
+      -9,
+      3,
+      15
+    ]
+  },
+  "notices": {
+    "candidates": [
+      {
+        "name": "甲",
+        "l": [
+          18,
+          62
+        ],
+        "r": [
+          24,
+          80
+        ]
+      },
+      {
+        "name": "乙",
+        "l": [
+          20,
+          70
+        ],
+        "r": [
+          34,
+          78
+        ]
+      },
+      {
+        "name": "丙",
+        "l": [
+          12,
+          52
+        ],
+        "r": [
+          18,
+          62
+        ]
+      },
+      {
+        "name": "丁",
+        "l": [
+          28,
+          66
+        ],
+        "r": [
+          42,
+          86
+        ]
+      }
+    ],
+    "matchingPairs": [
+      [
+        "丙",
+        "甲"
+      ]
+    ],
+    "assumption": "上下の印刷基準と表面を固定した二穴比較。画像の数字片は未検証"
+  },
+  "stop": {
+    "platforms": [
+      [
+        6,
+        8
+      ],
+      [
+        10,
+        12
+      ]
+    ],
+    "doorHalfWidth": 0.5,
+    "doorPitch": 4,
+    "valid": [
+      7
+    ]
+  }
+}

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "train/north",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a81c6887-c55b-41cc-b9d0-49f654f0fe43.png",
+    "file": "public/assets/remake/train/north.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/north-bag-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f27c78a4-b246-4dab-abb2-77b928e2af8e.png",
+    "file": "public/assets/remake/train/north-bag-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/north-strap-aside",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a8bf38a7-c964-430f-8c27-d115bae09bd2.png",
+    "file": "public/assets/remake/train/north-strap-aside.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/north-unlatched",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-9eec69da-79a4-4801-a2e4-173dde4c919f.png",
+    "file": "public/assets/remake/train/north-unlatched.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/north-clasp-only",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-337eddd6-cd9f-4bfb-b312-4742653a0231.png",
+    "file": "public/assets/remake/train/north-clasp-only.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/north-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-0e1f4d8e-3b53-4a18-b2ab-5b0c6af435c0.png",
+    "file": "public/assets/remake/train/north-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bag/closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8f8bac7c-59f2-4087-a801-162350dd2414.png",
+    "file": "public/assets/remake/bag/closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bag/strap-aside",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-83b02196-e628-4a8c-b1c7-7ccb7b8506d6.png",
+    "file": "public/assets/remake/bag/strap-aside.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bag/unlatched",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-0a3ea4ee-dffb-4b58-9c4a-d20c50fd4bf8.png",
+    "file": "public/assets/remake/bag/unlatched.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bag/clasp-only",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-72091297-2239-4e03-b819-0b6a68000fa3.png",
+    "file": "public/assets/remake/bag/clasp-only.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bag/open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-912d0ca5-f5d5-4544-9ece-cb5b0ac216c8.png",
+    "file": "public/assets/remake/bag/open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bag/empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4d73b2a4-be36-49c0-9a1d-7b73202a8c67.png",
+    "file": "public/assets/remake/bag/empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  }
+]
