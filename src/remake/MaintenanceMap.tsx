@@ -1,35 +1,70 @@
 import { useState } from 'react';
-export function MaintenanceMap() {
-    const [zoom, setZoom] = useState(false);
-    return <section className="rm-maintenance-map"><div className="rm-map-sheet"><svg viewBox="0 0 1200 850" style={zoom ? { width: 'max(160%, 900px)', maxWidth: 'none' } : undefined} role="img" aria-label="北を上に描かれた保守略図。坑口、塔と二本の柱、踏切の配置">
- <image href="/assets/remake/parts/photo-back.webp" width="1200" height="850" preserveAspectRatio="none"/>
- <g stroke="#52584a" fill="none" strokeWidth="2.4" fontFamily="serif">
- <text x="90" y="95" fill="#41483d" stroke="none" fontSize="30">沿線保守　見取図</text><path d="M1050 145V68m-12 24 12-25 12 25"/><text x="1040" y="52" fill="#41483d" stroke="none" fontSize="21">北</text>
- <path d="M70 125H1130M70 740H1130" strokeWidth="1"/>
- <g transform="translate(90 170)">
- <text x="0" y="0" fill="#41483d" stroke="none" fontSize="24">坑口</text>
- <path d="M230 70H330V305H230M230 90V145m0 70v70M210 155H330M210 203H330"/>
- <path d="M-5 155H212M-5 203H212" strokeWidth="3"/><path d="M10 148V210m20-62v62m20-62v62m20-62v62m20-62v62m20-62v62m20-62v62m20-62v62m20-62v62" strokeWidth="1"/>
- <rect x="140" y="75" width="70" height="50"/><path d="M140 75L175 62L210 75M210 235h-16v15h-16v15h-16"/>
- <text x="142" y="110" fill="#41483d" stroke="none" fontSize="17">小屋</text>
- </g>
- <g transform="translate(505 210)">
- <text x="0" y="-40" fill="#41483d" stroke="none" fontSize="24">塔</text>
- <rect x="75" y="80" width="54" height="54"/><path d="M75 80L129 134M129 80L75 134M65 103v32m-8-32v32m0-27h8m-8 8h8m-8 8h8m-8 8h8"/>
- <circle cx="-25" cy="170" r="11"/><circle cx="240" cy="170" r="11" fill="#55594d"/>
- <path d="M-35 165l20 10M-35 172l14 8" strokeWidth="5" stroke="#e9dfc3"/>
- <path d="M-25 157V142L10 138M240 157V140" strokeWidth="1"/>
- <text x="-60" y="127" fill="#41483d" stroke="none" fontSize="17">白い塗跡</text><text x="210" y="126" fill="#41483d" stroke="none" fontSize="17">木柱</text>
- <path d="M58 120H30V87" strokeWidth="1"/><text x="0" y="77" fill="#41483d" stroke="none" fontSize="17">梯子</text>
- <path d="M-50 285Q102 360 268 285" strokeDasharray="5 5" strokeWidth="1"/>
- </g>
- <g transform="translate(875 245)">
- <text x="0" y="-75" fill="#41483d" stroke="none" fontSize="24">踏切</text>
- <path d="M70-20V370M120-20V370M-35 100H265M-35 119H265"/>
- <path d="M-20 92v35m25-35v35m25-35v35m25-35v35m80-35v35m25-35v35m25-35v35m25-35v35m25-35v35" strokeWidth="1"/>
- <rect x="-12" y="149" width="62" height="78" fill="#75939944"/><path d="M-12 149l31-10 31 10M143 149V350m8-201v201m-8-180h8m-8 30h8m-8 30h8m-8 30h8m-8 30h8m-8 30h8"/>
- <text x="-18" y="250" fill="#41483d" stroke="none" fontSize="17">青い小屋</text><text x="161" y="220" fill="#41483d" stroke="none" fontSize="17" writingMode="tb">石垣</text>
- </g>
- <text x="90" y="785" fill="#66624e" stroke="none" fontSize="18">位置照合用　／　縮尺不同</text><text x="925" y="785" fill="#66624e" stroke="none" fontSize="18">保線係　控</text>
- </g></svg></div><button onClick={() => setZoom(!zoom)}>{zoom ? '全体を見る' : '拡大する'}</button></section>;
+import { poles, towerCameras, tower } from './geometry';
+const xy = (x: number, y: number) => [190 + x * 8, 285 - y * 8];
+const titles = ['塔', '踏切', '坑口'];
+function ObservationPoint({ x, y }: {
+    x: number;
+    y: number;
+}) {
+    const [px, py] = xy(x, y), angle = Math.atan2(285 - py, 190 - px) * 180 / Math.PI;
+    const side = Math.abs(x) > Math.abs(y) ? x < 0 ? '西' : '東' : y > 0 ? '北' : '南';
+    return <g><g transform={`translate(${px} ${py}) rotate(${angle})`}><circle r="7" fill="#e6ddc5"/><path d="M7-3L13-6V6L7 3"/></g><text x={px + (side === '西' ? -24 : side === '東' ? 14 : -8)} y={py + (side === '北' ? -17 : side === '南' ? 30 : 6)} fontSize="17">{side}</text></g>;
+}
+function North() {
+    return <g transform="translate(330 62)"><path d="M0 35V0M-7 12L0 0L7 12"/><text x="0" y="-10" textAnchor="middle">北</text></g>;
+}
+function Site({ index }: {
+    index: number;
+}) {
+    const viewpoints = index === 0 ? [towerCameras.west.position, towerCameras.east.position, [0, 18], [0, -18]] : [[-18, 0], [18, 0], [0, 18], [0, -18]];
+    return <g stroke="#515747" fill="none" strokeWidth="1.8" fontFamily="serif">
+    <text x="35" y="52" fontSize="26">{titles[index]}</text><North />
+    {index === 0 ? <>
+      <path d={tower.corners.map(([x, y], i) => `${i ? 'L' : 'M'}${xy(x, y).join(' ')}`).join('') + 'Z'}/>
+      <path d="M180 275L200 295M200 275L180 295"/>
+      <g transform={`translate(${xy(tower.ladderX, tower.ladderY)[0] - 6} 277)`}><path d="M0 0V25M5 0V25M0 5H5M0 12H5M0 19H5"/></g>
+      {poles.map(p => { const [x, y] = xy(p.base[0], p.base[1]); return <g key={p.id}><circle cx={x} cy={y} r="6" fill={p.scar === null ? '#57513f' : '#e7dfc8'}/>{p.scar !== null && <path d={`M${x - 6} ${y - 2}l12 4`} stroke="#57513f"/>}</g>; })}
+      <path d="M168 285L128 253H88"/><text x="43" y="245" fontSize="18">梯子</text>
+      <path d="M142 318L119 368H73"/><text x="38" y="389" fontSize="18">白い塗跡</text>
+      <path d="M238 318L262 368H309"/><text x="269" y="389" fontSize="18">木柱</text>
+      <path d="M30 459Q190 495 355 459" strokeDasharray="4 5" strokeWidth="1"/>
+    </> : index === 1 ? <>
+      <path d="M174 80V462M206 80V462M30 279H350M30 291H350"/>
+      {Array.from({ length: 20 }, (_, i) => 34 + i * 16).filter(x => x < 170 || x > 210).map(x => <path key={x} d={`M${x} 275v20`} strokeWidth="1"/>)}
+      <path d="M132 307L169 305L172 357H131Z" fill="#708b9744"/><text x="67" y="382" fontSize="18">青い小屋</text>
+      <path d="M224 304V451M232 304V451M224 320H232M224 343H232M224 366H232M224 389H232M224 412H232M224 435H232"/>
+      <text x="250" y="364" fontSize="18">石垣</text>
+    </> : <>
+      <path d="M190 220H268V350H190M190 220V264M190 305V350M30 279H260M30 291H260"/>
+      {Array.from({ length: 10 }, (_, i) => <path key={i} d={`M${35 + i * 16} 274v22`} strokeWidth="1"/>)}
+      <rect x="121" y="217" width="51" height="30"/><path d="M121 217L146 207L172 217"/><text x="77" y="204" fontSize="18">小屋</text>
+      <path d="M187 323h-11v12h-11v12h-11v12" strokeWidth="4"/><text x="102" y="388" fontSize="18">控え壁</text>
+    </>}
+    {viewpoints.map((p, i) => <ObservationPoint key={i} x={p[0]} y={p[1]}/>)}
+    <text x="35" y="527" fontSize="17">○　点検位置</text>
+  </g>;
+}
+export function MaintenanceMap({ embedded = false }: {
+    embedded?: boolean;
+}) {
+    const [detail, setDetail] = useState<number | null>(null);
+    return <section className={'rm-maintenance-map' + (embedded ? ' rm-map-embedded' : '')}>
+    <div className="rm-map-sheet"><svg viewBox={detail === null ? '0 0 1200 760' : `${detail * 400} 105 400 560`} role="group" aria-label="北を上にした保守略図。塔、踏切、坑口と点検位置">
+      <image href="/assets/remake/parts/photo-back.webp" width="1200" height="760" preserveAspectRatio="none"/>
+      <g fill="#454b3e" fontFamily="serif"><text x="55" y="65" fontSize="30">沿線保守　見取図</text><text x="55" y="720" fontSize="18">位置照合用　／　縮尺不同</text><text x="1000" y="720" fontSize="18">保線係　控</text></g>
+      <path d="M40 88H1160M40 679H1160M400 120V650M800 120V650" stroke="#73745a" strokeWidth="1" fill="none"/>
+      {titles.map((title, i) => <g key={title} aria-hidden={detail !== null && detail !== i} transform={`translate(${i * 400} 105)`} className={detail === null ? 'rm-map-inset' : undefined} role={detail === null ? 'button' : undefined} tabIndex={detail === null ? 0 : undefined} aria-label={detail === null ? title + 'の図を近くで見る' : undefined} onClick={() => {
+                if (detail === null)
+                    setDetail(i);
+            }} onKeyDown={e => {
+                if (detail === null && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    setDetail(i);
+                }
+            }}>
+        <Site index={i}/>{detail === null && <rect x="15" y="10" width="370" height="540" fill="transparent"/>}
+      </g>)}
+    </svg></div>
+    <div className="rm-map-controls">{detail !== null && <button aria-label="前の図" onClick={() => setDetail((detail + 2) % 3)}>〈</button>}<button onClick={() => setDetail(detail === null ? 0 : null)}>{detail === null ? '拡大する' : '全体を見る'}</button>{detail !== null && <button aria-label="次の図" onClick={() => setDetail((detail + 1) % 3)}>〉</button>}</div>
+  </section>;
 }

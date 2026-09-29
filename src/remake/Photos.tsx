@@ -1,3 +1,5 @@
+import { MaintenanceMap } from './MaintenanceMap';
+import { owns } from './model';
 import { useRef, useState } from 'react';
 import { Photo } from './Photo';
 import { cutPaths } from './ticketGeometry';
@@ -33,7 +35,8 @@ export function Photos({ s, dispatch, say }: {
     say: (message: string) => void;
 }) {
     const order = s.values.photoOrder ?? initialPhotoOrder;
-    const selected = s.values.photoSelected?.[0] ?? 0, compare = s.values.photoCompare?.[0] === 1, backs = s.values.photoBacks ?? [];
+    const showMap = owns(s, 'envelope') && s.values.photoMapCompare?.[0] === 1;
+    const selected = s.values.photoSelected?.[0] ?? 0, compare = !showMap && s.values.photoCompare?.[0] === 1, backs = s.values.photoBacks ?? [];
     const setSelected = (n: number) => dispatch({ type: 'values', id: 'photoSelected', values: [n] });
     const setCompare = (v: boolean) => dispatch({ type: 'values', id: 'photoCompare', values: [v ? 1 : 0] });
     const setBacks = (values: number[]) => dispatch({ type: 'values', id: 'photoBacks', values });
@@ -50,8 +53,8 @@ export function Photos({ s, dispatch, say }: {
         dispatch({ type: 'values', id: 'photoOrder', values: next });
         setSelected(target);
     }
-    return <section className={'rm-photographs rm-arrival-photos ' + (compare ? 'rm-compare' : '')} aria-label="手元の写真">
- <div className="rm-print-table">{(compare ? order.map((_, i) => i) : [selected]).map(slot => {
+    return <section className={'rm-photographs rm-arrival-photos ' + (compare ? 'rm-compare' : '') + (showMap ? ' rm-with-map' : '')} aria-label="手元の写真">
+ <div className={showMap ? 'rm-photo-map-layout' : undefined}><div className={showMap ? 'rm-photo-map-photo' : undefined}><div className="rm-print-table">{(compare ? order.map((_, i) => i) : [selected]).map(slot => {
             const index = order[slot], back = backs.includes(index);
             return <figure key={index} className="rm-print">
  {back ? <PhotoBack index={index}/> : <Photo src={`/assets/remake/documents/${arrivalPhotos[index].id}.webp`} label={captions[index]} zoomable/>}
@@ -72,7 +75,7 @@ export function Photos({ s, dispatch, say }: {
                     }
                 }}>⠿</button>
  <button aria-label={`${slot + 1}枚目を後へ`} disabled={slot === 3} onClick={() => move(slot, slot + 1)}>→</button></figcaption></figure>;
-        })}</div>
- <div className="rm-document-controls">{!compare && <><button aria-label="前の写真" onClick={() => setSelected((selected + 3) % 4)}>〈</button><button aria-label="次の写真" onClick={() => setSelected((selected + 1) % 4)}>〉</button></>}<button aria-pressed={compare} onClick={() => setCompare(!compare)}>{compare ? '一枚ずつ見る' : '並べて見る'}</button><button onClick={() => { dispatch({ type: 'record', id: 'arrivalPhotos', values: order }); say('この並びを記録した。'); }}>記録に残す</button></div>
+        })}</div>{showMap && <nav className="rm-photo-browse" aria-label="写真を選ぶ"><button onClick={() => setSelected((selected + 3) % 4)}>前の写真</button><button onClick={() => setSelected((selected + 1) % 4)}>次の写真</button></nav>}</div>{showMap && <MaintenanceMap embedded/>}</div>
+ <div className="rm-document-controls">{!compare && !showMap && <><button aria-label="前の写真" onClick={() => setSelected((selected + 3) % 4)}>〈</button><button aria-label="次の写真" onClick={() => setSelected((selected + 1) % 4)}>〉</button></>}<button aria-pressed={compare} onClick={() => { setCompare(!compare); dispatch({ type: 'values', id: 'photoMapCompare', values: [0] }); }}>{compare ? '一枚ずつ見る' : '並べて見る'}</button>{owns(s, 'envelope') && <button aria-pressed={showMap} onClick={() => { dispatch({ type: 'values', id: 'photoMapCompare', values: [showMap ? 0 : 1] }); setCompare(false); }}>{showMap ? '写真だけを見る' : '略図と見比べる'}</button>}<button onClick={() => { dispatch({ type: 'record', id: 'arrivalPhotos', values: order }); say('この並びを記録した。'); }}>記録に残す</button></div>
  </section>;
 }
