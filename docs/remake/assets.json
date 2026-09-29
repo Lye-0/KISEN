@@ -1,5 +1,117 @@
 [
   {
+    "id": "case/mechanism",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8a518324-8b64-44f2-8159-f85e2d332ac8.png",
+    "file": "public/assets/remake/case/mechanism.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/case-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-b6b9dbd6-ec65-43d3-99f5-c4700256b447.png",
+    "file": "public/assets/remake/train/case-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/case-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-db09d4b9-664d-4a24-a4f8-14aa9ad578e1.png",
+    "file": "public/assets/remake/train/case-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "case/closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-b9413412-866e-4aa7-93d9-7cd796354ff6.png",
+    "file": "public/assets/remake/case/closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "case/open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8e56f524-7d62-4a9e-b1d8-e148fc92d66f.png",
+    "file": "public/assets/remake/case/open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "case/empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-dddbbad7-798e-400e-9c51-970b6c307ff7.png",
+    "file": "public/assets/remake/case/empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "train/case-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ad31218d-ca10-4d70-a4b5-f4b31c08cb42.png",
+    "file": "public/assets/remake/train/case-closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "documents/tunnel",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-22a53368-8906-4cb4-9ed6-c98e0bff4efb.png",
+    "file": "public/assets/remake/documents/tunnel.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "documents/crossing",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4251cf1e-3351-4eb9-be73-509ec1436131.png",
+    "file": "public/assets/remake/documents/crossing.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/photo-back",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-77949027-5bc2-4ce1-8067-b5ac89166bf2.png",
+    "file": "public/assets/remake/parts/photo-back.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "recorder/bare",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8f68b87e-9515-49a5-9f17-a7c16c446760.png",
+    "file": "public/assets/remake/recorder/bare.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "recorder/fitted",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-55d2a696-9399-4217-bc27-0bd382a468e1.png",
+    "file": "public/assets/remake/recorder/fitted.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/paper-strip",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-5322533d-4660-4315-8f3c-8c1e786f34cb.png",
+    "file": "public/assets/remake/parts/paper-strip.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "office/south",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-9b5bc1c3-cea8-40e6-94ef-2337b6c90c2e.png",
+    "file": "public/assets/remake/office/south.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "documents/tower-west",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-41e53756-6e28-4932-ada6-f20ba624a07f.png",
+    "file": "public/assets/remake/documents/tower-west.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "documents/tower-east",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-246538f7-c162-4eae-866b-4b4ddfe03cfe.png",
+    "file": "public/assets/remake/documents/tower-east.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
     "id": "train/north",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a81c6887-c55b-41cc-b9d0-49f654f0fe43.png",
     "file": "public/assets/remake/train/north.webp",
