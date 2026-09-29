@@ -35,9 +35,12 @@ export function tapeSamples(which: Tape, rate = 22050) {
         low = .94 * low + .06 * noise();
         out[i] = low * .024 + noise() * .002;
     }
-    const sound = (at: number, seconds: number, sample: (t: number) => number) => { const start = Math.round(at * rate); for (let j = 0; j < seconds * rate && start + j < out.length; j++)
-        if (start + j >= 0)
-            out[start + j] += sample(j / rate); };
+    const sound = (at: number, seconds: number, sample: (t: number) => number) => {
+        const start = Math.round(at * rate);
+        for (let j = 0; j < seconds * rate && start + j < out.length; j++)
+            if (start + j >= 0)
+                out[start + j] += sample(j / rate);
+    };
     const bell = (at: number, base: number, strength: number) => sound(at, 1.5, t => strength * (Math.sin(t * base * 2 * Math.PI) * Math.exp(-t * 4) + .35 * Math.sin(t * base * 2.71 * 2 * Math.PI) * Math.exp(-t * 7)));
     for (const e of tapes[which]) {
         if (e.kind === 'gate') {

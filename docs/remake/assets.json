@@ -1,5 +1,61 @@
 [
   {
+    "id": "reader/closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-1672d7af-035a-422e-8d65-81d104aa710f.png",
+    "file": "public/assets/remake/reader/closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "reader/open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-45e895e1-4edf-4cb7-8eb0-7b5029eeaf7f.png",
+    "file": "public/assets/remake/reader/open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "ticket/empty-stamp",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-17fc24ea-e157-46c5-bf52-c465ef7dc537.png",
+    "file": "public/assets/remake/ticket/empty-stamp.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/service-stamp",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-7d2ceeb0-e128-4fda-bddd-80d3d7e50980.png",
+    "file": "public/assets/remake/parts/service-stamp.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "ticket/bench",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-1a814f24-d8b1-47a6-aeb8-9c8ba4d39852.png",
+    "file": "public/assets/remake/ticket/bench.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "ticket/empty-rack",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-df7699ca-9902-43ad-910e-4797b4129671.png",
+    "file": "public/assets/remake/ticket/empty-rack.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/punch-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-83316561-8f29-4283-a0f4-8a459f0dfb96.png",
+    "file": "public/assets/remake/parts/punch-open.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "parts/punch-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-63028f52-e0b8-43ed-bb87-d80258b3166b.png",
+    "file": "public/assets/remake/parts/punch-closed.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
     "id": "case/mechanism",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8a518324-8b64-44f2-8159-f85e2d332ac8.png",
     "file": "public/assets/remake/case/mechanism.webp",

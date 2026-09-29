@@ -8,15 +8,21 @@ export function Bag({ s, dispatch, say }: {
     dispatch: (a: Action) => void;
     say: (m: string) => void;
 }) {
-    useEffect(() => { for (const n of ['closed', 'strap-aside', 'clasp-only', 'unlatched', 'open', 'empty'])
-        void decode(root + n + '.webp').catch(() => { }); }, []);
-    const mouth = () => { if (!s.bag.mouth && !s.bag.clasp) {
-        say('留めが、口を押さえている。');
-        return;
-    } if (!s.bag.mouth && s.bag.strap < .8) {
-        say('帯が張って、口が開かない。');
-        return;
-    } dispatch({ type: 'bagMouth' }); };
+    useEffect(() => {
+        for (const n of ['closed', 'strap-aside', 'clasp-only', 'unlatched', 'open', 'empty'])
+            void decode(root + n + '.webp').catch(() => { });
+    }, []);
+    const mouth = () => {
+        if (!s.bag.mouth && !s.bag.clasp) {
+            say('留めが、口を押さえている。');
+            return;
+        }
+        if (!s.bag.mouth && s.bag.strap < .8) {
+            say('帯が張って、口が開かない。');
+            return;
+        }
+        dispatch({ type: 'bagMouth' });
+    };
     const strap = () => dispatch({ type: 'bagStrap', position: s.bag.strap > .8 ? 0 : 1 });
     return <Photo src={bagPhoto(s)} label="座席に置かれた革の鞄">
   {s.bag.mouth && s.locations.photos !== 'bag' && <Patch src={root + 'empty.webp'} rect={[36, 38, 26, 14]}/>}

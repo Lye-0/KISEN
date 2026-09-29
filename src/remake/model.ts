@@ -1,3 +1,4 @@
+import { sameOpening } from './ticketGeometry';
 import { arrivalCaseSides } from './arrivalPhotos';
 import { duration as tapeDuration } from './recordings';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'lamp' | 'tunnel' | 'north' | 'return';
@@ -11,6 +12,11 @@ export type Hole = {
     side: Side;
 };
 export interface Ticket {
+    stamps?: number[];
+    marks?: {
+        service: number;
+        back: boolean;
+    }[];
     id: number;
     holes: Hole[];
     service: number;
@@ -86,10 +92,10 @@ export function trace(route: number[], current = true, start: 'S' | 'R' = 'S') {
 }
 export const expectedHoles = (route: number[]): Hole[] => trace(route).path.filter(n => nodes.includes(n as Node)).map((node, column, all) => ({ column, node: node as Node, side: entrySide[(column ? all[column - 1] : 'S') + '>' + node] }));
 export function validTicket(s: State, t: Ticket | null) {
-    if (!t || trace(s.route).end !== 'O' || t.service !== 2)
+    if (!t || trace(s.route).end !== 'O' || t.service !== 2 || t.stamps?.some(n => n !== 2) || t.marks?.some(m => m.service !== 2))
         return false;
     const expected = expectedHoles(s.route);
-    return t.holes.length === expected.length && expected.every(e => t.holes.some(h => h.column === e.column && h.node === e.node && h.side === e.side));
+    return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side).map(h => h.node), e.node));
 }
 export type Action = {
     type: 'start';
@@ -149,6 +155,8 @@ export type Action = {
 } | {
     type: 'newTicket';
 } | {
+    type: 'readerClamp';
+} | {
     type: 'mountTicket';
 } | {
     type: 'removeTicket';
@@ -177,7 +185,13 @@ export function reduce(s: State, a: Action): State {
             return { ...s, room: a.room, camera, visited: append(s.visited, a.room + ':' + camera) };
         }
         case 'bagStrap': return s.bag.mouth ? s : { ...s, bag: { ...s.bag, strap: Math.max(0, Math.min(1, a.position)) } };
-        case 'caseDoor': { const open = s.values.caseOpen?.[0] === 1; const wheels=s.values.caseWheels??[0,0,0,0]; if (!open && (wheels.length!==4 || !wheels.every((v,i)=>v===arrivalCaseSides[i]))) return s; return {...s, values: {...s.values, caseOpen:[open?0:1]}, locations:{...s.locations,officeKey:s.locations.officeKey??'case'}}; }
+        case 'caseDoor': {
+            const open = s.values.caseOpen?.[0] === 1;
+            const wheels = s.values.caseWheels ?? [0, 0, 0, 0];
+            if (!open && (wheels.length !== 4 || !wheels.every((v, i) => v === arrivalCaseSides[i])))
+                return s;
+            return { ...s, values: { ...s.values, caseOpen: [open ? 0 : 1] }, locations: { ...s.locations, officeKey: s.locations.officeKey ?? 'case' } };
+        }
         case 'bagClasp': return s.bag.mouth ? s : { ...s, bag: { ...s.bag, clasp: !s.bag.clasp } };
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
@@ -199,14 +213,21 @@ export function reduce(s: State, a: Action): State {
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return s.room === 'return' || !nodes[a.index] || !connections[nodes[a.index]][a.value] ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
-        case 'punch': return !owns(s, 'punch') || !owns(s, 'paper') ? s : { ...s, draft: { ...s.draft, holes: [...s.draft.holes, a.hole] } };
+        case 'punch': return !owns(s, 'punch') || !owns(s, 'paper') || !Number.isInteger(a.hole.column) || a.hole.column < 0 || a.hole.column > 4 || !nodes.includes(a.hole.node) || !['white', 'black'].includes(a.hole.side) || s.draft.holes.some(h => h.column === a.hole.column && h.side === a.hole.side && h.node === a.hole.node) ? s : { ...s, draft: { ...s.draft, holes: [...s.draft.holes, a.hole] } };
         case 'flipTicket': return { ...s, draft: { ...s.draft, back: !s.draft.back } };
-        case 'ticketService': return { ...s, draft: { ...s.draft, service: a.service } };
-        case 'newTicket': return !owns(s, 'paper') ? s : { ...s, savedTickets: s.draft.holes.length ? [...s.savedTickets.slice(-7), s.draft] : s.savedTickets, draft: { id: Math.max(s.draft.id, s.mounted?.id ?? 0, ...s.savedTickets.map(t => t.id)) + 1, holes: [], service: 0, back: false } };
-        case 'mountTicket': return s.mounted ? s : { ...s, mounted: structuredClone(s.draft), draft: { id: s.draft.id + 1, holes: [], service: 0, back: false } };
-        case 'removeTicket': return !s.mounted ? s : { ...s, draft: s.mounted, mounted: null, savedTickets: s.draft.holes.length ? [...s.savedTickets.slice(-7), s.draft] : s.savedTickets };
+        case 'ticketService': {
+            if (!Number.isInteger(a.service) || a.service < 1 || a.service > 6)
+                return s;
+            const marks = s.draft.marks ?? (s.draft.stamps ?? (s.draft.service ? [s.draft.service] : [])).map(service => ({ service, back: false }));
+            const mark = { service: a.service, back: s.draft.back };
+            return { ...s, draft: { ...s.draft, service: a.service, stamps: undefined, marks: marks.some(m => m.service === mark.service && m.back === mark.back) ? marks : [...marks, mark] } };
+        }
+        case 'newTicket': return !owns(s, 'paper') ? s : { ...s, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets.slice(-7), s.draft] : s.savedTickets, draft: { id: Math.max(s.draft.id, s.mounted?.id ?? 0, ...s.savedTickets.map(t => t.id)) + 1, holes: [], service: 0, back: false } };
+        case 'readerClamp': return (s.values.readerDepth?.[0] ?? 0) > 0 && (s.values.readerDepth?.[0] ?? 0) < 1 ? s : { ...s, values: { ...s.values, readerClamp: [s.values.readerClamp?.[0] === 1 ? 0 : 1] } };
+        case 'mountTicket': return s.mounted || !owns(s, 'paper') || s.draft.back || s.values.readerClamp?.[0] !== 1 || s.values.readerDepth?.[0] !== .65 ? s : { ...s, values: { ...s.values, readerDepth: [1] }, mounted: structuredClone(s.draft), draft: { id: s.draft.id + 1, holes: [], service: 0, back: false } };
+        case 'removeTicket': return !s.mounted || s.values.readerClamp?.[0] !== 1 ? s : { ...s, values: { ...s.values, readerDepth: [0] }, draft: s.mounted, mounted: null, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets.slice(-7), s.draft] : s.savedTickets };
         case 'call': return { ...s, train: { service: a.service, position: trace(s.route).end === 'O' && a.service === 2 && done(s, 'signal') ? 'stopped' : 'passing' } };
-        case 'board': return !validTicket(s, s.mounted) || s.train.position !== 'stopped' || !done(s, 'footing') ? s : { ...s, room: 'return', camera: 0, train: { ...s.train, position: 'departed' } };
+        case 'board': return !validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0 || s.train.position !== 'stopped' || !done(s, 'footing') ? s : { ...s, room: 'return', camera: 0, train: { ...s.train, position: 'departed' } };
         case 'end': return s.room === 'return' ? { ...s, ended: true } : s;
         case 'sound': return { ...s, sound: !s.sound };
         case 'tick': return { ...s, elapsed: s.elapsed + a.seconds };
@@ -220,16 +241,18 @@ export function restore(value: unknown): State | null {
         return null;
     if (!Number.isFinite(s.bag.strap) || s.bag.strap < 0 || s.bag.strap > 1 || typeof s.bag.clasp !== 'boolean' || typeof s.bag.mouth !== 'boolean')
         return null;
-    const ticket = (t: Ticket) => t && Number.isInteger(t.id) && t.id > 0 && Array.isArray(t.holes) && t.holes.length <= 60 && [0, 1, 2, 3, 4, 5, 6].includes(t.service) && typeof t.back === 'boolean' && t.holes.every(h => Number.isInteger(h.column) && h.column >= 0 && h.column < 5 && nodes.includes(h.node) && ['white', 'black'].includes(h.side));
+    const ticket = (t: Ticket) => t && Number.isInteger(t.id) && t.id > 0 && Array.isArray(t.holes) && t.holes.length <= 60 && [0, 1, 2, 3, 4, 5, 6].includes(t.service) && typeof t.back === 'boolean' && (t.marks === undefined || Array.isArray(t.marks) && t.marks.length <= 12 && t.marks.every(m => m && Number.isInteger(m.service) && m.service >= 1 && m.service <= 6 && typeof m.back === 'boolean')) && (t.stamps === undefined || Array.isArray(t.stamps) && t.stamps.length <= 6 && t.stamps.every(n => Number.isInteger(n) && n >= 1 && n <= 6)) && t.holes.every(h => Number.isInteger(h.column) && h.column >= 0 && h.column < 5 && nodes.includes(h.node) && ['white', 'black'].includes(h.side));
     if (!ticket(s.draft) || s.mounted && !ticket(s.mounted) || !Array.isArray(s.savedTickets) || s.savedTickets.length > 8 || !s.savedTickets.every(ticket))
         return null;
-    const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 100 && v.every(n=>typeof n === 'number' && Number.isFinite(n));
-    if (!Object.values(s.values).every(numeric)) return null;
-    const order = (v: number[]) => v.length===4 && new Set(v).size===4 && v.every(n=>Number.isInteger(n)&&n>=0&&n<4);
-    if (s.values.photoOrder && !order(s.values.photoOrder)) return null;
-    if (s.values.caseWheels && (s.values.caseWheels.length!==4 || !s.values.caseWheels.every(n=>Number.isInteger(n)&&n>=0&&n<4))) return null;
-    if (!s.notes.every(n=>n && typeof n.id==='string' && numeric(n.values) && (n.id!=='arrivalPhotos'||order(n.values)))) return null;
+    const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 100 && v.every(n => typeof n === 'number' && Number.isFinite(n));
+    if (!Object.values(s.values).every(numeric))
+        return null;
+    const order = (v: number[]) => v.length === 4 && new Set(v).size === 4 && v.every(n => Number.isInteger(n) && n >= 0 && n < 4);
+    if (s.values.photoOrder && !order(s.values.photoOrder))
+        return null;
+    if (s.values.caseWheels && (s.values.caseWheels.length !== 4 || !s.values.caseWheels.every(n => Number.isInteger(n) && n >= 0 && n < 4)))
+        return null;
+    if (!s.notes.every(n => n && typeof n.id === 'string' && numeric(n.values) && (n.id !== 'arrivalPhotos' || order(n.values))))
+        return null;
     return s;
 }
-
-

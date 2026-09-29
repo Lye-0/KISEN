@@ -1,7 +1,7 @@
 import { useState } from 'react';
-export function MaintenanceMap(){
- const [zoom,setZoom]=useState(false);
- return <section className="rm-maintenance-map"><div className="rm-map-sheet"><svg viewBox="0 0 1200 850" style={zoom?{width:'max(160%, 900px)',maxWidth:'none'}:undefined} role="img" aria-label="北を上に描かれた保守略図。坑口、塔と二本の柱、踏切の配置">
+export function MaintenanceMap() {
+    const [zoom, setZoom] = useState(false);
+    return <section className="rm-maintenance-map"><div className="rm-map-sheet"><svg viewBox="0 0 1200 850" style={zoom ? { width: 'max(160%, 900px)', maxWidth: 'none' } : undefined} role="img" aria-label="北を上に描かれた保守略図。坑口、塔と二本の柱、踏切の配置">
  <image href="/assets/remake/parts/photo-back.webp" width="1200" height="850" preserveAspectRatio="none"/>
  <g stroke="#52584a" fill="none" strokeWidth="2.4" fontFamily="serif">
  <text x="90" y="95" fill="#41483d" stroke="none" fontSize="30">沿線保守　見取図</text><path d="M1050 145V68m-12 24 12-25 12 25"/><text x="1040" y="52" fill="#41483d" stroke="none" fontSize="21">北</text>
@@ -31,6 +31,5 @@ export function MaintenanceMap(){
  <text x="-18" y="250" fill="#41483d" stroke="none" fontSize="17">青い小屋</text><text x="161" y="220" fill="#41483d" stroke="none" fontSize="17" writingMode="tb">石垣</text>
  </g>
  <text x="90" y="785" fill="#66624e" stroke="none" fontSize="18">位置照合用　／　縮尺不同</text><text x="925" y="785" fill="#66624e" stroke="none" fontSize="18">保線係　控</text>
- </g></svg></div><button onClick={()=>setZoom(!zoom)}>{zoom?'全体を見る':'拡大する'}</button></section>;
+ </g></svg></div><button onClick={() => setZoom(!zoom)}>{zoom ? '全体を見る' : '拡大する'}</button></section>;
 }
-

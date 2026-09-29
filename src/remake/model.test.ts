@@ -40,6 +40,9 @@ describe('remake:現在の経路と券', () => {
         s.draft = { id: 1, holes: expectedHoles(s.route), service: 2, back: true };
         s.locations.punch = 'inventory';
         s.locations.paper = 'inventory';
+        s = reduce(s, { type: 'flipTicket' });
+        s.values.readerClamp = [1];
+        s.values.readerDepth = [.65];
         s = reduce(s, { type: 'mountTicket' });
         expect(validTicket(s, s.mounted)).toBe(true);
         s = reduce(s, { type: 'punch', hole: { column: 0, node: 'C', side: 'white' } });
@@ -53,3 +56,4 @@ describe('remake:現在の経路と券', () => {
     });
     it('初回版の保存は新版へ混ぜない', () => { expect(restore({ version: 1 })).toBeNull(); });
 });
+it('便印の重ね押しで前の印が消えず、押した面も保存される', () => { let s = newState(); s.route = [0, 1, 0, 1, 1, 1]; s.draft.holes = expectedHoles(s.route); s = reduce(s, { type: 'ticketService', service: 1 }); s = reduce(s, { type: 'flipTicket' }); s = reduce(s, { type: 'ticketService', service: 2 }); expect(s.draft.marks).toEqual([{ service: 1, back: false }, { service: 2, back: true }]); expect(validTicket(s, s.draft)).toBe(false); expect(restore(JSON.parse(JSON.stringify(s)))).toEqual(s); });
