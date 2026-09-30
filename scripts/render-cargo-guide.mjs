@@ -1,0 +1,30 @@
+import sharp from 'sharp';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { project } from '../src/remake/geometry.ts';
+import { cargoBoxes, cargoInitial, cargoGrid } from '../src/remake/cargo.ts';
+import { cargoCamera, cargoSouthCamera, cargoRoom as r, cargoStairDoor, cargoOfficeDoor, cargoNorthWindow } from '../src/remake/cargoGeometry.ts';
+const out=process.env.KISEN_REVIEW_DIR ?? 'docs/remake/geometry';
+await mkdir(out,{recursive:true});
+const parts=[], near=cargoCamera.position[1]+.15;
+const poly=(ps,fill,stroke='#373c35')=>{const q=ps.map(p=>project(p,cargoCamera));return `<polygon points="${q.map(p=>p.x+','+p.y).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="2"/>`};
+parts.push(poly([[r.west,near,0],[r.east,near,0],[r.east,r.north,0],[r.west,r.north,0]],'#56544a'));
+parts.push(poly([[r.west,r.north,r.ceiling],[r.east,r.north,r.ceiling],[r.east,near,r.ceiling],[r.west,near,r.ceiling]],'#45433b'));
+parts.push(poly([[r.west,near,0],[r.west,r.north,0],[r.west,r.north,r.ceiling],[r.west,near,r.ceiling]],'#8b8779'));
+parts.push(poly([[r.east,r.north,0],[r.east,near,0],[r.east,near,r.ceiling],[r.east,r.north,r.ceiling]],'#767465'));
+parts.push(poly([[r.west,r.north,0],[r.east,r.north,0],[r.east,r.north,r.ceiling],[r.west,r.north,r.ceiling]],'#969283'));
+parts.push(poly(cargoNorthWindow,'#29373c'),poly(cargoStairDoor,'#413b31'),poly(cargoOfficeDoor,'#494238'));
+for(let col=0;col<3;col++)for(const dx of [.13,.66]) {const x=cargoGrid.x+col*cargoGrid.stepX+dx;parts.push(poly([[x-.018,cargoGrid.y,0.006],[x+.018,cargoGrid.y,0.006],[x+.018,cargoGrid.y+6*cargoGrid.stepY,0.006],[x-.018,cargoGrid.y+6*cargoGrid.stepY,0.006]],'#292d29'));}
+const make=async(name,extra)=>{const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941"><rect width="1672" height="941" fill="#34342f"/>${parts.join('')}${extra}</svg>`;await writeFile(`${out}/${name}.svg`,svg);await sharp(Buffer.from(svg)).png().toFile(`${out}/${name}.png`)};
+await make('cargo-empty-guide','');
+const faces=[];
+for(const b of cargoBoxes(cargoInitial)) {const {x,y,w,d,h}=b;for(const [ps,color] of [[[[x,y,0],[x+w,y,0],[x+w,y,h],[x,y,h]],'#776146'],[[[x,y,h],[x+w,y,h],[x+w,y+d,h],[x,y+d,h]],'#947b54'],[[[x+w,y,0],[x+w,y+d,0],[x+w,y+d,h],[x+w,y,h]],'#645239'],[[[x,y,0],[x,y+d,0],[x,y+d,h],[x,y,h]],'#574937']]) {const q=ps.map(p=>project(p,cargoCamera));faces.push({depth:q.reduce((a,b)=>a+b.depth,0)/4,svg:poly(ps,color)});}}
+faces.sort((a,b)=>b.depth-a.depth);await make('cargo-initial-guide',faces.map(f=>f.svg).join(''));
+console.log(out);
+const southPoly=(ps,fill)=>{const q=ps.map(p=>project(p,cargoSouthCamera));return `<polygon points="${q.map(p=>p.x+','+p.y).join(' ')}" fill="${fill}" stroke="#373c35" stroke-width="2"/>`};
+const south=[];
+south.push(southPoly([[r.west,r.south,0],[r.east,r.south,0],[r.east,r.south,3.2],[r.west,r.south,3.2]],'#969283'));
+south.push(southPoly([[12.55,-11.98,1],[14.45,-11.98,1],[14.45,-11.98,2.9],[12.55,-11.98,2.9]],'#283a41'));
+for(const x of [13.18,13.82])south.push(southPoly([[x-.025,-11.96,1],[x+.025,-11.96,1],[x+.025,-11.96,2.9],[x-.025,-11.96,2.9]],'#433d32'));
+south.push(southPoly([[12.55,-11.96,1.925],[14.45,-11.96,1.925],[14.45,-11.96,1.975],[12.55,-11.96,1.975]],'#433d32'));
+const southSVG=`<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941"><rect width="1672" height="941" fill="#545347"/>${south.join('')}</svg>`;
+await writeFile(`${out}/cargo-south-guide.svg`,southSVG);await sharp(Buffer.from(southSVG)).png().toFile(`${out}/cargo-south-guide.png`);

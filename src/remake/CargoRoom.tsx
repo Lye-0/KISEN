@@ -2,23 +2,15 @@ import { useState } from 'react';
 import { Photo, Touch } from './Photo';
 import { cargoBoxes, cargoInitial, moveCargo, stairsClear } from './cargo';
 import type { Cargo } from './cargo';
-import { project } from './geometry';
-import type { Camera } from './geometry';
+import { cargoOfficeDoor, cargoStairDoor, cargoVisualBounds, projectedBounds } from './cargoGeometry';
 import type { Action, State } from './model';
-// Asset-composition calibration. The final building-space camera still needs G1 reconciliation.
-const camera: Camera = { position: [13.5, -14.5, 1.7], target: [13.5, -7.4, 1.4], focal: 750, width: 1672, height: 941 };
 const objects = [
     { name: '長い木箱', image: 'long-crate', axis: 'depth' },
     { name: '幅広い木箱', image: 'wide-crate', axis: 'side' },
     { name: '空の台車', image: 'trolley', axis: 'side' },
     { name: '車輪付きの棚', image: 'shelf', axis: 'depth' },
 ] as const;
-function bounds(box: ReturnType<typeof cargoBoxes>[number]) {
-    const h = box.id === 'trolley' ? .9 : box.h;
-    const points = [box.x, box.x + box.w].flatMap(x => [box.y, box.y + box.d].flatMap(y => [0, h].map(z => project([x, y, z], camera))));
-    const x = Math.min(...points.map(p => p.x)), y = Math.min(...points.map(p => p.y));
-    return { x, y, w: Math.max(...points.map(p => p.x)) - x, h: Math.max(...points.map(p => p.y)) - y };
-}
+const office = projectedBounds(cargoOfficeDoor), stair = projectedBounds(cargoStairDoor);
 export function CargoRoom({ s, dispatch, say, leave, descend }: {
     s: State;
     dispatch: (a: Action) => void;
@@ -37,15 +29,15 @@ export function CargoRoom({ s, dispatch, say, leave, descend }: {
         dispatch({ type: 'cargoMove', index, direction });
     };
     return <div className="rm-cargo"><Photo src={'/assets/remake/cargo/' + (doorOpen ? 'door-open' : 'empty') + '.webp'} label="荷物室の床の溝と、車輪付きの荷">
-        <Touch name="駅務室へ戻る" rect={[0, 8, 13, 84]} act={leave}/>
-        {clear && <Touch name={doorOpen ? '開いた階段戸を通る' : '奥の木戸'} rect={[61, 17, 11, 53]} act={() => {
+        <Touch name="駅務室へ戻る" rect={[office.x / 16.72, office.y / 9.41, office.w / 16.72, office.h / 9.41]} act={leave}/>
+        {clear && <Touch name={doorOpen ? '開いた階段戸を通る' : '奥の木戸'} rect={[stair.x / 16.72, stair.y / 9.41, stair.w / 16.72, stair.h / 9.41]} act={() => {
                 if (doorOpen)
                     descend();
                 else
                     dispatch({ type: 'stairDoor' });
             }} style={{ zIndex: 5 }}/>}
         {cargoBoxes(cargo).map((box, index) => {
-            const r = bounds(box), item = objects[index], depth = Math.round(r.y + r.h) + 20;
+            const r = cargoVisualBounds(box), item = objects[index], depth = Math.round(r.y + r.h) + 20;
             return <div key={box.id}>
                 <img className={'rm-cargo-prop' + (active === index ? ' selected' : '')} src={'/assets/remake/cargo/' + item.image + '.png'} draggable={false} alt="" aria-hidden="true" style={{ left: r.x / 16.72 + '%', top: r.y / 9.41 + '%', width: r.w / 16.72 + '%', height: r.h / 9.41 + '%', zIndex: depth }}/>
                 <Touch name={item.name} rect={[r.x / 16.72, r.y / 9.41, r.w / 16.72, r.h / 9.41]} act={() => setActive(index)} drag={(dx, dy) => {

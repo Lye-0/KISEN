@@ -43,15 +43,22 @@
   },
   {
     "id": "cargo/empty",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-53bb4a1f-556e-4b37-be00-1b11c518c388.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-078ff203-c39b-48ab-9a0c-07d7682813e4.png",
     "file": "public/assets/remake/cargo/empty.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
   },
   {
     "id": "cargo/door-open",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-32864a06-fc72-44cd-a7e0-9ff123a711d8.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-16727575-5e31-4194-8860-0167d49b8542.png",
     "file": "public/assets/remake/cargo/door-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "cargo/south",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8025c160-f979-4aa9-835a-9e01af4e050f.png",
+    "file": "public/assets/remake/cargo/south.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
   },

@@ -17,13 +17,13 @@ export function occupied(v: Cargo) {
     ];
 }
 export function validCargo(v: Cargo) {
-    if (v.some((n, i) => !Number.isInteger(n) || n < 0 || n > [3, 1, 1, 4][i]))
+    if (!Array.isArray(v) || v.length !== 4 || v.some((n, i) => !Number.isInteger(n) || n < 0 || n > [3, 1, 1, 4][i]))
         return false;
     const cells = occupied(v).flat().map(c => c.join(':'));
     return cells.length === new Set(cells).size;
 }
 export function moveCargo(v: Cargo, index: number, direction: number): Cargo | null {
-    if (index < 0 || index > 3 || ![-1, 1].includes(direction))
+    if (!validCargo(v) || !Number.isInteger(index) || index < 0 || index > 3 || ![-1, 1].includes(direction))
         return null;
     const n = [...v] as Cargo;
     n[index] += direction;
@@ -31,12 +31,13 @@ export function moveCargo(v: Cargo, index: number, direction: number): Cargo | n
 }
 export const stairsClear = (v: Cargo) => !occupied(v).flat().some(([x, y]) => x === 2 && (y === 1 || y === 2));
 export const chestClear = (v: Cargo) => !occupied(v).flat().some(([x, y]) => x === 2 && y === 0);
+export const cargoGrid = { x: 12.6, y: -10.1, stepX: .8, stepY: .55 };
 export function cargoBoxes(v: Cargo) {
-    const x0 = 12.65, y0 = -11.75, step = .8;
+    const { x: x0, y: y0, stepX, stepY } = cargoGrid;
     return [
-        { id: 'long', x: x0, y: y0 + v[0] * step, w: .7, d: 2.3, h: .95 },
-        { id: 'wide', x: x0 + v[1] * step, y: y0, w: 1.5, d: .7, h: .7 },
-        { id: 'trolley', x: x0 + v[2] * step, y: y0 + 3 * step, w: 1.5, d: .7, h: .25 },
-        { id: 'shelf', x: x0 + 2 * step + .05, y: y0 + v[3] * step, w: .8, d: 1.5, h: 3 },
+        { id: 'long', x: x0, y: y0 + v[0] * stepY, w: .7, d: 1.55, h: .75 },
+        { id: 'wide', x: x0 + v[1] * stepX, y: y0, w: 1.5, d: .5, h: .65 },
+        { id: 'trolley', x: x0 + v[2] * stepX, y: y0 + 3 * stepY, w: 1.5, d: .5, h: .25 },
+        { id: 'shelf', x: x0 + 2 * stepX, y: y0 + v[3] * stepY, w: .75, d: 1.05, h: 2.5 },
     ];
 }

@@ -22,6 +22,11 @@ it('北ホームの閉じた地下蓋は外から先取りできない', () => {
     expect(reduce(north, { type: 'northHatch' })).toBe(north);
     expect(reduce(north, { type: 'move', room: 'tunnel' })).toBe(north);
 });
+it('保存された荷物配置の短い配列、干渉、範囲外を復元しない', () => {
+    for (const cargo of [[1], [1, 0, 1, 2], [4, 0, 1, 1]])
+        expect(restore({ ...newState(), values: { cargo } })).toBeNull();
+    expect(moveCargo(cargoInitial, 1.5, 1)).toBeNull();
+});
 it('荷物を実際に動かしてから階段戸を開き、保存後も逆操作できる', () => {
     let s: State = { ...newState(), room: 'cargo' };
     expect(reduce(s, { type: 'stairDoor' })).toBe(s);

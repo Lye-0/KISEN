@@ -1,5 +1,5 @@
 import { sameOpening } from './ticketGeometry';
-import { cargoInitial, moveCargo, stairsClear } from './cargo';
+import { cargoInitial, moveCargo, stairsClear, validCargo } from './cargo';
 import type { Cargo } from './cargo';
 import { arrivalCaseSides } from './arrivalPhotos';
 import { duration as tapeDuration } from './recordings';
@@ -414,6 +414,11 @@ export function restore(value: unknown): State | null {
     const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 768 && v.every(n => typeof n === 'number' && Number.isFinite(n));
     if (!Object.values(s.values).every(numeric))
         return null;
+    if (s.values.cargo && !validCargo(s.values.cargo as Cargo))
+        return null;
+    for (const name of ['stairDoor', 'northHatch'])
+        if (s.values[name] && (s.values[name].length !== 1 || ![0, 1].includes(s.values[name][0])))
+            return null;
     for (const name of ['rackRing', 'tagCaught'])
         if (s.values[name] && (s.values[name].length !== 1 || ![0, 1].includes(s.values[name][0])))
             return null;
