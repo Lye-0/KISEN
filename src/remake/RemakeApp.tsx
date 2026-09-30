@@ -57,7 +57,7 @@ function load() {
     }
 }
 const labels: Record<Item, string> = { spareLamp: '交換灯具', photos: '写真', receipt: '受取票', envelope: '封筒', ownTicket: '到着券', officeKey: '駅務室の鍵', knob: '黒いつまみ', hook: '鉤付き棒', pin: '薄い片', support: '支え', lamp: '灯具', punch: '鋏', paper: '用紙', fragments: '券の断片', hood: '覆い', ticket: '切符', counterRecords: '帳票' };
-const documentFocus: Partial<Record<Item, Focus>> = { photos: 'photos', receipt: 'receipt', envelope: 'map', paper: 'paperView', counterRecords: 'notices' };
+const documentFocus: Partial<Record<Item, Focus>> = { photos: 'photos', receipt: 'receipt', envelope: 'map', ownTicket: 'arrivalTicket', paper: 'paperView', counterRecords: 'notices' };
 const roomLabels: Record<Room, string> = { train: '到着車内', platform: '南ホーム', waiting: '待合室', forecourt: '駅前', office: '駅務室', lost: '忘れ物室', bridge: '跨線橋', cargo: '荷物室', lamp: '灯具小屋', tunnel: 'トンネル側道', north: '北ホーム', return: '帰りの車内' };
 export default function RemakeApp() {
     const [s, setS] = useState(load), [view, setView] = useState<{

@@ -1,6 +1,7 @@
 import { ReceiptPaper } from './Receipt';
 import { TicketPaper } from './TicketBench';
-import type { Item, State, Ticket } from './model';
+import { arrivalTicket } from './arrivalTicket';
+import type { Item, State } from './model';
 const root = '/assets/remake/';
 const art: Partial<Record<Item, string>> = {
     envelope: 'parts/seat-envelope.png',
@@ -11,7 +12,6 @@ const art: Partial<Record<Item, string>> = {
     spareLamp: 'parts/marker-lamp.png',
     counterRecords: 'parts/counter-folder.png',
 };
-const oldTicket: Ticket = { id: 1, holes: [], service: 1, back: false };
 export function ItemImage({ item, state }: {
     item: Item;
     state: State;
@@ -23,7 +23,7 @@ export function ItemImage({ item, state }: {
     if (item === 'receipt')
         return <ReceiptPaper />;
     if (item === 'ownTicket' || item === 'ticket')
-        return <TicketPaper ticket={item === 'ownTicket' ? oldTicket : state.mounted ?? state.draft}/>;
+        return <TicketPaper ticket={item === 'ownTicket' ? arrivalTicket : state.mounted ?? state.draft}/>;
     if (item === 'paper')
         return <img className="rm-item-image" src={root + 'parts/inventory-paper.png'} alt="" draggable={false}/>;
     if (item === 'hood')

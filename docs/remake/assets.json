@@ -1,5 +1,12 @@
 [
   {
+    "id": "train/floor-clear",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ef8abfe8-14f9-4986-b49a-21bdbc838e9c.png",
+    "file": "public/assets/remake/train/floor-clear.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
     "id": "parts/return-car-gap6-closed",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-24cbffdd-e431-4483-949a-fe69ae52a286.png",
     "file": "public/assets/remake/parts/return-car-gap6-closed.png",

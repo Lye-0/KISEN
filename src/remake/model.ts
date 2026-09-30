@@ -283,6 +283,8 @@ export function reduce(s: State, a: Action): State {
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
             const at = s.locations[a.item];
+            if (a.item === 'ownTicket' && at === 'floor' && s.room !== 'train')
+                return s;
             if (at === 'signal')
                 return s;
             if (a.item === 'punch' && at === 'toolBench' || a.item === 'paper' && at === 'toolBench' && s.room !== 'office')

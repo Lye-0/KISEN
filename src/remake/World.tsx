@@ -8,7 +8,7 @@ import { DrawerImage } from './CounterDrawer';
 import { RecordCard } from './ServiceRecords';
 import { RecorderImage } from './Recorder';
 import type { Action, Item, Room, State } from './model';
-export type Focus = 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
+export type Focus = 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
 export const availableViews: Partial<Record<Room, string[]>> = { train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前'], office: ['机と南の窓', '北の保管区画'] };
 function CounterObjects({ s }: {
     s: State;

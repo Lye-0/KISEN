@@ -1,5 +1,6 @@
 import { Shutter } from './Shutter';
 import { ItemImage } from './ItemImage';
+import { arrivalTicket } from './arrivalTicket';
 import { ToolTrial, PunchGraphic } from './ToolTrial';
 import { Train } from './Train';
 import { Bag } from './Bag';
@@ -47,6 +48,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'platformClock': return <Photo src="/assets/remake/platform/station.webp" view={[935, 207, 188, 195]} label="ホームの時計"><Clock minutes={23 * 60 + 17} transform="translate(1030 302) scale(.72)"/></Photo>;
         case 'officeLock': return <OfficeLock s={s} dispatch={dispatch} say={say} selected={selected} onSelect={onSelect} enter={() => { dispatch({ type: 'move', room: 'office', camera: 0 }); close(); }}/>;
         case 'paperView': return <div className="rm-hand-paper"><TicketPaper ticket={s.draft}/><button onClick={() => dispatch({ type: 'flipTicket' })}>裏返す</button></div>;
+        case 'arrivalTicket': return <div className="rm-hand-paper"><TicketPaper ticket={{ ...arrivalTicket, back: s.values.arrivalTicketBack?.[0] === 1 }}/><button onClick={() => dispatch({ type: 'values', id: 'arrivalTicketBack', values: [s.values.arrivalTicketBack?.[0] === 1 ? 0 : 1] })}>裏返す</button></div>;
         case 'item': return <div className="rm-hand-item">{selected === 'punch' ? <svg viewBox="0 0 1536 1024" aria-label="手元の鋏"><PunchGraphic tool={s.values.punchTool?.[0] ?? 1} transform="translate(0 0)"/></svg> : selected && (itemArt[selected] ? <img src={itemArt[selected]} alt="手元の持ち物"/> : <ItemImage item={selected} state={s}/>)}</div>;
         default: return null;
     }

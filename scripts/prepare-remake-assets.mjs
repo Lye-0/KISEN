@@ -3,6 +3,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['train/floor-clear','ef8abfe8-14f9-4986-b49a-21bdbc838e9c'],
  ['parts/return-car-gap6-closed','24cbffdd-e431-4483-949a-fe69ae52a286'],
  ['parts/inventory-paper','ef4b30e0-e69d-4047-8909-5e3041b566b5'],
  ['parts/inventory-photos','e3f1a5c7-52a8-469e-a329-5e769eea5e69'],
