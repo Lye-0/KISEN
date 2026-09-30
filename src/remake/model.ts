@@ -1,3 +1,4 @@
+import { changeSketch, validSketch } from './sketchGraph';
 import { validDispatchRecord } from './dispatchEvidence';
 import { validGlassRecord } from './glassGeometry';
 import { validNoticeLift } from './notice';
@@ -113,6 +114,11 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'sketch';
+    a: number;
+    b: number;
+    kind: number;
+} | {
     type: 'returnAdvance';
     seconds: number;
 } | {
@@ -302,6 +308,7 @@ export function reduce(s: State, a: Action): State {
     if (s.room === 'return' && !['look', 'end', 'returnAdvance', 'returnReview', 'sound', 'tick', 'record'].includes(a.type))
         return s;
     switch (a.type) {
+        case 'sketch': return !owns(s, 'envelope') ? s : { ...s, values: { ...s.values, sketchEdges: changeSketch(s.values.sketchEdges ?? [], a.a, a.b, a.kind) } };
         case 'fragmentMove': {
             if (!owns(s, 'fragments'))
                 return s;
@@ -508,7 +515,7 @@ export function reduce(s: State, a: Action): State {
             const seconds = Math.max(s.values[id]?.[0] ?? 0, Math.min(tapeDuration, Math.max(0, a.seconds)));
             return { ...s, values: { ...s.values, [id]: [seconds] } };
         }
-        case 'values': return a.id === 'returnTrip' || a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['fragments', 'receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
+        case 'values': return a.id === 'sketchEdges' || a.id === 'returnTrip' || a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['fragments', 'receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return !nodes[a.index] || !connections[nodes[a.index]][a.value] || ['approaching', 'passing', 'leaving', 'stopped'].includes(s.train.position) && trace(s.route).path.includes(nodes[a.index]) ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
@@ -563,6 +570,8 @@ export function restore(value: unknown): State | null {
         return null;
     if (s.ended && (s.room !== 'return' || s.values.returnTrip?.[0] !== 12 || s.values.returnTrip?.[1] !== 1))
         return null;
+    if (s.values.sketchEdges && !validSketch(s.values.sketchEdges))
+        return null;
     const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 768 && v.every(n => typeof n === 'number' && Number.isFinite(n));
     if (!Object.values(s.values).every(numeric))
         return null;
@@ -572,6 +581,10 @@ export function restore(value: unknown): State | null {
     if (s.values.lightAim && !validAim(s.values.lightAim) || s.values.bellInputs && !validBellTimes(s.values.bellInputs) || s.values.bellChannel && (s.values.bellChannel.length !== 1 || ![0, 1].includes(s.values.bellChannel[0])))
         return null;
     if (s.locations.lamp === 'glassStand' && s.locations.spareLamp === 'glassStand' || Object.entries(s.locations).some(([item, at]) => at === 'glassStand' && !['lamp', 'spareLamp'].includes(item)))
+        return null;
+    if (s.notes.some(n => n?.id === 'routeSketch' && (!Array.isArray(n.values) || !validSketch(n.values))))
+        return null;
+    if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('crossing-observation-') && (n.values?.length !== 1 || !Number.isInteger(n.values[0]) || n.values[0] < 0 || n.values[0] > 2)))
         return null;
     if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('dispatch-record-') && (!numeric(n.values) || !validDispatchRecord(n.values))))
         return null;

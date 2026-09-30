@@ -3,6 +3,11 @@ import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['crossing/bridge','ad875dbb-e2d6-4c8d-ac21-6e63592fd6fc'],
+ ['crossing/window','462a6431-5729-4b1c-9f12-0b7d041ab73b'],
+ ['crossing/north','4c344db4-670d-48f7-b954-cfc2c4245862'],
+ ['train/near-door-open','a0949aab-4840-4bbc-ad4b-0d513714715a'],
+ ['platform/train-open','7318379c-0780-41c5-81c6-9b04cdb45181'],
  ['return/home','cff60d45-39c1-4d9e-9134-7b6ef95ceacd'],
  ['return/home-photo','4cfa38f2-4d11-4f65-993a-52484a0b8fb1'],
  ['return/travelling','2163b616-4c7a-4205-a969-df8c83bdbc83'],

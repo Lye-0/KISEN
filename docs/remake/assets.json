@@ -1328,5 +1328,40 @@
     "file": "public/assets/remake/parts/phone.png",
     "status": "representative-review",
     "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "train/near-door-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a0949aab-4840-4bbc-ad4b-0d513714715a.png",
+    "file": "public/assets/remake/train/near-door-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "platform/train-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-7318379c-0780-41c5-81c6-9b04cdb45181.png",
+    "file": "public/assets/remake/platform/train-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "crossing/bridge",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ad875dbb-e2d6-4c8d-ac21-6e63592fd6fc.png",
+    "file": "public/assets/remake/crossing/bridge.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "crossing/window",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-462a6431-5729-4b1c-9f12-0b7d041ab73b.png",
+    "file": "public/assets/remake/crossing/window.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "crossing/north",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4c344db4-670d-48f7-b954-cfc2c4245862.png",
+    "file": "public/assets/remake/crossing/north.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
   }
 ]

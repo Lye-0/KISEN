@@ -58,9 +58,10 @@ export function Train({ s, dispatch, inspect, inspectCase, inspectSeat, exit, sa
  <svg className="rm-object-overlay" viewBox="0 0 1672 941"><NearSeatLayers s={s}/></svg>
  {s.locations.ownTicket === 'inventory' && <svg className="rm-object-overlay" viewBox="0 0 1672 941"><defs><filter id={cabinetId + 'floorSoft'} x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter><mask id={cabinetId + 'floorMask'}><ellipse cx="1508" cy="846" rx="90" ry="54" fill="white" filter={`url(#${cabinetId}floorSoft)`}/></mask></defs><image href={root + 'floor-clear.webp'} width="1672" height="941" mask={`url(#${cabinetId}floorMask)`}/></svg>}
  {s.values.caseOpen?.[0] === 1 && <svg className="rm-object-overlay" viewBox="0 0 1672 941"><defs><clipPath id={cabinetId}><path d="M1476 104L1672 49V382L1462 356Z"/></clipPath></defs><image href={root + 'case-' + (s.locations.officeKey === 'inventory' ? 'empty' : 'open') + '.webp'} width="1672" height="941" clipPath={`url(#${cabinetId})`}/></svg>}
- {closeSeat === undefined && <><Touch name="乗務員用書類箱" rect={[87, 6, 11, 31]} act={inspectCase}/><Touch name="座席の鞄" rect={[25, 50, 22, 28]} act={inspect}/>{exit && <Touch name="扉を開けてホームへ降りる" rect={[69, 8, 16, 79]} act={exit}/>}</>}
+ {closeSeat === undefined && <><Touch name="乗務員用書類箱" rect={[87, 6, 11, 31]} act={inspectCase}/><Touch name="座席の鞄" rect={[25, 50, 22, 28]} act={inspect}/>{exit && <Touch name="開いた扉からホームへ降りる" rect={[69, 8, 16, 79]} act={exit}/>}</>}
  {closeSeat === undefined && s.locations.ownTicket === 'floor' && <Touch name="床の到着券" rect={[85, 77, 12, 20]} act={() => { dispatch?.({ type: 'take', item: 'ownTicket' }); say?.('切符を拾った。'); }}/>}
  <Touch name={closeSeat === undefined ? '手前の座席の背' : s.seats[2] ? '座席の背を戻す' : '座席の背を倒す'} rect={[54, 46, 5, 13]} act={() => act(2)}/>
  {s.seats[2] === 1 && s.locations.envelope === 'seat' && <Touch name="座席裏の封筒" rect={[44, 46, 8, 12]} act={() => { dispatch?.({ type: 'take', item: 'envelope' }); say?.('封筒を手に取った。'); }}/>}
+ <Patch src={root + 'near-door-open.webp'} rect={[66.3, 0, 20.2, 94]}/>
  </Photo>;
 }

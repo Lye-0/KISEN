@@ -1,3 +1,5 @@
+import { CrossingView } from './CrossingView';
+import { RouteSketch } from './RouteSketch';
 import { HomePhone, ReturnTicket } from './ReturnTrain';
 import { ReturnDispatch } from './ReturnDispatch';
 import { FreightFocus } from './Freight';
@@ -65,8 +67,10 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'cargoDockets': return <CargoDocketsView dispatch={dispatch} say={say}/>;
         case 'cargoDocket': return <CargoDocketSheet />;
         case 'points': return <PointControls s={s} dispatch={dispatch} say={say}/>;
-        case 'passageWindow': return <div className="rm-route-focus"><Photo src="/assets/remake/passage/window.webp" view={[330, 130, 1000, 700]} label="踊り場の窓から見える旧線の橋脚と、その下を抜ける線路"/></div>;
-        case 'crossing': return <div className="rm-route-focus"><Photo src={'/assets/remake/bridge/east-tag' + (owns(s, 'pin') ? '-empty' : '') + '.webp'} view={[425, 150, 800, 620]} label="旧線の橋脚とその下を続く線路"/></div>;
+        case 'passageWindow': return <CrossingView view='window' dispatch={dispatch} say={say}/>;
+        case 'crossing': return <CrossingView view='bridge' dispatch={dispatch} say={say}/>;
+        case 'northTracks': return <CrossingView view='north' dispatch={dispatch} say={say}/>;
+        case 'routeSketch': return <RouteSketch s={s} dispatch={dispatch} say={say}/>;
         case 'dispatch': return <ReturnDispatch s={s} dispatch={dispatch} say={say}/>;
         case 'signal': return <Shutter s={s} dispatch={dispatch} say={say} reader={() => inspect('reader')} papers={() => inspect('dispatch')}/>;
         case 'tools': return <ToolTrial s={s} dispatch={dispatch} say={say} openTicket={() => inspect('ticket')}/>;
@@ -75,7 +79,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'photos': return <Photos s={s} dispatch={dispatch} say={say}/>;
         case 'recorder': return <Recorder s={s} dispatch={dispatch} say={say} selected={selected} onSelect={onSelect}/>;
         case 'case': return <RouteCase s={s} dispatch={dispatch} say={say}/>;
-        case 'map': return <MaintenanceMap />;
+        case 'map': return <MaintenanceMap sketch={() => inspect('routeSketch')}/>;
         case 'ticket': return <TicketBench s={s} dispatch={dispatch} say={say} records={() => inspect('journeyRecords')}/>;
         case 'journeyRecords': return <JourneyRecords s={s} dispatch={dispatch} say={say}/>;
         case 'reader': return <TicketReader s={s} dispatch={dispatch} say={say}/>;

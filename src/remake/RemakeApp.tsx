@@ -1,3 +1,5 @@
+import { CrossingNote } from './CrossingView';
+import { SketchNote } from './RouteSketch';
 import { Ending, HomePhone } from './ReturnTrain';
 import { DispatchNote } from './ReturnDispatch';
 import { GlassNote } from './GlassWindow';
@@ -25,11 +27,19 @@ import { JourneyRecordNote } from './JourneyRecords';
 import { useModal } from './useModal';
 import './remake.css';
 const fixture = new URLSearchParams(location.search).get('remake');
-const group = fixture === 'ending' ? 'ending' : fixture === 'dispatch' ? 'dispatch' : fixture === 'glass' ? 'glass' : fixture === 'freight' ? 'freight' : fixture === 'fragments' ? 'fragments' : fixture === 'lost' ? 'lost' : fixture === 'optics' ? 'optics' : fixture === 'shed' ? 'shed' : fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : fixture === 'points' ? 'points' : fixture === 'cargo' ? 'cargo' : '';
+const group = fixture === 'crossing' ? 'crossing' : fixture === 'ending' ? 'ending' : fixture === 'dispatch' ? 'dispatch' : fixture === 'glass' ? 'glass' : fixture === 'freight' ? 'freight' : fixture === 'fragments' ? 'fragments' : fixture === 'lost' ? 'lost' : fixture === 'optics' ? 'optics' : fixture === 'shed' ? 'shed' : fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : fixture === 'points' ? 'points' : fixture === 'cargo' ? 'cargo' : '';
 const saveKey = 'kisen-remake-v2' + (group ? ':' + group : '');
-const initialFocus: Focus = fixture === 'dispatch' ? 'dispatch' : fixture === 'fragments' ? 'fragments' : fixture === 'shed' ? 'posters' : fixture === 'reader' ? 'reader' : fixture === 'ticket' ? 'ticket' : fixture === 'journeys' ? 'journeyRecords' : fixture === 'cargo' ? 'cargoChest' : null;
+const initialFocus: Focus = fixture === 'crossing' ? 'passageWindow' : fixture === 'dispatch' ? 'dispatch' : fixture === 'fragments' ? 'fragments' : fixture === 'shed' ? 'posters' : fixture === 'reader' ? 'reader' : fixture === 'ticket' ? 'ticket' : fixture === 'journeys' ? 'journeyRecords' : fixture === 'cargo' ? 'cargoChest' : null;
 function seed() {
     const s = newState();
+    if (group === 'crossing') {
+        s.room = 'passage';
+        s.camera = 2;
+        s.locations.envelope = 'inventory';
+        s.locations.pin = 'inventory';
+        s.locations.support = 'inventory';
+        s.values.gateOpen = [1];
+    }
     if (group === 'ending') {
         s.room = 'return';
         s.started = true;
@@ -105,6 +115,8 @@ function seed() {
         s.locations.punch = 'inventory';
         s.route = [0, 1, 0, 1, 1, 1];
     }
+    if (fixture !== null)
+        s.started = true;
     s.visited = [s.room + ':' + s.camera];
     return s;
 }
@@ -173,14 +185,24 @@ export default function RemakeApp() {
         const id = setInterval(() => dispatch({ type: 'trainAdvance', seconds: .1 }), 100);
         return () => clearInterval(id);
     }, [s.train.position, dispatch]);
-    useEffect(() => { if (s.room !== 'return' || s.ended || (s.values.returnTrip?.[0] ?? 0) >= 12)
-        return; const id = setInterval(() => dispatch({ type: 'returnAdvance', seconds: .25 }), 250); return () => clearInterval(id); }, [s.room, s.ended, s.values.returnTrip?.[0] >= 12, dispatch]);
-    useEffect(() => { if (!s.started || s.ended)
-        return; const id = setInterval(() => dispatch({ type: 'tick', seconds: 30 }), 30000); return () => clearInterval(id); }, [s.started, s.ended, dispatch]);
+    useEffect(() => {
+        if (s.room !== 'return' || s.ended || (s.values.returnTrip?.[0] ?? 0) >= 12)
+            return;
+        const id = setInterval(() => dispatch({ type: 'returnAdvance', seconds: .25 }), 250);
+        return () => clearInterval(id);
+    }, [s.room, s.ended, s.values.returnTrip?.[0] >= 12, dispatch]);
+    useEffect(() => {
+        if (!s.started || s.ended)
+            return;
+        const id = setInterval(() => dispatch({ type: 'tick', seconds: 30 }), 30000);
+        return () => clearInterval(id);
+    }, [s.started, s.ended, dispatch]);
     const exportSave = () => { const url = URL.createObjectURL(new Blob([JSON.stringify(s)], { type: 'application/json' })); const a = document.createElement('a'); a.href = url; a.download = 'KISEN-remake.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 500); };
     const inv = (Object.keys(s.locations) as Item[]).filter(i => owns(s, i)), views = availableViews[s.room] ?? [];
     const showSelected = selected && owns(s, selected) && focus !== (documentFocus[selected] ?? 'item');
     const world = <World s={s} dispatch={dispatch} inspect={inspect} say={say} selected={selected}/>;
+    if (!s.started && fixture === null)
+        return <main id="rm-game" className="rm-title"><img src="/assets/remake/platform/train-open.webp" alt="誰もいないきさらぎ駅。列車の扉が開いている"/><div className="rm-title-copy"><p>きさらぎ駅</p><h1>帰線</h1><p className="rm-title-reading">K I S E N</p><p>帰るための線を、見つける。</p><button onClick={() => dispatch({ type: 'start' })}>{s.room === 'train' && !s.bag.mouth ? '車内へ' : '続きへ'}</button><p className="rm-title-meta">ひとりで遊ぶ脱出ゲーム<br />進行は、このブラウザに自動保存されます。</p></div></main>;
     if (s.ended)
         return <Ending s={s} review={() => dispatch({ type: 'returnReview' })} exportSave={exportSave}/>;
     return <main id="rm-game" className={targets ? 'rm-targets' : ''}><BellAudio s={s}/>
@@ -217,6 +239,6 @@ export default function RemakeApp() {
                         say('この記録は読み込めません。');
                     }
                     e.target.value = '';
-                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id === 'homePhoto' ? <HomePhone /> : n.id === 'fragmentPhoto' ? <FragmentPhoto /> : n.id === 'fragments' ? <FragmentLayout values={n.values}/> : n.id === 'receiptTray' ? <ReceiptNote values={n.values}/> : n.id === 'clockChecks' ? <ClockChecks s={{ ...s, values: { ...s.values, clockAdjust: n.values } }} dispatch={() => { }} say={() => { }} readOnly/> : n.id.startsWith('bell-record-') ? <BellNote values={n.values}/> : n.id.startsWith('lamp-observation-') ? <LampNote values={n.values}/> : n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id.startsWith('dispatch-record-') ? <DispatchNote values={n.values}/> : n.id.startsWith('glass-observation-') ? <GlassNote values={n.values}/> : n.id === 'freight' ? <FreightNote /> : n.id === 'noticeBoard' ? <NoticeBoardNote values={n.values}/> : n.id === 'posters' ? <PosterNote values={n.values}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
+                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>最初から始める</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id === 'routeSketch' ? <SketchNote values={n.values}/> : n.id.startsWith('crossing-observation-') ? <CrossingNote values={n.values}/> : n.id === 'homePhoto' ? <HomePhone /> : n.id === 'fragmentPhoto' ? <FragmentPhoto /> : n.id === 'fragments' ? <FragmentLayout values={n.values}/> : n.id === 'receiptTray' ? <ReceiptNote values={n.values}/> : n.id === 'clockChecks' ? <ClockChecks s={{ ...s, values: { ...s.values, clockAdjust: n.values } }} dispatch={() => { }} say={() => { }} readOnly/> : n.id.startsWith('bell-record-') ? <BellNote values={n.values}/> : n.id.startsWith('lamp-observation-') ? <LampNote values={n.values}/> : n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id.startsWith('dispatch-record-') ? <DispatchNote values={n.values}/> : n.id.startsWith('glass-observation-') ? <GlassNote values={n.values}/> : n.id === 'freight' ? <FreightNote /> : n.id === 'noticeBoard' ? <NoticeBoardNote values={n.values}/> : n.id === 'posters' ? <PosterNote values={n.values}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
  </main>;
 }

@@ -44,8 +44,9 @@ function Site({ index }: {
     <text x="35" y="527" fontSize="17">○　点検位置</text>
   </g>;
 }
-export function MaintenanceMap({ embedded = false }: {
+export function MaintenanceMap({ embedded = false, sketch }: {
     embedded?: boolean;
+    sketch?: () => void;
 }) {
     const [detail, setDetail] = useState<number | null>(null);
     return <section className={'rm-maintenance-map' + (embedded ? ' rm-map-embedded' : '')}>
@@ -65,6 +66,6 @@ export function MaintenanceMap({ embedded = false }: {
         <Site index={i}/>{detail === null && <rect x="15" y="10" width="370" height="540" fill="transparent"/>}
       </g>)}
     </svg></div>
-    <div className="rm-map-controls">{detail !== null && <button aria-label="前の図" onClick={() => setDetail((detail + 2) % 3)}>〈</button>}<button onClick={() => setDetail(detail === null ? 0 : null)}>{detail === null ? '拡大する' : '全体を見る'}</button>{detail !== null && <button aria-label="次の図" onClick={() => setDetail((detail + 1) % 3)}>〉</button>}</div>
+    <div className="rm-map-controls">{sketch && <button onClick={sketch}>路線の略図を見る</button>}{detail !== null && <button aria-label="前の図" onClick={() => setDetail((detail + 2) % 3)}>〈</button>}<button onClick={() => setDetail(detail === null ? 0 : null)}>{detail === null ? '拡大する' : '全体を見る'}</button>{detail !== null && <button aria-label="次の図" onClick={() => setDetail((detail + 1) % 3)}>〉</button>}</div>
   </section>;
 }
