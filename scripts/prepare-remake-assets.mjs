@@ -3,6 +3,18 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['tunnel/landing','a44b94fe-9311-417b-9532-bf0730cfeeba'],
+ ['tunnel/landing-closed','603383a7-0912-4991-ab81-b153fa01cbbe'],
+ ['tunnel/window','80039a5f-e71b-4f17-9882-385b0503618c'],
+ ['tunnel/return','ec6d3842-62a1-4b0d-b926-2b43ee22b91f'],
+ ['north/east-crossing','f091a761-bcfc-4042-a1e7-632203237bbd'],
+ ['north/east-crossing-closed','bf80aab1-b381-4c04-ac59-5870b18ad0a8'],
+ ['cargo/empty','53bb4a1f-556e-4b37-be00-1b11c518c388'],
+ ['cargo/door-open','32864a06-fc72-44cd-a7e0-9ff123a711d8'],
+ ['cargo/shelf','c3c35c15-c261-4aa9-82cf-37011ac190c3'],
+ ['cargo/long-crate','2e1d0f0e-38ee-4dd6-9be2-7524bc1054e0'],
+ ['cargo/wide-crate','a413e599-09cd-4582-b435-d13e71d0f94c'],
+ ['cargo/trolley','375c1055-ade9-41dd-bd7b-38178b8895d1'],
  ['bridge/gate-mechanism-open-empty','d6b6a1ac-6fcd-4496-b993-8c64ddeafe85'],
  ['bridge/gate-mechanism-empty','78ca52c0-8b3c-4502-9110-d5ceb2c872b7'],
  ['bridge/north-gate-open-empty','549fcebf-f621-49ef-8e63-bfa96fc0245e'],
@@ -112,7 +124,7 @@ const entries=[
  ['bag/empty','576ac99e-3630-4ab4-95f2-784c208449a0'],
 ];
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||['parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||['cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 for(const tape of ['A','B'])manifest.push({id:`audio/tape-${tape}`,source:'src/remake/recordings.ts',file:`public/assets/remake/audio/tape-${tape}.wav`,status:'representative-review',method:'deterministic original WAV; scripts/prepare-recordings.mjs'});
 await mkdir('docs/remake',{recursive:true});await writeFile('docs/remake/assets.json',JSON.stringify(manifest,null,2)+'\n');
 console.log('Encoded '+manifest.length+' representative assets.');

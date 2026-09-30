@@ -1,4 +1,6 @@
 import { sameOpening } from './ticketGeometry';
+import { cargoInitial, moveCargo, stairsClear } from './cargo';
+import type { Cargo } from './cargo';
 import { arrivalCaseSides } from './arrivalPhotos';
 import { duration as tapeDuration } from './recordings';
 import { freshSignals, freshTrain, mounts, stopAt, boardingGeometry, validSignals, validTrain } from './stopping';
@@ -99,6 +101,14 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'cargoMove';
+    index: number;
+    direction: number;
+} | {
+    type: 'stairDoor';
+} | {
+    type: 'northHatch';
+} | {
     type: 'gateInstallSupport';
 } | {
     type: 'rackRing';
@@ -233,6 +243,14 @@ export function reduce(s: State, a: Action): State {
     if (s.room === 'return' && !['look', 'end', 'sound', 'tick', 'record'].includes(a.type))
         return s;
     switch (a.type) {
+        case 'cargoMove': {
+            if (s.room !== 'cargo')
+                return s;
+            const next = moveCargo((s.values.cargo ?? cargoInitial) as Cargo, a.index, a.direction);
+            return next ? { ...s, values: { ...s.values, cargo: next } } : s;
+        }
+        case 'stairDoor': return s.room !== 'cargo' || !stairsClear((s.values.cargo ?? cargoInitial) as Cargo) ? s : { ...s, values: { ...s.values, stairDoor: [s.values.stairDoor?.[0] === 1 ? 0 : 1] } };
+        case 'northHatch': return s.room !== 'tunnel' && (s.room !== 'north' || s.values.northHatch?.[0] !== 1) ? s : { ...s, values: { ...s.values, northHatch: [s.values.northHatch?.[0] === 1 ? 0 : 1] } };
         case 'rackRing': return s.room !== 'office' || s.camera !== 1 || s.locations.hook !== 'toolRack' ? s : { ...s, values: { ...s.values, rackRing: [s.values.rackRing?.[0] === 1 ? 0 : 1] } };
         case 'tagInsert': return s.room !== 'bridge' || s.camera !== 1 || !owns(s, 'hook') || s.locations.pin !== 'railTag' || s.values.tagDepth?.[0] ? s : { ...s, values: { ...s.values, tagDepth: [1] } };
         case 'tagExtend': return s.room !== 'bridge' || s.camera !== 1 || s.values.tagDepth?.[0] !== 1 ? s : { ...s, values: { ...s.values, tagDepth: [2] } };
@@ -300,6 +318,8 @@ export function reduce(s: State, a: Action): State {
         }
         case 'move': {
             if ((s.room === 'bridge' && a.room === 'north' || s.room === 'north' && a.room === 'bridge') && s.values.gateOpen?.[0] !== 1)
+                return s;
+            if ((s.room === 'cargo' && a.room === 'tunnel' || s.room === 'tunnel' && a.room === 'cargo') && s.values.stairDoor?.[0] !== 1 || (s.room === 'north' && a.room === 'tunnel' || s.room === 'tunnel' && a.room === 'north') && s.values.northHatch?.[0] !== 1)
                 return s;
             const camera = a.camera ?? 0;
             return { ...s, room: a.room, camera, visited: append(s.visited, a.room + ':' + camera) };

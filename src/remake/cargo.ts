@@ -37,6 +37,6 @@ export function cargoBoxes(v: Cargo) {
         { id: 'long', x: x0, y: y0 + v[0] * step, w: .7, d: 2.3, h: .95 },
         { id: 'wide', x: x0 + v[1] * step, y: y0, w: 1.5, d: .7, h: .7 },
         { id: 'trolley', x: x0 + v[2] * step, y: y0 + 3 * step, w: 1.5, d: .7, h: .25 },
-        { id: 'shelf', x: x0 + 2 * step, y: y0 + v[3] * step, w: .75, d: 1.5, h: 2.6 },
+        { id: 'shelf', x: x0 + 2 * step + .05, y: y0 + v[3] * step, w: .8, d: 1.5, h: 3 },
     ];
 }

@@ -1,5 +1,89 @@
 [
   {
+    "id": "tunnel/landing",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a44b94fe-9311-417b-9532-bf0730cfeeba.png",
+    "file": "public/assets/remake/tunnel/landing.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "tunnel/landing-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-603383a7-0912-4991-ab81-b153fa01cbbe.png",
+    "file": "public/assets/remake/tunnel/landing-closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "tunnel/window",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-80039a5f-e71b-4f17-9882-385b0503618c.png",
+    "file": "public/assets/remake/tunnel/window.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "tunnel/return",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ec6d3842-62a1-4b0d-b926-2b43ee22b91f.png",
+    "file": "public/assets/remake/tunnel/return.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "north/east-crossing",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f091a761-bcfc-4042-a1e7-632203237bbd.png",
+    "file": "public/assets/remake/north/east-crossing.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "north/east-crossing-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-bf80aab1-b381-4c04-ac59-5870b18ad0a8.png",
+    "file": "public/assets/remake/north/east-crossing-closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "cargo/empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-53bb4a1f-556e-4b37-be00-1b11c518c388.png",
+    "file": "public/assets/remake/cargo/empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "cargo/door-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-32864a06-fc72-44cd-a7e0-9ff123a711d8.png",
+    "file": "public/assets/remake/cargo/door-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "cargo/shelf",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c3c35c15-c261-4aa9-82cf-37011ac190c3.png",
+    "file": "public/assets/remake/cargo/shelf.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "cargo/long-crate",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2e1d0f0e-38ee-4dd6-9be2-7524bc1054e0.png",
+    "file": "public/assets/remake/cargo/long-crate.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "cargo/wide-crate",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a413e599-09cd-4582-b435-d13e71d0f94c.png",
+    "file": "public/assets/remake/cargo/wide-crate.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "cargo/trolley",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-375c1055-ade9-41dd-bd7b-38178b8895d1.png",
+    "file": "public/assets/remake/cargo/trolley.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
     "id": "bridge/gate-mechanism-open-empty",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-d6b6a1ac-6fcd-4496-b993-8c64ddeafe85.png",
     "file": "public/assets/remake/bridge/gate-mechanism-open-empty.webp",
