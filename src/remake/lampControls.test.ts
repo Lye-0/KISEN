@@ -1,0 +1,50 @@
+import { describe, expect, it } from 'vitest';
+import { newState, reduce, restore } from './model';
+import { bellRecord } from './bellCircuit';
+describe('lamp stand and bell controls', () => {
+    it('moves one physical lamp and reuses an unloaded support without duplicating either', () => {
+        let s = newState();
+        s.room = 'lamp';
+        s.locations.lamp = 'inventory';
+        s.locations.spareLamp = 'inventory';
+        s.locations.support = 'inventory';
+        s = reduce(s, { type: 'lightBrace' });
+        expect(s.locations.support).toBe('lightStand');
+        s = reduce(s, { type: 'lightMount', item: 'lamp' });
+        expect(s.locations.lamp).toBe('lightStand');
+        expect(reduce(s, { type: 'lightBrace' })).toBe(s);
+        expect(reduce(s, { type: 'lightMount', item: 'spareLamp' })).toBe(s);
+        expect(reduce(s, { type: 'take', item: 'support' })).toBe(s);
+        s = reduce(s, { type: 'lightMount', item: 'lamp' });
+        s = reduce(s, { type: 'lightBrace' });
+        expect(s.locations.support).toBe('inventory');
+        expect(s.locations.lamp).toBe('inventory');
+    });
+    it('stores only bounded chronological input, and retains the live selector when a new strip is started', () => {
+        let s = newState();
+        s.room = 'lamp';
+        s = reduce(s, { type: 'bellChannel', channel: 1 });
+        s = reduce(s, { type: 'bellStrike', time: 1000 });
+        expect(reduce(s, { type: 'bellStrike', time: 1000 })).toBe(s);
+        s = reduce(s, { type: 'bellStrike', time: 1400 });
+        expect(s.values.bellInputs).toEqual([1000, 1400]);
+        s = reduce(s, { type: 'record', id: 'bell-record-1000', values: bellRecord(1000, s.values.bellInputs, 1, 2000) });
+        expect(restore(s)).not.toBeNull();
+        s = reduce(s, { type: 'bellReset' });
+        expect(s.values.bellInputs).toEqual([]);
+        expect(s.values.bellChannel).toEqual([1]);
+        expect(s.notes[0].values.at(-1)).toBe(900);
+    });
+    it('rejects invalid restored controls and permits the recovered gate support at the light stand', () => {
+        const s = newState();
+        s.room = 'lamp';
+        s.values = { gateOpen: [1], gateRod: [0], gateSupport: [0] };
+        s.locations.support = 'lightStand';
+        expect(restore(s)).not.toBeNull();
+        s.values.lightAim = [0, 10];
+        expect(restore(s)).toBeNull();
+        s.values.lightAim = [0, 0];
+        s.values.bellInputs = [100, 90];
+        expect(restore(s)).toBeNull();
+    });
+});

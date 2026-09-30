@@ -1,3 +1,4 @@
+import { liveCircuit } from './model';
 import { useId, useRef, useState } from 'react';
 import { Photo, Touch } from './Photo';
 import { shutterSlotCenters } from './stopping';
@@ -18,7 +19,7 @@ export function ShutterImage({ s, controls = false, dispatch }: {
  <text x="733" y="647" textAnchor="middle" fontSize="30" fill="#c3bfae">{s.values.callService?.[0] ?? 1}</text><text x="970" y="591" textAnchor="middle" fontSize="17" fill="#999b8c">呼出</text><defs><clipPath id={id + 'cavity'}><rect x="381" y="281" width="909" height="226"/></clipPath>
  {[0, 1].map(plate => <mask key={plate} id={id + plate} maskUnits="userSpaceOnUse" x="300" y="270" width="1040" height="270"><rect x="300" y="270" width="1040" height="270" fill="white"/>{shutterSlotCenters(plate, s.signals.shutters[plate]).map(x => <rect key={x} x={origin + x * unit - 52} y="352" width="104" height="100" rx="4" fill="black"/>)}</mask>)}
  <linearGradient id={id + 'grip'} x2="0" y2="1"><stop stopColor="#818481"/><stop offset=".4" stopColor="#383c39"/><stop offset="1" stopColor="#161b19"/></linearGradient></defs>
- {fitted && <><g clipPath={'url(#' + id + 'cavity)'}>{[0, 1].map(plate => <g key={plate} mask={'url(#' + id + plate + ')'}><rect x="380" y="280" width="920" height="230" fill={plate ? '#343a39' : '#171c1c'}/><svg x={-230 + s.signals.shutters[plate] * unit * 10} y="280" width="1640" height="230" viewBox="60 205 2040 315" preserveAspectRatio="none" opacity={plate ? .75 : .5}><image href="/assets/remake/parts/shutter-blade.png" width="2172" height="724"/></svg></g>)}</g>
+ {!liveCircuit(s) && <rect x="381" y="281" width="909" height="226" fill="#080b09"/>}{fitted && <><g clipPath={'url(#' + id + 'cavity)'}>{[0, 1].map(plate => <g key={plate} mask={'url(#' + id + plate + ')'}><rect x="380" y="280" width="920" height="230" fill={plate ? '#343a39' : '#171c1c'}/><svg x={-230 + s.signals.shutters[plate] * unit * 10} y="280" width="1640" height="230" viewBox="60 205 2040 315" preserveAspectRatio="none" opacity={plate ? .75 : .5}><image href="/assets/remake/parts/shutter-blade.png" width="2172" height="724"/></svg></g>)}</g>
  {[0, 1].map(plate => {
                 const step = s.signals.shutters[plate], x = origin + (18 + step * 10) * unit, y = plate ? 509 : 264;
                 return <g key={plate} role={controls ? 'slider' : undefined} tabIndex={controls ? 0 : undefined} aria-label={plate ? '手前の羽根' : '奥の羽根'} aria-valuemin={0} aria-valuemax={4} aria-valuenow={step} style={{ pointerEvents: controls ? 'auto' : 'none', cursor: 'ew-resize', touchAction: 'none' }} onKeyDown={e => {

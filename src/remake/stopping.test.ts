@@ -22,6 +22,7 @@ it('進入と退去の途中で保存再開しても呼び直しや停止位置�
 function ready() {
     let s = newState();
     s.room = 'north';
+    s.values.bellChannel = [1];
     s.route = [0, 1, 0, 1, 1, 1];
     s.locations = { ...s.locations, lamp: 'inventory', spareLamp: 'inventory', hood: 'inventory' };
     s = reduce(s, { type: 'signalHood' });
@@ -139,3 +140,4 @@ it('重複取付や所在のない取付、汎用の移動操作による設置�
     expect(reduce(empty, { type: 'signalMount', lamp: 0, mark: 7 })).toBe(empty);
     expect(reduce(empty, { type: 'signalHood' })).toBe(empty);
 });
+it('現在の回線へ接続していなければ、同じ灯具と路線でも通過する', () => { let s = ready(); s.values.bellChannel = [0]; s = reduce(reduce(s, { type: 'call', service: 2 }), { type: 'trainArrive' }); expect(s.train.position).toBe('passing'); const old = ready(); delete old.values.bellChannel; expect(restore(old)?.values.bellChannel).toEqual([1]); });

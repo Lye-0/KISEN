@@ -1,3 +1,4 @@
+import { useBell } from './Bell';
 import { useId, useState } from 'react';
 import { Photo, Touch } from './Photo';
 import { Surface } from './Surface';
@@ -5,7 +6,7 @@ import { planeMatrix } from './plane';
 import { ShutterImage } from './Shutter';
 import { platformPoint, platformPolygon, carriageSideY, lampRowY } from './platformGeometry';
 import { illuminatedPorts, mounts, planks, services, stopAt, doorCenters, boardingGeometry } from './stopping';
-import { validTicket, trace } from './model';
+import { liveCircuit, validTicket, trace } from './model';
 import type { Action, State, Item } from './model';
 import type { Focus } from './World';
 function Carriage({ s }: {
@@ -14,7 +15,7 @@ function Carriage({ s }: {
     if (s.train.position === 'absent' || s.train.position === 'departed')
         return null;
     const car = services.find(c => c.id === s.train.service)!;
-    const target = stopAt(s.train.service, s.signals, s.locations.hood === 'signal', trace(s.route).end === 'O').firstDoor ?? 7;
+    const target = stopAt(s.train.service, s.signals, s.locations.hood === 'signal', trace(s.route).end === 'O' && liveCircuit(s)).firstDoor ?? 7;
     const progress = s.train.progress ?? 0;
     const first = s.train.position === 'stopped' ? s.train.firstDoor! : s.train.position === 'approaching' ? target - 28 * (1 - progress) ** 2 : (s.train.position === 'leaving' ? s.train.firstDoor! : target) + 28 * progress;
     // Both boarding doors keep their physical separation inside a longer carriage.
@@ -68,7 +69,8 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
     const id = useId().replace(/:/g, ''), [detail, setDetail] = useState(false), [boardIndex, setBoardIndex] = useState(0);
     const center = platformPoint(boardIndex === 0 ? 7 : 11, carriageSideY);
     const visible = (x: number) => !detail || Math.abs(platformPoint(x, carriageSideY).x - center.x) < 210;
-    const light = illuminatedPorts(s.signals, s.locations.hood === 'signal');
+    const light = illuminatedPorts(s.signals, s.locations.hood === 'signal' && liveCircuit(s));
+    const bell = useBell(s, false), beacon = platformPoint(5, 8, 1.3), foot = platformPoint(5, 8, 0), beaconHeight = (foot.y - beacon.y) / .85;
     const lampIndex = selected === 'lamp' ? 0 : selected === 'spareLamp' ? 1 : null;
     return <div className="rm-north"><Photo src="/assets/remake/north/platform.webp" label="北ホームの二つの踏み板と停車灯の取付列" view={detail ? [center.x - 210, 400, 420, 365] : undefined}>
  <Carriage s={s}/><svg className="rm-object-overlay" viewBox="0 0 1672 941"><defs><clipPath id={id + 'front'}><rect x="0" y={platformPoint(7, 7).y} width="1672" height={941 - platformPoint(7, 7).y}/>{planks.map(([a, b]) => <polygon key={a} points={platformPolygon([[a, 6.22, .04], [b, 6.22, .04], [b, 7.1, .04], [a, 7.1, .04]])}/>)}</clipPath><radialGradient id={id + 'glow'}><stop stopColor="#fff1b7" stopOpacity=".75"/><stop offset="1" stopColor="#ddbc73" stopOpacity="0"/></radialGradient></defs>
@@ -80,7 +82,7 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
             const p = platformPoint(mark, lampRowY), top = platformPoint(mark, lampRowY, .48), h = p.y - top.y, w = h * 1024 / 1536;
             return <g key={i}><ellipse cx={p.x} cy={p.y} rx={w * .26} ry="3" fill="#020504" opacity=".65"/><image href="/assets/remake/parts/marker-lamp.png" x={p.x - w / 2} y={p.y - h * .97} width={w} height={h}/>{light[i] && <ellipse cx={p.x} cy={p.y - h * .53} rx={w * .29} ry={h * .19} fill={'url(#' + id + 'glow)'}/>}</g>;
         })}
- <svg x="1200" y="624" width="240" height="135" viewBox="0 0 1672 941"><defs><clipPath id={id + 'housing'}><path d="M195 115Q205 80 270 80H1400Q1467 80 1467 140V630Q1467 695 1400 695H1340V854H1460V941H200V854H325V695H265Q195 695 195 630Z"/></clipPath></defs><g clipPath={'url(#' + id + 'housing)'}><image href="/assets/remake/signal/housing.webp" width="1672" height="941"/><ShutterImage s={s}/></g></svg>
+ <image href="/assets/remake/parts/response-beacon.png" x={beacon.x - beaconHeight * .3} y={beacon.y - beaconHeight * .15} width={beaconHeight * .6} height={beaconHeight}/>{bell.reply && <ellipse cx={beacon.x} cy={beacon.y} rx="40" ry="38" fill={'url(#' + id + 'glow)'}/>}<svg x="1200" y="624" width="240" height="135" viewBox="0 0 1672 941"><defs><clipPath id={id + 'housing'}><path d="M195 115Q205 80 270 80H1400Q1467 80 1467 140V630Q1467 695 1400 695H1340V854H1460V941H200V854H325V695H265Q195 695 195 630Z"/></clipPath></defs><g clipPath={'url(#' + id + 'housing)'}><image href="/assets/remake/signal/housing.webp" width="1672" height="941"/><ShutterImage s={s}/></g></svg>
  </svg>
  {mounts.filter(visible).map(mark => {
             const p = platformPoint(mark, lampRowY), i = s.signals.mounts.indexOf(mark);
@@ -97,7 +99,9 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
  {(s.train.position === 'stopped' ? doorCenters(s.train) : []).filter(visible).map((x, i) => {
             const p = platformPoint(x, carriageSideY, 1.1);
             return <Touch key={i} name="扉へ足を渡す" rect={[(p.x - 36) / 16.72, (p.y - 70) / 9.41, 72 / 16.72, 140 / 9.41]} act={() => {
-                    if (!boardingGeometry(s.train, s.signals, s.locations.hood === 'signal'))
+                    if (!liveCircuit(s))
+                        say('停車灯が消えている。');
+                    else if (!boardingGeometry(s.train, s.signals, s.locations.hood === 'signal'))
                         say('踏み板から扉へ、足を渡せない。');
                     else if (!validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0) {
                         inspect('reader');

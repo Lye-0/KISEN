@@ -1111,5 +1111,47 @@
     "file": "public/assets/remake/audio/tape-B.wav",
     "status": "representative-review",
     "method": "deterministic original WAV; scripts/prepare-recordings.mjs"
+  },
+  {
+    "id": "parts/lamp-rear",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-514957c6-4fef-4d52-9948-e2da5f50db28.png",
+    "file": "public/assets/remake/parts/lamp-rear.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; original canvas preserved; encoding only"
+  },
+  {
+    "id": "lamp/bell",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-84e21189-323c-49c3-abf5-dcce170566b9.png",
+    "file": "public/assets/remake/lamp/bell.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/response-beacon",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-444e7559-64dd-4b85-8c28-9bd186d01d2d.png",
+    "file": "public/assets/remake/parts/response-beacon.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "lamp/field",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-44f32bb0-da6c-42ff-bc7e-44c96f8a6c38.png",
+    "file": "public/assets/remake/lamp/field.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; original canvas preserved; encoding only"
+  },
+  {
+    "id": "lamp/window",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-4d8dd230-2fb8-45f9-827c-9aa517ac23f0.png",
+    "file": "public/assets/remake/lamp/window.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; original canvas preserved; encoding only"
+  },
+  {
+    "id": "parts/field-posts",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-aa56c1bc-ffc7-4fe5-972f-9a3fe8caa25f.png",
+    "file": "public/assets/remake/parts/field-posts.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; original canvas preserved; encoding only"
   }
 ]

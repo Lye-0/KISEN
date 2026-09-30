@@ -1,3 +1,5 @@
+import { LampWindow } from './LampWindow';
+import { BellPanel } from './Bell';
 import { Posters } from './PosterFragments';
 import { ShedDoor, BalanceBox } from './LampShed';
 import { CargoChest, CargoDocketsView, CargoDocketSheet } from './CargoChest';
@@ -43,7 +45,8 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'posters': return <Posters s={s} dispatch={dispatch} say={say}/>;
         case 'shedDoor': return <ShedDoor s={s} dispatch={dispatch} say={say} enter={() => dispatch({ type: 'move', room: 'lamp' })}/>;
         case 'balanceBox': return <BalanceBox s={s} dispatch={dispatch} say={say}/>;
-        case 'lampWindow': return <Photo src='/assets/remake/lamp/store.webp' view={[0, 120, 485, 650]} label='小屋の西の窓'/>;
+        case 'lampWindow': return <LampWindow s={s} dispatch={dispatch} selected={selected} say={say} inspect={inspect} field/>;
+        case 'bell': return <BellPanel s={s} dispatch={dispatch} say={say}/>;
         case 'cargoChest': return <CargoChest s={s} dispatch={dispatch} say={say} inspectDockets={() => inspect('cargoDockets')} inspectDocket={() => inspect('cargoDocket')}/>;
         case 'cargoDockets': return <CargoDocketsView dispatch={dispatch} say={say}/>;
         case 'cargoDocket': return <CargoDocketSheet />;

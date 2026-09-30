@@ -33,7 +33,7 @@ export function LampShed({ s, dispatch, inspect, say }: {
             }
             else
                 say('灯具の金具が残っている。');
-        }}/><Touch name="左右の重りの付いた保管箱" rect={[38, 49, 31, 39]} act={() => inspect('balanceBox')}/><Touch name="小屋の西の窓" rect={[0, 16, 27, 58]} act={() => inspect('lampWindow')}/></Photo><button className="rm-passage-actions" onClick={() => dispatch({ type: "move", room: "forecourt", camera: 1 })}>入口へ戻る</button></>;
+        }}/><Touch name="左右の重りの付いた保管箱" rect={[38, 49, 31, 39]} act={() => inspect('balanceBox')}/><Touch name="小屋の西の窓" rect={[0, 16, 27, 58]} act={() => dispatch({ type: 'look', camera: 1 })}/></Photo><button className="rm-passage-actions" onClick={() => dispatch({ type: "move", room: "forecourt", camera: 1 })}>入口へ戻る</button></>;
 }
 export function BalanceContents({ s }: {
     s: State;

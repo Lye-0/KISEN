@@ -1,3 +1,4 @@
+import { LampWindow } from './LampWindow';
 import { LampShed } from './LampShed';
 import { BridgeGateWide } from './BridgeGate';
 import { RailTagWide } from './RailTag';
@@ -15,8 +16,8 @@ import { RecordCard } from './ServiceRecords';
 import { RecorderImage } from './Recorder';
 import { owns } from './model';
 import type { Action, Item, Room, State } from './model';
-export type Focus = 'posters' | 'shedDoor' | 'balanceBox' | 'lampWindow' | 'cargoChest' | 'cargoDockets' | 'cargoDocket' | 'points' | 'journeyRecords' | 'passageWindow' | 'crossing' | 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
-export const availableViews: Partial<Record<Room, string[]>> = { train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側', '西の階段'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前', '東の側道'], office: ['机と南の窓', '北の保管区画'], cargo: ['箱と台車', '南の窓と柱'], passage: ['南の階段', '地下通路・北向き', '北の踊り場', '地下通路・南向き'], bridge: ['駅舎の屋根と北壁', '線路と屋根', '北端の保守柵'], north: ['停車灯と踏み板', '西の橋階段', '東の線路と地下入口', '分岐操作器'] };
+export type Focus = 'bell' | 'posters' | 'shedDoor' | 'balanceBox' | 'lampWindow' | 'cargoChest' | 'cargoDockets' | 'cargoDocket' | 'points' | 'journeyRecords' | 'passageWindow' | 'crossing' | 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
+export const availableViews: Partial<Record<Room, string[]>> = { lamp: ['保管箱と灯具', '西の窓'], train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側', '西の階段'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前', '東の側道'], office: ['机と南の窓', '北の保管区画'], cargo: ['箱と台車', '南の窓と柱'], passage: ['南の階段', '地下通路・北向き', '北の踊り場', '地下通路・南向き'], bridge: ['駅舎の屋根と北壁', '線路と屋根', '北端の保守柵'], north: ['停車灯と踏み板', '西の橋階段', '東の線路と地下入口', '分岐操作器'] };
 function CounterObjects({ s }: {
     s: State;
 }) { const open = s.values.drawerOpen?.[0] === 1; return <svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="978" y="254" width="256" height="275" viewBox="436 166 784 632" preserveAspectRatio="none"><HatchImage s={s}/></svg><svg x={open ? 945 : 965} y={open ? 552 : 557} width={open ? 339 : 299} height={open ? 139 : 76} viewBox={open ? '55 252 1555 638' : '125 296 1415 350'} preserveAspectRatio="none"><DrawerImage s={s}/></svg><foreignObject x="690" y="275" width="100" height="195"><RecordCard id={0} inkOnly/></foreignObject><foreignObject x="800" y="310" width="72" height="141"><RecordCard id={1} inkOnly/></foreignObject></svg>; }
@@ -50,7 +51,7 @@ export function World({ s, dispatch, inspect, selected, say }: {
             }}/></>);
     }
     if (s.room === 'lamp')
-        return <LampShed s={s} dispatch={dispatch} inspect={inspect} say={say}/>;
+        return s.camera === 1 ? <LampWindow s={s} dispatch={dispatch} inspect={inspect} selected={selected} say={say}/> : <LampShed s={s} dispatch={dispatch} inspect={inspect} say={say}/>;
     if (s.room === 'forecourt')
         return s.camera === 1 ? image('lamp/path-' + (s.values.shedOpen?.[0] === 1 ? 'open' : 'closed'), '駅舎の東端から灯具小屋へ続く側道', <Touch name={s.values.shedOpen?.[0] === 1 ? '灯具小屋へ入る' : '灯具小屋の扉の錠'} rect={[44.5, 41, 13, 27]} act={() => s.values.shedOpen?.[0] === 1 ? move('lamp') : inspect('shedDoor')}/>) : image('forecourt/station', '六つの窓が並ぶ駅舎', <><Touch name="待合室へ戻る" rect={[13, 44, 7, 27]} act={() => move('waiting', 2)}/><Touch name="外の掲示板の破れた紙" rect={[86, 51, 9, 16]} act={() => inspect('posters')}/></>);
     if (s.room === 'office')

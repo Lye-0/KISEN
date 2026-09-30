@@ -15,6 +15,20 @@ const dot = (a: Vec3, b: Vec3) => a.reduce((v, n, i) => v + n * b[i], 0);
 const cross = (a: Vec3, b: Vec3): Vec3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const unit = (a: Vec3): Vec3 => { const l = Math.hypot(...a); return a.map(n => n / l) as Vec3; };
 export function project(p: Vec3, c: Camera) { const forward = unit(sub(c.target, c.position)), right = unit(cross(forward, [0, 0, 1])), up = cross(right, forward), v = sub(p, c.position), depth = dot(v, forward); return { x: c.width / 2 + c.focal * dot(v, right) / depth, y: c.height / 2 - c.focal * dot(v, up) / depth, depth }; }
+/** Clip a physical surface before perspective projection, including cameras close to a window. */
+export function clipCameraPolygon(vertices: Vec3[], camera: Camera, near = .02): Vec3[] {
+    const result: Vec3[] = [];
+    for (let i = 0; i < vertices.length; i++) {
+        const a = vertices[i], b = vertices[(i + 1) % vertices.length], da = project(a, camera).depth, db = project(b, camera).depth, insideA = da >= near, insideB = db >= near;
+        if (insideA)
+            result.push(a);
+        if (insideA !== insideB) {
+            const t = (near - da) / (db - da);
+            result.push(a.map((n, k) => n + t * (b[k] - n)) as Vec3);
+        }
+    }
+    return result;
+}
 export const towerCameras: Record<'west' | 'east', Camera> = { west: { position: [-18, -8, 2.4], target: [0, 0, 6], focal: 1400, width: 1672, height: 941 }, east: { position: [18, -8, 2.4], target: [0, 0, 6], focal: 1400, width: 1672, height: 941 } };
 export const tower = { corners: [[-1.2, -1.2], [1.2, -1.2], [1.2, 1.2], [-1.2, 1.2]], height: 12, ladderX: -1.22, ladderY: -.95 };
 export const poles = [{ id: 'scarred', base: [-6, -3.1, 0] as Vec3, height: 10, radius: .15, scar: 6.3 }, { id: 'plain', base: [6, -3.1, 0] as Vec3, height: 10, radius: .15, scar: null }];
