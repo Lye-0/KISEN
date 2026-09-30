@@ -414,6 +414,13 @@ export function restore(value: unknown): State | null {
     const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 768 && v.every(n => typeof n === 'number' && Number.isFinite(n));
     if (!Object.values(s.values).every(numeric))
         return null;
+    for (const [name, max] of [['journeySelected', 3], ['journeyStop', 1], ['journeyFrame', 1], ['journeyCompare', 1]] as const)
+        if (s.values[name] && (s.values[name].length !== 1 || !Number.isInteger(s.values[name][0]) || s.values[name][0] < 0 || s.values[name][0] > max))
+            return null;
+    if (s.values.journeyBacks && (s.values.journeyBacks.length > 4 || new Set(s.values.journeyBacks).size !== s.values.journeyBacks.length || s.values.journeyBacks.some(n => !Number.isInteger(n) || n < 0 || n > 3)))
+        return null;
+    if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('journey-record-') && (!numeric(n.values) || ![2, 3].includes(n.values.length) || !Number.isInteger(n.values[0]) || n.values[0] < 0 || n.values[0] > 3 || ![0, 1].includes(n.values[1]) || n.values.length === 3 && ![0, 1].includes(n.values[2]))))
+        return null;
     if (s.values.cargo && !validCargo(s.values.cargo as Cargo))
         return null;
     for (const name of ['stairDoor', 'northHatch'])

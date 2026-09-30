@@ -16,6 +16,7 @@ import { TicketReader } from './TicketReader';
 import { Hatch } from './Hatch';
 import { CounterDrawer } from './CounterDrawer';
 import { ServiceRecords } from './ServiceRecords';
+import { JourneyRecords } from './JourneyRecords';
 import { OfficeLock } from './OfficeLock';
 import { Receipt } from './Receipt';
 import { Photo } from './Photo';
@@ -45,7 +46,8 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'recorder': return <Recorder s={s} dispatch={dispatch} say={say} selected={selected} onSelect={onSelect}/>;
         case 'case': return <RouteCase s={s} dispatch={dispatch} say={say}/>;
         case 'map': return <MaintenanceMap />;
-        case 'ticket': return <TicketBench s={s} dispatch={dispatch} say={say}/>;
+        case 'ticket': return <TicketBench s={s} dispatch={dispatch} say={say} records={() => inspect('journeyRecords')}/>;
+        case 'journeyRecords': return <JourneyRecords s={s} dispatch={dispatch} say={say}/>;
         case 'reader': return <TicketReader s={s} dispatch={dispatch} say={say}/>;
         case 'hatch': return <Hatch s={s} dispatch={dispatch} say={say}/>;
         case 'counterDrawer': return <CounterDrawer s={s} dispatch={dispatch} say={say}/>;

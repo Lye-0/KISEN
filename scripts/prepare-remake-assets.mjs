@@ -3,6 +3,18 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['journeys/b-white-0','98e6249c-ffc7-4a82-bd66-463dcf163a05'],
+ ['journeys/b-white-1','2e14201c-81d1-46ab-ab24-4635852374d4'],
+ ['journeys/b-black-0','279371d2-fa4f-4125-ba1c-bacf6b043b86'],
+ ['journeys/b-black-1','8abce186-c614-4474-8f7c-5afb2f27c725'],
+ ['journeys/e-white-0','c85b9eee-1e4c-4565-85bc-181726ff3313'],
+ ['journeys/e-white-1','1a067870-3294-4d0f-bd1c-a4469c5915f0'],
+ ['journeys/e-black-0','a55b80b2-f279-4ef8-b9a4-85f34ebb2c09'],
+ ['journeys/e-black-1','09885dd2-70f4-4913-a26e-5c5403c3a9b9'],
+ ['journeys/d-white-0','ca033211-9894-473f-b60c-ff0d582a031d'],
+ ['journeys/d-white-1','c78df016-5f74-4eda-90f0-97a0dcfa69a7'],
+ ['journeys/c-black-0','f256e368-edd0-4b3d-aead-788d1e4f1bfd'],
+ ['journeys/c-black-1','481ed1d0-7396-4a0d-98ed-5c3e9ac73a4b'],
  ['tunnel/landing','a44b94fe-9311-417b-9532-bf0730cfeeba'],
  ['tunnel/landing-closed','603383a7-0912-4991-ab81-b153fa01cbbe'],
  ['tunnel/window','80039a5f-e71b-4f17-9882-385b0503618c'],

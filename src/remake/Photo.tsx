@@ -9,11 +9,12 @@ export function decode(src: string) {
     }
     return p;
 }
-export function Photo({ src, label, children, zoomable = false, view }: {
+export function Photo({ src, label, children, zoomable = false, zoomOrigin, view }: {
     src: string;
     label: string;
     children?: ReactNode;
     zoomable?: boolean;
+    zoomOrigin?: string;
     view?: [
         number,
         number,
@@ -37,7 +38,7 @@ export function Photo({ src, label, children, zoomable = false, view }: {
         return () => { active = false; };
     }, [src]);
     const [x, y, w, h] = view ?? [0, 0, 1672, 941];
-    return <div className="rm-photo" aria-busy={loaded !== src} style={{ aspectRatio: `${w}/${h}`, maxWidth: view ? `min(calc(100dvh * ${w / h}), ${w*2}px)` : undefined }}><div className="rm-photo-content" style={{ left: `${-x / w * 100}%`, top: `${-y / h * 100}%`, width: `${1672 / w * 100}%`, height: `${941 / h * 100}%`, transform: zoom ? 'scale(2.7)' : undefined, transformOrigin: origin }}><img src={loaded || src} alt={label} draggable={false}/>{loaded === src && children}</div>{loaded === src ? <>{zoomable && <button className="rm-photo-zoom" aria-label={zoom ? '写真の全体を見る' : '写真を拡大する'} onClick={e => { const r = e.currentTarget.getBoundingClientRect(); setOrigin(e.detail === 0 ? '50% 50%' : `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`); setZoom(!zoom); }}><span aria-hidden="true">{zoom ? '−' : '＋'}</span></button>}</> : <div className="rm-loading" role="status">{error ? '画像を読み込めません。再読み込みしてください。' : '…'}</div>}</div>;
+    return <div className="rm-photo" aria-busy={loaded !== src} style={{ aspectRatio: `${w}/${h}`, maxWidth: view ? `min(calc(100dvh * ${w / h}), ${w * 2}px)` : undefined }}><div className="rm-photo-content" style={{ left: `${-x / w * 100}%`, top: `${-y / h * 100}%`, width: `${1672 / w * 100}%`, height: `${941 / h * 100}%`, transform: zoom ? 'scale(2.7)' : undefined, transformOrigin: origin }}><img src={loaded || src} alt={label} draggable={false}/>{loaded === src && children}</div>{loaded === src ? <>{zoomable && <button className="rm-photo-zoom" aria-label={zoom ? '写真の全体を見る' : '写真を拡大する'} onClick={e => { const r = e.currentTarget.getBoundingClientRect(); setOrigin(zoomOrigin ?? (e.detail === 0 ? '50% 50%' : `${(e.clientX - r.left) / r.width * 100}% ${(e.clientY - r.top) / r.height * 100}%`)); setZoom(!zoom); }}><span aria-hidden="true">{zoom ? '−' : '＋'}</span></button>}</> : <div className="rm-loading" role="status">{error ? '画像を読み込めません。再読み込みしてください。' : '…'}</div>}</div>;
 }
 export function Patch({ src, rect }: {
     src: string;
