@@ -1,8 +1,11 @@
 import sharp from 'sharp';
-import {mkdir,writeFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['bridge/freight-detail','657271d7-ea60-4461-bdbb-6ed97b43f30f'],
+ ['bridge/freight','16b0a8d7-3905-4a75-ac1d-7afbc781b885'],
+ ['forecourt/notice-board','e5d9d868-926f-41d8-b979-9adc4ea96bda'],
  ['parts/retaining-pin','a56718f0-3149-487d-9da9-7fcfa0e7e6f5'],
  ['journeys/f-white','0a6009bd-8e92-4b4c-ba40-59b9e6643f0a'],
  ['lost/table','49f2835d-acf4-4e05-ab30-88708de51437'],
@@ -173,8 +176,16 @@ const entries=[
  ['bag/open','93298c85-5b07-4e27-bdb2-8fddff225250'],
  ['bag/empty','576ac99e-3630-4ab4-95f2-784c208449a0'],
 ];
+const requested=new Set(process.argv.slice(2));
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/field-posts','parts/response-beacon','parts/lamp-rear','parts/balance-weights','parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='parts/retaining-pin'||id==='parts/balance-beam'||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(id==='parts/retaining-pin')await sharp(source).trim().png().toFile(file);else if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:id==='parts/retaining-pin'?'built-in image_gen; alpha preserved, trim only':rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/field-posts','parts/response-beacon','parts/lamp-rear','parts/balance-weights','parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='parts/retaining-pin'||id==='parts/balance-beam'||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');if(!requested.size||requested.has(id)){await mkdir(path.dirname(file),{recursive:true});if(id==='parts/retaining-pin')await sharp(source).trim().png().toFile(file);else if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);}manifest.push({id,source,file,status:'representative-review',method:id==='parts/retaining-pin'?'built-in image_gen; alpha preserved, trim only':rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 for(const tape of ['A','B'])manifest.push({id:`audio/tape-${tape}`,source:'src/remake/recordings.ts',file:`public/assets/remake/audio/tape-${tape}.wav`,status:'representative-review',method:'deterministic original WAV; scripts/prepare-recordings.mjs'});
+let previous=[];try{previous=JSON.parse(await readFile('docs/remake/assets.json','utf8'));}catch{}
+const previousIndex=new Map(previous.map((v,i)=>[v.id,i]));const previousById=new Map(previous.map(v=>[v.id,v]));
+for(const entry of manifest){const old=previousById.get(entry.id);if(old?.source?.replaceAll('\\','/')===entry.source.replaceAll('\\','/'))entry.source=old.source;}
+manifest.sort((a,b)=>(previousIndex.get(a.id)??Infinity)-(previousIndex.get(b.id)??Infinity));
 await mkdir('docs/remake',{recursive:true});await writeFile('docs/remake/assets.json',JSON.stringify(manifest,null,2)+'\n');
 console.log('Encoded '+manifest.length+' representative assets.');
+
+
+

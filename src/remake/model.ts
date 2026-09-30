@@ -1,3 +1,4 @@
+import { validNoticeLift } from './notice';
 import { fragmentInitial, moveFragment, validFragments } from './ticketFragments';
 import { placeReceipt, receiptInitial, receiptTrayReleases, validClockAdjust, validReceiptSlots } from './lostProperty';
 import { validAim } from './lampOptics';
@@ -70,7 +71,7 @@ export interface State {
     ended: boolean;
 }
 export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { retainingPin: 'balanceChest', fragments: 'lostDrawer', lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { retainingPinRevision: [1], passageRevision: [1], bellChannel: [0] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
-export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
+export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 4, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
 export const signalReady = (s: State) => s.locations.hood === 'signal' && s.locations.retainingPin === 'signal';
 export const liveCircuit = (s: State) => s.values.bellChannel?.[0] === 1;
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
@@ -568,6 +569,10 @@ export function restore(value: unknown): State | null {
         if (s.values[name] && (s.values[name].length !== 1 || ![0, 1].includes(s.values[name][0])))
             return null;
     if (s.values.balanceOpen?.[0] === 1 && !balanceReleases(s.values.balancePositions ?? [1, 1]))
+        return null;
+    if (s.notes.some(n => n?.id === 'freight' && (!numeric(n.values) || n.values.length !== 0)))
+        return null;
+    if (s.values.noticeLift && !validNoticeLift(s.values.noticeLift) || s.notes.some(n => n?.id === 'noticeBoard' && (!numeric(n.values) || !validNoticeLift(n.values))))
         return null;
     if (s.values.posterPair && (s.values.posterPair.length !== 2 || !s.values.posterPair.every(n => Number.isInteger(n) && n >= 0 && n < 4)))
         return null;

@@ -1138,7 +1138,7 @@
     "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-514957c6-4fef-4d52-9948-e2da5f50db28.png",
     "file": "public/assets/remake/parts/lamp-rear.png",
     "status": "representative-review",
-    "method": "built-in image_gen; original canvas preserved; encoding only"
+    "method": "built-in image_gen; alpha and canvas preserved"
   },
   {
     "id": "lamp/bell",
@@ -1159,21 +1159,21 @@
     "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-44f32bb0-da6c-42ff-bc7e-44c96f8a6c38.png",
     "file": "public/assets/remake/lamp/field.webp",
     "status": "representative-review",
-    "method": "built-in image_gen; original canvas preserved; encoding only"
+    "method": "built-in image_gen; WebP encoding only"
   },
   {
     "id": "lamp/window",
     "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-4d8dd230-2fb8-45f9-827c-9aa517ac23f0.png",
     "file": "public/assets/remake/lamp/window.webp",
     "status": "representative-review",
-    "method": "built-in image_gen; original canvas preserved; encoding only"
+    "method": "built-in image_gen; WebP encoding only"
   },
   {
     "id": "parts/field-posts",
     "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-aa56c1bc-ffc7-4fe5-972f-9a3fe8caa25f.png",
     "file": "public/assets/remake/parts/field-posts.png",
     "status": "representative-review",
-    "method": "built-in image_gen; original canvas preserved; encoding only"
+    "method": "built-in image_gen; alpha and canvas preserved"
   },
   {
     "id": "lost/room",
@@ -1193,6 +1193,27 @@
     "id": "lost/tray-open",
     "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-99d2aa80-e61f-466d-97d1-19239f2d685d.png",
     "file": "public/assets/remake/lost/tray-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/freight-detail",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-657271d7-ea60-4461-bdbb-6ed97b43f30f.png",
+    "file": "public/assets/remake/bridge/freight-detail.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/freight",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-16b0a8d7-3905-4a75-ac1d-7afbc781b885.png",
+    "file": "public/assets/remake/bridge/freight.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "forecourt/notice-board",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e5d9d868-926f-41d8-b979-9adc4ea96bda.png",
+    "file": "public/assets/remake/forecourt/notice-board.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
   }

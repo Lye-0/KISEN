@@ -1,3 +1,5 @@
+import { FreightFocus } from './Freight';
+import { NoticeBoard } from './NoticeBoard';
 import { FragmentBoard, FragmentPhoto } from './FragmentBoard';
 import { ClockChecks, ReceiptTray } from './ForgottenShelf';
 import { LampWindow } from './LampWindow';
@@ -48,6 +50,8 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'fragmentPhoto': return owns(s, 'fragments') ? <FragmentPhoto dispatch={dispatch} say={say}/> : null;
         case 'receiptTray': return <ReceiptTray s={s} dispatch={dispatch} say={say}/>;
         case 'clockChecks': return <ClockChecks s={s} dispatch={dispatch} say={say}/>;
+        case 'freight': return <FreightFocus s={s} dispatch={dispatch} say={say}/>;
+        case 'noticeBoard': return <NoticeBoard s={s} dispatch={dispatch} say={say} posters={() => inspect('posters')}/>;
         case 'posters': return <Posters s={s} dispatch={dispatch} say={say}/>;
         case 'shedDoor': return <ShedDoor s={s} dispatch={dispatch} say={say} enter={() => dispatch({ type: 'move', room: 'lamp' })}/>;
         case 'balanceBox': return <BalanceBox s={s} dispatch={dispatch} say={say}/>;
