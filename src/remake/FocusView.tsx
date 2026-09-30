@@ -1,3 +1,4 @@
+import { ClockChecks, ReceiptTray } from './ForgottenShelf';
 import { LampWindow } from './LampWindow';
 import { BellPanel } from './Bell';
 import { Posters } from './PosterFragments';
@@ -42,6 +43,8 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
     inspect: (focus: Focus) => void;
 }) {
     switch (focus) {
+        case 'receiptTray': return <ReceiptTray s={s} dispatch={dispatch} say={say}/>;
+        case 'clockChecks': return <ClockChecks s={s} dispatch={dispatch} say={say}/>;
         case 'posters': return <Posters s={s} dispatch={dispatch} say={say}/>;
         case 'shedDoor': return <ShedDoor s={s} dispatch={dispatch} say={say} enter={() => dispatch({ type: 'move', room: 'lamp' })}/>;
         case 'balanceBox': return <BalanceBox s={s} dispatch={dispatch} say={say}/>;

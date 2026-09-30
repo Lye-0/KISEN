@@ -1153,5 +1153,26 @@
     "file": "public/assets/remake/parts/field-posts.png",
     "status": "representative-review",
     "method": "built-in image_gen; original canvas preserved; encoding only"
+  },
+  {
+    "id": "lost/room",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-ddbbec55-7acf-4430-8f13-71c4b2321841.png",
+    "file": "public/assets/remake/lost/room.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lost/tray-closed",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-6d40686f-011e-4a75-9317-eef3fd4c3dbc.png",
+    "file": "public/assets/remake/lost/tray-closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lost/tray-open",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-99d2aa80-e61f-466d-97d1-19239f2d685d.png",
+    "file": "public/assets/remake/lost/tray-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
   }
 ]
