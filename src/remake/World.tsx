@@ -17,7 +17,7 @@ import { RecordCard } from './ServiceRecords';
 import { RecorderImage } from './Recorder';
 import { owns } from './model';
 import type { Action, Item, Room, State } from './model';
-export type Focus = 'receiptTray' | 'clockChecks' | 'bell' | 'posters' | 'shedDoor' | 'balanceBox' | 'lampWindow' | 'cargoChest' | 'cargoDockets' | 'cargoDocket' | 'points' | 'journeyRecords' | 'passageWindow' | 'crossing' | 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
+export type Focus = 'fragmentPhoto' | 'fragments' | 'receiptTray' | 'clockChecks' | 'bell' | 'posters' | 'shedDoor' | 'balanceBox' | 'lampWindow' | 'cargoChest' | 'cargoDockets' | 'cargoDocket' | 'points' | 'journeyRecords' | 'passageWindow' | 'crossing' | 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
 export const availableViews: Partial<Record<Room, string[]>> = { lost: ['傘と受取棚', '比較台'], lamp: ['保管箱と灯具', '西の窓'], train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側', '西の階段'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前', '東の側道'], office: ['机と南の窓', '北の保管区画'], cargo: ['箱と台車', '南の窓と柱'], passage: ['南の階段', '地下通路・北向き', '北の踊り場', '地下通路・南向き'], bridge: ['駅舎の屋根と北壁', '線路と屋根', '北端の保守柵'], north: ['停車灯と踏み板', '西の橋階段', '東の線路と地下入口', '分岐操作器'] };
 function CounterObjects({ s }: {
     s: State;

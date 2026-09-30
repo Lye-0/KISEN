@@ -1,3 +1,4 @@
+import { fragmentInitial, moveFragment, validFragments } from './ticketFragments';
 import { placeReceipt, receiptInitial, receiptTrayReleases, validClockAdjust, validReceiptSlots } from './lostProperty';
 import { validAim } from './lampOptics';
 import { validBellTimes, readBellRecord } from './bellCircuit';
@@ -108,6 +109,10 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'fragmentMove';
+    id: number;
+    pose: number[];
+} | {
     type: 'receiptPlace';
     receipt: number;
     slot: number;
@@ -285,6 +290,12 @@ export function reduce(s: State, a: Action): State {
     if (s.room === 'return' && !['look', 'end', 'sound', 'tick', 'record'].includes(a.type))
         return s;
     switch (a.type) {
+        case 'fragmentMove': {
+            if (!owns(s, 'fragments'))
+                return s;
+            const v = moveFragment(s.values.fragments ?? fragmentInitial, a.id, a.pose);
+            return v ? { ...s, values: { ...s.values, fragments: v } } : s;
+        }
         case 'receiptPlace': {
             if (s.room !== 'lost' || s.values.receiptOpen?.[0] === 1)
                 return s;
@@ -468,7 +479,7 @@ export function reduce(s: State, a: Action): State {
             const seconds = Math.max(s.values[id]?.[0] ?? 0, Math.min(tapeDuration, Math.max(0, a.seconds)));
             return { ...s, values: { ...s.values, [id]: [seconds] } };
         }
-        case 'values': return a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
+        case 'values': return a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['fragments', 'receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return !nodes[a.index] || !connections[nodes[a.index]][a.value] || ['approaching', 'passing', 'leaving', 'stopped'].includes(s.train.position) && trace(s.route).path.includes(nodes[a.index]) ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
@@ -528,6 +539,8 @@ export function restore(value: unknown): State | null {
     if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('lamp-observation-') && (!numeric(n.values) || n.values.length !== 4 || ![0, 1].includes(n.values[0]) || ![0, 1].includes(n.values[3]) || !validAim(n.values.slice(1, 3)))))
         return null;
     if (s.values.receiptSlots && !validReceiptSlots(s.values.receiptSlots) || s.values.receiptOpen && (s.values.receiptOpen.length !== 1 || ![0, 1].includes(s.values.receiptOpen[0])) || s.values.receiptOpen?.[0] === 1 && !receiptTrayReleases(s.values.receiptSlots ?? receiptInitial))
+        return null;
+    if (s.values.fragments && !validFragments(s.values.fragments) || s.notes.some(n => n?.id === 'fragments' && !validFragments(n.values)))
         return null;
     if (s.values.clockAdjust && !validClockAdjust(s.values.clockAdjust))
         return null;

@@ -1,3 +1,4 @@
+import { FragmentBoard, FragmentPhoto } from './FragmentBoard';
 import { ClockChecks, ReceiptTray } from './ForgottenShelf';
 import { LampWindow } from './LampWindow';
 import { BellPanel } from './Bell';
@@ -43,6 +44,8 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
     inspect: (focus: Focus) => void;
 }) {
     switch (focus) {
+        case 'fragments': return <FragmentBoard s={s} dispatch={dispatch} say={say} photos={() => inspect('fragmentPhoto')}/>;
+        case 'fragmentPhoto': return owns(s, 'fragments') ? <FragmentPhoto dispatch={dispatch} say={say}/> : null;
         case 'receiptTray': return <ReceiptTray s={s} dispatch={dispatch} say={say}/>;
         case 'clockChecks': return <ClockChecks s={s} dispatch={dispatch} say={say}/>;
         case 'posters': return <Posters s={s} dispatch={dispatch} say={say}/>;

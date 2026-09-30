@@ -3,6 +3,8 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['journeys/f-white','0a6009bd-8e92-4b4c-ba40-59b9e6643f0a'],
+ ['lost/table','49f2835d-acf4-4e05-ab30-88708de51437'],
  ['lost/tray-open','99d2aa80-e61f-466d-97d1-19239f2d685d'],
  ['lost/tray-closed','6d40686f-011e-4a75-9317-eef3fd4c3dbc'],
  ['lost/room','ddbbec55-7acf-4430-8f13-71c4b2321841'],
