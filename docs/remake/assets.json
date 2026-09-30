@@ -1,5 +1,61 @@
 [
   {
+    "id": "points/bank",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-1aa85615-65c2-4b86-b975-b6ad9e50e43c.png",
+    "file": "public/assets/remake/points/bank.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/point-grip",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2eb37888-8f26-4639-9bdf-671b124b385e.png",
+    "file": "public/assets/remake/parts/point-grip.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "parts/point-shaft",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2ed591d1-c535-4781-a3ed-eb3e0dfbe4bf.png",
+    "file": "public/assets/remake/parts/point-shaft.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "points/regular-0",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f630bd41-408b-4acb-b6cc-120d9ddd4c51.png",
+    "file": "public/assets/remake/points/regular-0.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "points/regular-1",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-52479330-db5a-49b5-9c73-2492ed5c58a0.png",
+    "file": "public/assets/remake/points/regular-1.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "points/wye-0",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-36ca4447-4982-438d-8c17-4d47989064c7.png",
+    "file": "public/assets/remake/points/wye-0.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "points/wye-1",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4fefcea5-835c-476b-9c47-888b5620451f.png",
+    "file": "public/assets/remake/points/wye-1.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "points/wye-2",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4a1078d9-dc89-4571-b192-7681c1c7e0cd.png",
+    "file": "public/assets/remake/points/wye-2.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
     "id": "journeys/b-white-0",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-98e6249c-ffc7-4a82-bd66-463dcf163a05.png",
     "file": "public/assets/remake/journeys/b-white-0.webp",

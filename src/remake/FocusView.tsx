@@ -16,6 +16,7 @@ import { TicketReader } from './TicketReader';
 import { Hatch } from './Hatch';
 import { CounterDrawer } from './CounterDrawer';
 import { ServiceRecords } from './ServiceRecords';
+import { PointControls } from './PointControls';
 import { JourneyRecords } from './JourneyRecords';
 import { OfficeLock } from './OfficeLock';
 import { Receipt } from './Receipt';
@@ -36,6 +37,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
     inspect: (focus: Focus) => void;
 }) {
     switch (focus) {
+        case 'points': return <PointControls s={s} dispatch={dispatch} say={say}/>;
         case 'passageWindow': return <div className="rm-route-focus"><Photo src="/assets/remake/passage/window.webp" view={[330, 130, 1000, 700]} label="踊り場の窓から見える旧線の橋脚と、その下を抜ける線路"/></div>;
         case 'crossing': return <div className="rm-route-focus"><Photo src={'/assets/remake/bridge/east-tag' + (owns(s, 'pin') ? '-empty' : '') + '.webp'} view={[425, 150, 800, 620]} label="旧線の橋脚とその下を続く線路"/></div>;
         case 'signal': return <Shutter s={s} dispatch={dispatch} reader={() => inspect('reader')}/>;

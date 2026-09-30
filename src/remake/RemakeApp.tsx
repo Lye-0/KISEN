@@ -9,15 +9,20 @@ import { ItemImage } from './ItemImage';
 import { PhotoRecord } from './Photos';
 import { RecordingStrips } from './Recorder';
 import { ServiceRecordNote } from './ServiceRecords';
+import { PointNote } from './PointControls';
 import { JourneyRecordNote } from './JourneyRecords';
 import { useModal } from './useModal';
 import './remake.css';
 const fixture = new URLSearchParams(location.search).get('remake');
-const group = fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : '';
+const group = fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : fixture === 'points' ? 'points' : '';
 const saveKey = 'kisen-remake-v2' + (group ? ':' + group : '');
 const initialFocus: Focus = fixture === 'reader' ? 'reader' : fixture === 'ticket' ? 'ticket' : fixture === 'journeys' ? 'journeyRecords' : null;
 function seed() {
     const s = newState();
+    if (group === 'points') {
+        s.room = 'north';
+        s.camera = 3;
+    }
     if (group === 'journeys')
         s.room = 'office';
     if (group === 'recorder') {
@@ -122,7 +127,7 @@ export default function RemakeApp() {
     const world = <World s={s} dispatch={dispatch} inspect={inspect} say={say} selected={selected}/>;
     return <main id="rm-game" className={targets ? 'rm-targets' : ''}>
  <div className={'rm-stage ' + (focus === 'bag' ? 'rm-close' : '')}>{focus ? <><div className="rm-focus-backdrop" aria-hidden="true" inert>{world}</div><div className="rm-focused-scene"><FocusView focus={focus} s={s} dispatch={dispatch} say={say} selected={selected} onSelect={setSelected} close={close} inspect={inspect}/></div></> : world}</div>
- {!focus && s.room !== 'passage' && views.length > 1 && <nav className="rm-world-nav" aria-label="周囲を見る"><button aria-label="左を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + views.length - 1) % views.length })}>‹</button><button aria-label="右を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + 1) % views.length })}>›</button></nav>}
+ {!focus && s.room !== 'passage' && !(s.room === 'north' && s.camera === 3) && views.length > 1 && <nav className="rm-world-nav" aria-label="周囲を見る"><button aria-label="左を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + views.length - 1) % views.length })}>‹</button><button aria-label="右を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + 1) % views.length })}>›</button></nav>}
  <div className="rm-top">{focus ? <button onClick={close} aria-label="前の場面へ戻る">〈 戻る</button> : <div><span className="rm-wordmark">帰線</span><span className="rm-area-name">{roomLabels[s.room]}</span></div>}<div><button onClick={() => setPanel('notes')}>記録</button><button onClick={() => setPanel('settings')} aria-label="設定と保存">⋯</button></div></div>
  {showSelected && <div className="rm-held-item"><div className="rm-held-icon"><ItemImage item={selected} state={s}/></div><button aria-label="選んだ持ち物を見る" onClick={() => inspect(documentFocus[selected] ?? 'item')}>見る</button></div>}
  <div className="rm-bottom"><div className="rm-inventory" aria-label="持ち物">{inv.map(item => <button key={item} aria-label={labels[item]} className={selected === item ? 'selected' : ''} aria-pressed={selected === item} onClick={() => {
@@ -154,6 +159,6 @@ export default function RemakeApp() {
                         say('この記録は読み込めません。');
                     }
                     e.target.value = '';
-                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
+                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
  </main>;
 }

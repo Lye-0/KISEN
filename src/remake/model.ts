@@ -63,7 +63,7 @@ export interface State {
     ended: boolean;
 }
 export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { passageRevision: [1] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
-export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 3, return: 2 };
+export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
 export const done = (s: State, id: string) => s.flags.includes(id);
 const append = <T,>(a: T[], v: T) => a.includes(v) ? a : [...a, v];
@@ -421,12 +421,14 @@ export function restore(value: unknown): State | null {
     const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 768 && v.every(n => typeof n === 'number' && Number.isFinite(n));
     if (!Object.values(s.values).every(numeric))
         return null;
-    for (const [name, max] of [['journeySelected', 3], ['journeyStop', 1], ['journeyFrame', 1], ['journeyCompare', 1]] as const)
+    for (const [name, max] of [['pointSelected', 5], ['journeySelected', 3], ['journeyStop', 1], ['journeyFrame', 1], ['journeyCompare', 1]] as const)
         if (s.values[name] && (s.values[name].length !== 1 || !Number.isInteger(s.values[name][0]) || s.values[name][0] < 0 || s.values[name][0] > max))
             return null;
     if (s.values.journeyBacks && (s.values.journeyBacks.length > 4 || new Set(s.values.journeyBacks).size !== s.values.journeyBacks.length || s.values.journeyBacks.some(n => !Number.isInteger(n) || n < 0 || n > 3)))
         return null;
     if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('journey-record-') && (!numeric(n.values) || ![2, 3].includes(n.values.length) || !Number.isInteger(n.values[0]) || n.values[0] < 0 || n.values[0] > 3 || ![0, 1].includes(n.values[1]) || n.values.length === 3 && ![0, 1].includes(n.values[2]))))
+        return null;
+    if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('point-observation-') && (!numeric(n.values) || n.values.length !== 2 || !Number.isInteger(n.values[0]) || n.values[0] < 0 || n.values[0] > 5 || !Number.isInteger(n.values[1]) || n.values[1] < 0 || n.values[1] >= connections[nodes[n.values[0]]].length)))
         return null;
     if (s.values.cargo && !validCargo(s.values.cargo as Cargo))
         return null;
