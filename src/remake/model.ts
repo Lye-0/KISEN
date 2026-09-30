@@ -16,7 +16,7 @@ import { duration as tapeDuration } from './recordings';
 import { freshSignals, freshTrain, mounts, stopAt, boardingGeometry, validSignals, validTrain } from './stopping';
 import type { SignalState, TrainState } from './stopping';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'passage' | 'lamp' | 'tunnel' | 'north' | 'return';
-export type Item = 'retainingPin' | 'cargoDocket' | 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
+export type Item = 'phone' | 'retainingPin' | 'cargoDocket' | 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
 export type Place = 'lostDrawer' | 'lightRack' | 'balanceChest' | 'cargoChest' | 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'glassStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 export type Side = 'white' | 'black';
@@ -72,7 +72,7 @@ export interface State {
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { retainingPin: 'balanceChest', fragments: 'lostDrawer', lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { retainingPinRevision: [1], passageRevision: [1], bellChannel: [0] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
+export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { phone: 'inventory', retainingPin: 'balanceChest', fragments: 'lostDrawer', lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { retainingPinRevision: [1], passageRevision: [1], bellChannel: [0] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
 export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 4, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
 export const signalReady = (s: State) => s.locations.hood === 'signal' && s.locations.retainingPin === 'signal';
 export const liveCircuit = (s: State) => s.values.bellChannel?.[0] === 1;
@@ -113,6 +113,11 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'returnAdvance';
+    seconds: number;
+} | {
+    type: 'returnReview';
+} | {
     type: 'glassLamp';
     item: 'lamp' | 'spareLamp';
 } | {
@@ -294,7 +299,7 @@ export type Action = {
     seconds: number;
 };
 export function reduce(s: State, a: Action): State {
-    if (s.room === 'return' && !['look', 'end', 'sound', 'tick', 'record'].includes(a.type))
+    if (s.room === 'return' && !['look', 'end', 'returnAdvance', 'returnReview', 'sound', 'tick', 'record'].includes(a.type))
         return s;
     switch (a.type) {
         case 'fragmentMove': {
@@ -494,7 +499,7 @@ export function reduce(s: State, a: Action): State {
                 return s;
             return { ...s, locations: { ...s.locations, [a.item]: 'inventory' } };
         }
-        case 'put': return !s.locations[a.item] || ['lostDrawer', 'glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
+        case 'put': return a.item === 'phone' || !s.locations[a.item] || ['lostDrawer', 'glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
         case 'seat': return { ...s, seats: s.seats.map((v, i) => i === a.index ? 1 - v : v) };
         case 'heard': {
             if (!Number.isFinite(a.seconds))
@@ -503,7 +508,7 @@ export function reduce(s: State, a: Action): State {
             const seconds = Math.max(s.values[id]?.[0] ?? 0, Math.min(tapeDuration, Math.max(0, a.seconds)));
             return { ...s, values: { ...s.values, [id]: [seconds] } };
         }
-        case 'values': return a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['fragments', 'receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
+        case 'values': return a.id === 'returnTrip' || a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['fragments', 'receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return !nodes[a.index] || !connections[nodes[a.index]][a.value] || ['approaching', 'passing', 'leaving', 'stopped'].includes(s.train.position) && trace(s.route).path.includes(nodes[a.index]) ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
@@ -521,10 +526,12 @@ export function reduce(s: State, a: Action): State {
         case 'mountTicket': return s.mounted || !owns(s, 'paper') || s.draft.back || s.values.readerClamp?.[0] !== 1 || s.values.readerDepth?.[0] !== .65 ? s : { ...s, values: { ...s.values, readerDepth: [1] }, mounted: structuredClone(s.draft), draft: { id: s.draft.id + 1, holes: [], service: 0, back: false } };
         case 'removeTicket': return !s.mounted || s.values.readerClamp?.[0] !== 1 ? s : { ...s, values: { ...s.values, readerDepth: [0] }, draft: s.mounted, mounted: null, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets, s.draft] : s.savedTickets };
         case 'call': return s.room !== 'north' || s.train.position !== 'absent' || !Number.isInteger(a.service) || a.service < 1 || a.service > 6 ? s : { ...s, train: { service: a.service, position: 'approaching', firstDoor: null } };
-        case 'board': return !liveCircuit(s) || s.room !== 'north' || !validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0 || trace(s.route).end !== 'O' || !boardingGeometry(s.train, s.signals, signalReady(s)) ? s : { ...s, room: 'return', camera: 0, train: { ...s.train, position: 'departed' } };
-        case 'end': return s.room === 'return' ? { ...s, ended: true } : s;
+        case 'board': return !liveCircuit(s) || s.room !== 'north' || !validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0 || trace(s.route).end !== 'O' || !boardingGeometry(s.train, s.signals, signalReady(s)) ? s : { ...s, room: 'return', camera: 0, values: { ...s.values, returnTrip: [0, 0] }, train: { ...s.train, position: 'departed' } };
+        case 'returnAdvance': return s.room !== 'return' || s.ended || !Number.isFinite(a.seconds) || a.seconds <= 0 || a.seconds > 1 ? s : { ...s, values: { ...s.values, returnTrip: [Math.min(12, (s.values.returnTrip?.[0] ?? 0) + a.seconds), s.values.returnTrip?.[1] ?? 0] } };
+        case 'end': return s.room === 'return' && s.values.returnTrip?.[0] === 12 ? { ...s, ended: true, values: { ...s.values, returnTrip: [12, 1] } } : s;
+        case 'returnReview': return s.room === 'return' && s.ended ? { ...s, ended: false, camera: 0 } : s;
         case 'sound': return { ...s, sound: !s.sound };
-        case 'tick': return { ...s, elapsed: s.elapsed + a.seconds };
+        case 'tick': return !Number.isFinite(a.seconds) || a.seconds <= 0 || a.seconds > 3600 ? s : { ...s, elapsed: s.elapsed + a.seconds };
     }
 }
 export function restore(value: unknown): State | null {
@@ -534,6 +541,8 @@ export function restore(value: unknown): State | null {
     // Earlier representative saves used the exterior-sidepath name for this underpass.
     if (s.room === 'tunnel' && s.values && !s.values.passageRevision && [0, 1].includes(s.camera))
         s = { ...s, room: 'passage', camera: s.camera === 0 ? 2 : 3, values: { ...s.values, passageRevision: [1] }, visited: Array.isArray(s.visited) ? s.visited.map(v => v === 'tunnel:0' ? 'passage:2' : v === 'tunnel:1' ? 'passage:3' : v) : s.visited };
+    if (s.values && s.room === 'return' && !s.values.returnTrip)
+        s = { ...s, values: { ...s.values, returnTrip: s.ended ? [12, 1] : [0, 0] } };
     const legacy = s.signals === undefined;
     const signals = legacy ? freshSignals() : s.signals;
     const train = legacy ? (s.room === 'return' ? { service: 2, position: 'departed' as const, firstDoor: 7 } : freshTrain()) : s.train;
@@ -547,6 +556,12 @@ export function restore(value: unknown): State | null {
         return null;
     const ticket = (t: Ticket) => t && Number.isInteger(t.id) && t.id > 0 && Array.isArray(t.holes) && t.holes.length <= 180 && [0, 1, 2, 3, 4, 5, 6].includes(t.service) && typeof t.back === 'boolean' && (t.marks === undefined || Array.isArray(t.marks) && t.marks.length <= 12 && t.marks.every(m => m && Number.isInteger(m.service) && m.service >= 1 && m.service <= 6 && typeof m.back === 'boolean')) && (t.stamps === undefined || Array.isArray(t.stamps) && t.stamps.length <= 6 && t.stamps.every(n => Number.isInteger(n) && n >= 1 && n <= 6)) && t.holes.every(h => Number.isInteger(h.column) && h.column >= 0 && h.column < 5 && nodes.includes(h.node) && (h.tool === undefined || [0, 1, 2].includes(h.tool)) && ['white', 'black'].includes(h.side));
     if (!ticket(s.draft) || s.mounted && !ticket(s.mounted) || !Array.isArray(s.savedTickets) || !s.savedTickets.every(ticket))
+        return null;
+    if (s.locations.phone !== undefined && s.locations.phone !== 'inventory')
+        return null;
+    if (s.values.returnTrip && (s.values.returnTrip.length !== 2 || !Number.isFinite(s.values.returnTrip[0]) || s.values.returnTrip[0] < 0 || s.values.returnTrip[0] > 12 || ![0, 1].includes(s.values.returnTrip[1]) || s.values.returnTrip[1] === 1 && s.values.returnTrip[0] !== 12))
+        return null;
+    if (s.ended && (s.room !== 'return' || s.values.returnTrip?.[0] !== 12 || s.values.returnTrip?.[1] !== 1))
         return null;
     const numeric = (v: unknown): v is number[] => Array.isArray(v) && v.length <= 768 && v.every(n => typeof n === 'number' && Number.isFinite(n));
     if (!Object.values(s.values).every(numeric))
@@ -641,7 +656,7 @@ export function restore(value: unknown): State | null {
     if (!s.notes.every(n => n && typeof n.id === 'string' && numeric(n.values) && (n.id !== 'arrivalPhotos' || order(n.values))))
         return null;
     const notes = s.notes.filter(n => n.id !== 'toolTrial' || !s.notes.some(other => other.id.startsWith('toolTrial-') && other.values.length === n.values.length && other.values.every((v, i) => v === n.values[i])));
-    const locations = { retainingPin: 'balanceChest', fragments: 'lostDrawer', lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } as State['locations'];
+    const locations = { phone: 'inventory', retainingPin: 'balanceChest', fragments: 'lostDrawer', lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } as State['locations'];
     if (legacy)
         for (const item of ['lamp', 'spareLamp', 'hood', 'retainingPin'] as Item[])
             if (locations[item] === 'signal')

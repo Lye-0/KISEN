@@ -10,8 +10,9 @@ import { CutShape } from './CutShape';
 import { owns } from './model';
 const dieNames = ['丸形', '長方形', '半円形', '三角形', '菱形', '星形'];
 const paperOutline = 'M0 0H800V235H0V70A18 18 0 0 0 0 34V0Z';
-export function TicketPaper({ ticket, aim, view }: {
+export function TicketPaper({ ticket, aim, view, returnMark }: {
     ticket: Ticket;
+    returnMark?: boolean;
     aim?: (column: number, side: 'white' | 'black') => void;
     view?: [
         number,
@@ -28,6 +29,7 @@ export function TicketPaper({ ticket, aim, view }: {
  <g mask={`url(#${id})`}><image href="/assets/remake/parts/photo-back.webp" width="800" height="235" preserveAspectRatio="none"/>
  <g fill="#565340" stroke="#696753" opacity={ticket.back ? .3 : .85} fontFamily="serif"><path d="M18 83H782M18 152H782" fill="none" strokeWidth="1.1"/>{[0, 1, 2, 3, 4].map(c => <g key={c}><path d={`M${c * 160} 9V226`} strokeWidth=".7"/><text x={80 + c * 160} y="126" textAnchor="middle" stroke="none" fontSize="24">{['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ'][c]}</text></g>)}<text x="28" y="177" stroke="none" fontSize="14">乗車券</text></g>
  {marks.map((m, i) => <g key={i} transform={m.back ? 'translate(800 0) scale(-1 1)' : undefined} opacity={m.back === ticket.back ? .85 : .22}><text x={770 - i % 2 * 2} y={178 + i % 2 * 2} fill="#813e30" fontFamily="serif" fontSize="19" textAnchor="end">第 {m.service} 便</text></g>)}
+ {returnMark && ticket.back && <g transform="translate(570 111) rotate(-11)" fill="none" stroke="#503933" strokeWidth="2.4" opacity=".63"><circle r="22"/><path d="M-11 12V-9H9M-11 2H4L12-8M-2 2V13"/></g>}
  </g></g>
  {aim && [0, 1, 2, 3, 4].flatMap(c => (['white', 'black'] as const).map(side => <g key={c + side} role="button" tabIndex={0} className="rm-paper-cut-target" aria-label={`${c + 1}列目・切欠きから${side === 'white' ? '近い' : '遠い'}縁に鋏を差す`} onClick={() => aim(c, side)} onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {

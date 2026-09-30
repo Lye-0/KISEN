@@ -5,7 +5,7 @@ import { TicketPaper } from './TicketBench';
 import { arrivalTicket } from './arrivalTicket';
 import type { Item, State } from './model';
 const root = '/assets/remake/';
-const art: Partial<Record<Item, string>> = { retainingPin: 'parts/retaining-pin.png',
+const art: Partial<Record<Item, string>> = { phone: 'parts/phone.png', retainingPin: 'parts/retaining-pin.png',
     envelope: 'parts/seat-envelope.png',
     officeKey: 'parts/office-key.png',
     knob: 'parts/reel-cap.png',

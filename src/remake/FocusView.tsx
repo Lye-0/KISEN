@@ -1,3 +1,4 @@
+import { HomePhone, ReturnTicket } from './ReturnTrain';
 import { ReturnDispatch } from './ReturnDispatch';
 import { FreightFocus } from './Freight';
 import { NoticeBoard } from './NoticeBoard';
@@ -47,6 +48,8 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
     inspect: (focus: Focus) => void;
 }) {
     switch (focus) {
+        case 'homePhoto': return <HomePhone dispatch={dispatch} say={say}/>;
+        case 'returnTicket': return <ReturnTicket s={s}/>;
         case 'fragments': return <FragmentBoard s={s} dispatch={dispatch} say={say} photos={() => inspect('fragmentPhoto')}/>;
         case 'fragmentPhoto': return owns(s, 'fragments') ? <FragmentPhoto dispatch={dispatch} say={say}/> : null;
         case 'receiptTray': return <ReceiptTray s={s} dispatch={dispatch} say={say}/>;

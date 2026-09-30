@@ -1286,5 +1286,47 @@
     "file": "public/assets/remake/parts/dispatch-pocket.png",
     "status": "representative-review",
     "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "return/home",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-cff60d45-39c1-4d9e-9134-7b6ef95ceacd.png",
+    "file": "public/assets/remake/return/home.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "return/home-photo",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4cfa38f2-4d11-4f65-993a-52484a0b8fb1.png",
+    "file": "public/assets/remake/return/home-photo.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "return/travelling",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2163b616-4c7a-4205-a969-df8c83bdbc83.png",
+    "file": "public/assets/remake/return/travelling.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "return/closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ff22efcc-ae8c-4758-9bce-46c54e460090.png",
+    "file": "public/assets/remake/return/closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "return/open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4caecaa2-7302-4546-af05-695d46d0452e.png",
+    "file": "public/assets/remake/return/open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/phone",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-85c9b8a8-6be9-40b0-85be-bcb17ec0a06c.png",
+    "file": "public/assets/remake/parts/phone.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
   }
 ]
