@@ -11,7 +11,7 @@ import { RecordCard } from './ServiceRecords';
 import { RecorderImage } from './Recorder';
 import { owns } from './model';
 import type { Action, Item, Room, State } from './model';
-export type Focus = 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
+export type Focus = 'crossing' | 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
 export const availableViews: Partial<Record<Room, string[]>> = { train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側', '西の階段'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前'], office: ['机と南の窓', '北の保管区画'], bridge: ['駅舎の屋根と北壁', '線路と屋根', '北端の保守柵'], north: ['停車灯と踏み板', '西の橋階段'] };
 function CounterObjects({ s }: {
     s: State;
@@ -32,7 +32,7 @@ export function World({ s, dispatch, inspect, selected, say }: {
     if (s.room === 'platform')
         return s.camera === 2 ? image('platform/west-bridge', '南ホーム西端の跨線橋階段', <Touch name="西の跨線橋へ上がる" rect={[34, 17, 18, 55]} act={() => move('bridge', 0)}/>) : s.camera === 1 ? image('platform/train', 'ホームに停まる列車', <Touch name="車内へ入る" rect={[37, 23, 22, 57]} act={() => move('train')}/>) : image('platform/station', '南ホームから見た待合室', <><Clock minutes={23 * 60 + 17} transform="translate(1030 302) scale(.72)"/><Touch name="待合室へ入る" rect={[36, 34, 20, 44]} act={() => move('waiting', 0)}/><Touch name="ホームの時計" rect={[57, 25, 9, 16]} act={() => inspect('platformClock')}/></>);
     if (s.room === 'bridge')
-        return s.camera === 1 ? <RailTagWide s={s} inspect={() => inspect('railTag')}/> : s.camera === 2 ? <BridgeGateWide s={s} dispatch={dispatch} inspect={() => inspect('bridgeGate')} enterNorth={() => move('north', 0)}/> : image('bridge/west-roof', '跨線橋から見える駅舎の北壁と西端', <Touch name="南ホームへ下りる" rect={[0, 56, 23, 44]} act={() => move('platform', 2)}/>);
+        return s.camera === 1 ? <RailTagWide s={s} inspect={() => inspect('railTag')} observe={() => inspect('crossing')}/> : s.camera === 2 ? <BridgeGateWide s={s} dispatch={dispatch} inspect={() => inspect('bridgeGate')} enterNorth={() => move('north', 0)}/> : image('bridge/west-roof', '跨線橋から見える駅舎の北壁と西端', <Touch name="南ホームへ下りる" rect={[0, 56, 23, 44]} act={() => move('platform', 2)}/>);
     if (s.room === 'waiting') {
         if (s.camera === 0)
             return image('waiting/south', '待合室の二つの南窓とベンチ');

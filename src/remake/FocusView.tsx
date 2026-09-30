@@ -19,6 +19,7 @@ import { ServiceRecords } from './ServiceRecords';
 import { OfficeLock } from './OfficeLock';
 import { Receipt } from './Receipt';
 import { Photo } from './Photo';
+import { owns } from './model';
 import { Clock } from './Clock';
 import type { Focus } from './World';
 import type { Action, Item, State } from './model';
@@ -34,6 +35,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
     inspect: (focus: Focus) => void;
 }) {
     switch (focus) {
+        case 'crossing': return <div className="rm-route-focus"><Photo src={'/assets/remake/bridge/east-tag' + (owns(s, 'pin') ? '-empty' : '') + '.webp'} view={[425, 150, 800, 620]} label="旧線の橋脚とその下を続く線路"/></div>;
         case 'signal': return <Shutter s={s} dispatch={dispatch} reader={() => inspect('reader')}/>;
         case 'tools': return <ToolTrial s={s} dispatch={dispatch} say={say} openTicket={() => inspect('ticket')}/>;
         case 'seat': return <Train s={s} dispatch={dispatch} closeSeat={s.values.seatFocus?.[0] ?? 2} inspect={() => { }} inspectCase={() => { }} say={say}/>;

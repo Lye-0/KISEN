@@ -1,0 +1,12 @@
+import sharp from 'sharp';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {sites,railLines,railCrossings} from '../src/remake/routeGeometry.ts';
+const out=process.env.KISEN_REVIEW_DIR ?? 'docs/remake/geometry';
+await mkdir(out,{recursive:true});
+const px=4.2, ox=700, oy=840;
+const P=(s)=>{const p=sites[s];return [ox+p.x*px,oy-p.y*px]};
+const lines=Object.entries(railLines).map(([name,path])=>`<polyline points="${path.map(n=>P(n).join(',')).join(' ')}" fill="none" stroke="${name==='C-X'?'#c99770':name==='E-F'?'#88c4aa':'#9aa6a7'}" stroke-width="${name==='C-X'?8:5}" ${name==='C-X'?'stroke-dasharray="12 6"':''}/>`).join('');
+const points=Object.entries(sites).map(([name,p])=>{const [x,y]=P(name);return `<g><circle cx="${x}" cy="${y}" r="7" fill="#f0e8cf"/><text x="${x+11}" y="${y-11}" fill="#eee8dc" font-size="19">${name} (${p.z}m)</text></g>`}).join('');
+const cross=railCrossings().map(({point})=>{const x=ox+point.x*px,y=oy-point.y*px;return `<circle cx="${x}" cy="${y}" r="15" fill="none" stroke="#eabf85" stroke-width="3"/><text x="${x+18}" y="${y+28}" fill="#eabf85" font-size="19">立体交差 ${point.z1.toFixed(1)}m / ${point.z2.toFixed(1)}m</text>`}).join('');
+const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941"><rect width="1672" height="941" fill="#192226"/><text x="80" y="70" fill="#eee8dc" font-size="30">KISEN 線路幾何・制作者用 / station x=0..18m</text><text x="80" y="110" fill="#bbb" font-size="20">二口操作器の接続を実空間へ配置。標高差は C–X と E–F の交差点だけを強調。</text>${lines}${cross}${points}</svg>`;
+await writeFile(out+'/route-network.svg',svg);await sharp(Buffer.from(svg)).png().toFile(out+'/route-network.png');console.log(out+'/route-network.png');
