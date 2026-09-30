@@ -1,3 +1,4 @@
+import { CargoDocketSheet } from './CargoChest';
 import { ReceiptPaper } from './Receipt';
 import { TicketPaper } from './TicketBench';
 import { arrivalTicket } from './arrivalTicket';
@@ -19,6 +20,8 @@ export function ItemImage({ item, state }: {
     item: Item;
     state: State;
 }) {
+    if (item === 'cargoDocket')
+        return <CargoDocketSheet />;
     if (art[item])
         return <img className="rm-item-image" src={root + art[item]} alt="" draggable={false}/>;
     if (item === 'photos')

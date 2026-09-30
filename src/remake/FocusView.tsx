@@ -1,3 +1,4 @@
+import { CargoChest, CargoDocketsView, CargoDocketSheet } from './CargoChest';
 import { BridgeGateDetail } from './BridgeGate';
 import { HookRack } from './HookRack';
 import { RailTagDetail } from './RailTag';
@@ -37,6 +38,9 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
     inspect: (focus: Focus) => void;
 }) {
     switch (focus) {
+        case 'cargoChest': return <CargoChest s={s} dispatch={dispatch} say={say} inspectDockets={() => inspect('cargoDockets')} inspectDocket={() => inspect('cargoDocket')}/>;
+        case 'cargoDockets': return <CargoDocketsView dispatch={dispatch} say={say}/>;
+        case 'cargoDocket': return <CargoDocketSheet />;
         case 'points': return <PointControls s={s} dispatch={dispatch} say={say}/>;
         case 'passageWindow': return <div className="rm-route-focus"><Photo src="/assets/remake/passage/window.webp" view={[330, 130, 1000, 700]} label="踊り場の窓から見える旧線の橋脚と、その下を抜ける線路"/></div>;
         case 'crossing': return <div className="rm-route-focus"><Photo src={'/assets/remake/bridge/east-tag' + (owns(s, 'pin') ? '-empty' : '') + '.webp'} view={[425, 150, 800, 620]} label="旧線の橋脚とその下を続く線路"/></div>;

@@ -1,5 +1,40 @@
 [
   {
+    "id": "cargo/wide-crate-locked",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a62d13e0-a918-4450-b62d-b305ce3a3363.png",
+    "file": "public/assets/remake/cargo/wide-crate-locked.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "cargo/wide-crate-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-bc704120-fe02-4c59-a109-6b493f58f880.png",
+    "file": "public/assets/remake/cargo/wide-crate-open.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "cargo/chest-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-db96a3a1-c8c3-48f0-b7d6-e12760186396.png",
+    "file": "public/assets/remake/cargo/chest-closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "cargo/chest-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-bbebcd1a-09b7-463d-ab51-db62e05c87c6.png",
+    "file": "public/assets/remake/cargo/chest-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "cargo/chest-mechanism",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-3bfd3fcc-3049-46e1-be86-d25082b87e6f.png",
+    "file": "public/assets/remake/cargo/chest-mechanism.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
     "id": "points/bank",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-1aa85615-65c2-4b86-b975-b6ad9e50e43c.png",
     "file": "public/assets/remake/points/bank.webp",

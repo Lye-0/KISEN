@@ -7,7 +7,7 @@ for await(const line of createInterface({input:createReadStream(file),crlfDelay:
  if(!line.includes('image_gen__imagegen'))continue;
  let entry;try{entry=JSON.parse(line)}catch{continue}
  const p=entry.payload;
- const source=p?.input??p?.arguments; if(typeof source!=='string')continue;if(source.includes('remakeTrainGeneration'))active=true;if(active&&/(?:const|let)\s+\w+\s*=\s*await tools\.image_gen__imagegen\(/.test(source))rows.push({timestamp:entry.timestamp,callId:p.call_id,tool:p.name,source});
+ const source=p?.input??p?.arguments; if(typeof source!=='string')continue;if(source.includes('remakeTrainGeneration'))active=true;if(active&&/(?:\b(?:const|let)\s+\w+\s*=\s*await|generatedImage\(\s*await) tools\.image_gen__imagegen\(/.test(source))rows.push({timestamp:entry.timestamp,callId:p.call_id,tool:p.name,source});
 }
 await mkdir('docs/remake/prompts',{recursive:true});await writeFile('docs/remake/prompts/imagegen-calls.json',JSON.stringify(rows,null,2)+'\n');console.log('Saved '+rows.length+' exact image-generation call records.');
 

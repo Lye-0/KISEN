@@ -1,3 +1,4 @@
+import { cargoUnlocks, validCargoDigits } from './cargoDockets';
 import { sameOpening } from './ticketGeometry';
 import { cargoInitial, moveCargo, stairsClear, validCargo } from './cargo';
 import type { Cargo } from './cargo';
@@ -6,8 +7,8 @@ import { duration as tapeDuration } from './recordings';
 import { freshSignals, freshTrain, mounts, stopAt, boardingGeometry, validSignals, validTrain } from './stopping';
 import type { SignalState, TrainState } from './stopping';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'passage' | 'lamp' | 'tunnel' | 'north' | 'return';
-export type Item = 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
-export type Place = 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
+export type Item = 'cargoDocket' | 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
+export type Place = 'cargoChest' | 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 export type Side = 'white' | 'black';
 export type Hole = {
@@ -62,7 +63,7 @@ export interface State {
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { passageRevision: [1] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
+export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { passageRevision: [1] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
 export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
 export const done = (s: State, id: string) => s.flags.includes(id);
@@ -101,6 +102,8 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'cargoChest';
+} | {
     type: 'cargoMove';
     index: number;
     direction: number;
@@ -243,8 +246,14 @@ export function reduce(s: State, a: Action): State {
     if (s.room === 'return' && !['look', 'end', 'sound', 'tick', 'record'].includes(a.type))
         return s;
     switch (a.type) {
-        case 'cargoMove': {
+        case 'cargoChest': {
             if (s.room !== 'cargo')
+                return s;
+            const open = s.values.cargoOpen?.[0] === 1;
+            return !open && !cargoUnlocks(s.values.cargoDigits ?? [0, 0, 0, 0]) ? s : { ...s, values: { ...s.values, cargoOpen: [open ? 0 : 1] } };
+        }
+        case 'cargoMove': {
+            if (s.room !== 'cargo' || a.index === 1 && s.values.cargoOpen?.[0] === 1)
                 return s;
             const next = moveCargo((s.values.cargo ?? cargoInitial) as Cargo, a.index, a.direction);
             return next ? { ...s, values: { ...s.values, cargo: next } } : s;
@@ -348,6 +357,8 @@ export function reduce(s: State, a: Action): State {
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
             const at = s.locations[a.item];
+            if (at === 'cargoChest' && (s.room !== 'cargo' || s.values.cargoOpen?.[0] !== 1))
+                return s;
             if (a.item === 'support' && at === 'bridgeGate')
                 return s.room !== 'bridge' || s.camera !== 2 || s.values.gateOpen?.[0] !== 1 ? s : { ...s, locations: { ...s.locations, support: 'inventory' }, values: { ...s.values, gateSupport: [0], gateRod: [0] } };
             if (a.item === 'hook' && (at !== 'toolRack' || s.room !== 'office' || s.camera !== 1 || s.values.rackRing?.[0] !== 1))
@@ -373,7 +384,7 @@ export function reduce(s: State, a: Action): State {
             const seconds = Math.max(s.values[id]?.[0] ?? 0, Math.min(tapeDuration, Math.max(0, a.seconds)));
             return { ...s, values: { ...s.values, [id]: [seconds] } };
         }
-        case 'values': return ['gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
+        case 'values': return a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return !nodes[a.index] || !connections[nodes[a.index]][a.value] || ['approaching', 'passing', 'leaving', 'stopped'].includes(s.train.position) && trace(s.route).path.includes(nodes[a.index]) ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
@@ -430,9 +441,11 @@ export function restore(value: unknown): State | null {
         return null;
     if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('point-observation-') && (!numeric(n.values) || n.values.length !== 2 || !Number.isInteger(n.values[0]) || n.values[0] < 0 || n.values[0] > 5 || !Number.isInteger(n.values[1]) || n.values[1] < 0 || n.values[1] >= connections[nodes[n.values[0]]].length)))
         return null;
+    if (s.values.cargoDigits && !validCargoDigits(s.values.cargoDigits))
+        return null;
     if (s.values.cargo && !validCargo(s.values.cargo as Cargo))
         return null;
-    for (const name of ['stairDoor', 'northHatch'])
+    for (const name of ['cargoOpen', 'stairDoor', 'northHatch'])
         if (s.values[name] && (s.values[name].length !== 1 || ![0, 1].includes(s.values[name][0])))
             return null;
     for (const name of ['rackRing', 'tagCaught'])
@@ -468,7 +481,7 @@ export function restore(value: unknown): State | null {
     if (!s.notes.every(n => n && typeof n.id === 'string' && numeric(n.values) && (n.id !== 'arrivalPhotos' || order(n.values))))
         return null;
     const notes = s.notes.filter(n => n.id !== 'toolTrial' || !s.notes.some(other => other.id.startsWith('toolTrial-') && other.values.length === n.values.length && other.values.every((v, i) => v === n.values[i])));
-    const locations = { support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } as State['locations'];
+    const locations = { spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } as State['locations'];
     if (legacy)
         for (const item of ['lamp', 'spareLamp', 'hood'] as Item[])
             if (locations[item] === 'signal')
