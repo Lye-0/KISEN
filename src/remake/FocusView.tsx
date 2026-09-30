@@ -1,3 +1,5 @@
+import { Posters } from './PosterFragments';
+import { ShedDoor, BalanceBox } from './LampShed';
 import { CargoChest, CargoDocketsView, CargoDocketSheet } from './CargoChest';
 import { BridgeGateDetail } from './BridgeGate';
 import { HookRack } from './HookRack';
@@ -26,7 +28,7 @@ import { owns } from './model';
 import { Clock } from './Clock';
 import type { Focus } from './World';
 import type { Action, Item, State } from './model';
-export const itemArt: Partial<Record<Item, string>> = { lamp: '/assets/remake/parts/marker-lamp.png', spareLamp: '/assets/remake/parts/marker-lamp.png', hood: '/assets/remake/parts/shutter-blade.png', envelope: '/assets/remake/parts/seat-envelope.png', officeKey: '/assets/remake/parts/office-key.png', knob: '/assets/remake/parts/reel-cap.png', punch: '/assets/remake/parts/punch-open.png', counterRecords: '/assets/remake/parts/counter-folder.png' };
+export const itemArt: Partial<Record<Item, string>> = { lamp: '/assets/remake/parts/marker-lamp.png', spareLamp: '/assets/remake/parts/marker-lamp.png', envelope: '/assets/remake/parts/seat-envelope.png', officeKey: '/assets/remake/parts/office-key.png', knob: '/assets/remake/parts/reel-cap.png', punch: '/assets/remake/parts/punch-open.png', counterRecords: '/assets/remake/parts/counter-folder.png' };
 export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, inspect }: {
     focus: Focus;
     s: State;
@@ -38,6 +40,10 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
     inspect: (focus: Focus) => void;
 }) {
     switch (focus) {
+        case 'posters': return <Posters s={s} dispatch={dispatch} say={say}/>;
+        case 'shedDoor': return <ShedDoor s={s} dispatch={dispatch} say={say} enter={() => dispatch({ type: 'move', room: 'lamp' })}/>;
+        case 'balanceBox': return <BalanceBox s={s} dispatch={dispatch} say={say}/>;
+        case 'lampWindow': return <Photo src='/assets/remake/lamp/store.webp' view={[0, 120, 485, 650]} label='小屋の西の窓'/>;
         case 'cargoChest': return <CargoChest s={s} dispatch={dispatch} say={say} inspectDockets={() => inspect('cargoDockets')} inspectDocket={() => inspect('cargoDocket')}/>;
         case 'cargoDockets': return <CargoDocketsView dispatch={dispatch} say={say}/>;
         case 'cargoDocket': return <CargoDocketSheet />;

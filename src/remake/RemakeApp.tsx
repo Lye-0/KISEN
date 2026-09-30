@@ -1,3 +1,4 @@
+import { PosterNote } from './PosterFragments';
 import { CargoDocketsNote } from './CargoChest';
 import { TrialSheet } from './ToolTrial';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,11 +16,14 @@ import { JourneyRecordNote } from './JourneyRecords';
 import { useModal } from './useModal';
 import './remake.css';
 const fixture = new URLSearchParams(location.search).get('remake');
-const group = fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : fixture === 'points' ? 'points' : fixture === 'cargo' ? 'cargo' : '';
+const group = fixture === 'shed' ? 'shed' : fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : fixture === 'points' ? 'points' : fixture === 'cargo' ? 'cargo' : '';
 const saveKey = 'kisen-remake-v2' + (group ? ':' + group : '');
-const initialFocus: Focus = fixture === 'reader' ? 'reader' : fixture === 'ticket' ? 'ticket' : fixture === 'journeys' ? 'journeyRecords' : fixture === 'cargo' ? 'cargoChest' : null;
+const initialFocus: Focus = fixture === 'shed' ? 'posters' : fixture === 'reader' ? 'reader' : fixture === 'ticket' ? 'ticket' : fixture === 'journeys' ? 'journeyRecords' : fixture === 'cargo' ? 'cargoChest' : null;
 function seed() {
     const s = newState();
+    if (group === 'shed') {
+        s.room = 'forecourt';
+    }
     if (group === 'cargo')
         s.room = 'cargo';
     if (group === 'points') {
@@ -162,6 +166,6 @@ export default function RemakeApp() {
                         say('この記録は読み込めません。');
                     }
                     e.target.value = '';
-                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
+                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id === 'posters' ? <PosterNote values={n.values}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
  </main>;
 }

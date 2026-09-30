@@ -1,5 +1,75 @@
 [
   {
+    "id": "lamp/store-lamp",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8148d4e0-f5ed-4271-b38c-f6675a16180e.png",
+    "file": "public/assets/remake/lamp/store-lamp.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lamp/path-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e5ecd44a-0699-4a81-b170-12c57bf9e139.png",
+    "file": "public/assets/remake/lamp/path-closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lamp/path-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-fc473db5-c6a1-4f98-863d-21a435ecef3e.png",
+    "file": "public/assets/remake/lamp/path-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lamp/store",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2df18828-621b-4a41-95cc-7f8c3df3805d.png",
+    "file": "public/assets/remake/lamp/store.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lamp/store-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-9abf655b-3f24-4269-833b-04007db73b04.png",
+    "file": "public/assets/remake/lamp/store-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lamp/door-lock",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-6deb6b81-95b8-443a-a7c7-356244f07cc9.png",
+    "file": "public/assets/remake/lamp/door-lock.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lamp/balance-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8a585d89-e7ba-45d4-bbc9-dece4863ccda.png",
+    "file": "public/assets/remake/lamp/balance-closed.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "lamp/balance-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-19917007-725a-4295-9f06-2799338b4d05.png",
+    "file": "public/assets/remake/lamp/balance-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/balance-beam",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ee1ca386-60b6-4f2e-b6bc-5386eebc68b7.png",
+    "file": "public/assets/remake/parts/balance-beam.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "parts/balance-weights",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-126ca90b-0aca-46c3-b550-0dfb2146d951.png",
+    "file": "public/assets/remake/parts/balance-weights.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
     "id": "cargo/wide-crate-locked",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a62d13e0-a918-4450-b62d-b305ce3a3363.png",
     "file": "public/assets/remake/cargo/wide-crate-locked.png",

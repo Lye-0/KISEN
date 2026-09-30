@@ -1,0 +1,3 @@
+import type { Camera } from './geometry';
+export const lampShed = { minX: 20, maxX: 23, minY: -5, maxY: -2, height: 2.8, door: { x: 21.5, y: -5, width: 1.2, height: 2.2 }, window: { x: 20, minY: -4.5, maxY: -2.2, sill: .9, head: 2.05 } };
+export const lampShedCameras: Record<string, Camera> = { path: { position: [22, -13, 1.65], target: [21.5, -5, 1.6], focal: 650, width: 1672, height: 941 }, store: { position: [21.5, -4.75, 1.65], target: [21.5, -2.25, 1.2], focal: 620, width: 1672, height: 941 }, window: { position: [22.7, -3.5, 1.6], target: [20, -3.5, 1.6], focal: 650, width: 1672, height: 941 } };

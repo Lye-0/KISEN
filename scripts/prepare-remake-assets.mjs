@@ -3,6 +3,16 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['lamp/store-lamp','8148d4e0-f5ed-4271-b38c-f6675a16180e'],
+ ['lamp/path-closed','e5ecd44a-0699-4a81-b170-12c57bf9e139'],
+ ['lamp/path-open','fc473db5-c6a1-4f98-863d-21a435ecef3e'],
+ ['lamp/store','2df18828-621b-4a41-95cc-7f8c3df3805d'],
+ ['lamp/store-open','9abf655b-3f24-4269-833b-04007db73b04'],
+ ['lamp/door-lock','6deb6b81-95b8-443a-a7c7-356244f07cc9'],
+ ['lamp/balance-closed','8a585d89-e7ba-45d4-bbc9-dece4863ccda'],
+ ['lamp/balance-open','19917007-725a-4295-9f06-2799338b4d05'],
+ ['parts/balance-beam','ee1ca386-60b6-4f2e-b6bc-5386eebc68b7'],
+ ['parts/balance-weights','126ca90b-0aca-46c3-b550-0dfb2146d951'],
  ['cargo/wide-crate-locked','a62d13e0-a918-4450-b62d-b305ce3a3363'],
  ['cargo/wide-crate-open','bc704120-fe02-4c59-a109-6b493f58f880'],
  ['cargo/chest-closed','db96a3a1-c8c3-48f0-b7d6-e12760186396'],
@@ -152,7 +162,7 @@ const entries=[
  ['bag/empty','576ac99e-3630-4ab4-95f2-784c208449a0'],
 ];
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/balance-weights','parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='parts/balance-beam'||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 for(const tape of ['A','B'])manifest.push({id:`audio/tape-${tape}`,source:'src/remake/recordings.ts',file:`public/assets/remake/audio/tape-${tape}.wav`,status:'representative-review',method:'deterministic original WAV; scripts/prepare-recordings.mjs'});
 await mkdir('docs/remake',{recursive:true});await writeFile('docs/remake/assets.json',JSON.stringify(manifest,null,2)+'\n');
 console.log('Encoded '+manifest.length+' representative assets.');

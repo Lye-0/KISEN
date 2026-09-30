@@ -1,0 +1,13 @@
+import {project} from '../src/remake/geometry.ts';
+import {lampShedCameras as cams} from '../src/remake/lampShedGeometry.ts';
+import sharp from 'sharp';
+import {mkdir} from 'node:fs/promises';
+const out=process.env.KISEN_REVIEW_DIR??'docs/remake/geometry/lamp-shed';await mkdir(out,{recursive:true});
+let camera=cams.path; let shapes='';const p=v=>project(v,camera),poly=(v,fill)=>{shapes+=`<polygon points="${v.map(v=>{const q=p(v);return q.x+','+q.y}).join(' ')}" fill="${fill}" stroke="#aaa" stroke-width="3"/>`;};
+poly([[18,-12,0],[18,-6,0],[18,-6,3.2],[18,-12,3.2]],'#454345');poly([[18,-12,3.2],[18,-9,5.7],[18,-6,3.2]],'#595357');poly([[0,-12,3.2],[18,-12,3.2],[18,-9,5.7],[0,-9,5.7]],'#303537');
+poly([[20,-5,0],[23,-5,0],[23,-5,2.8],[20,-5,2.8]],'#746f65');poly([[20,-5,2.8],[23,-5,2.8],[23,-2,3.05],[20,-2,3.05]],'#303c40');poly([[20.9,-5.015,0],[22.1,-5.015,0],[22.1,-5.015,2.2],[20.9,-5.015,2.2]],'#332a26');
+await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941"><rect width="1672" height="941" fill="#151c25"/>${shapes}</svg>`)).png().toFile(out+'/path-guide.png');
+console.log(out+'/path-guide.png');
+shapes='';camera=cams.store;
+poly([[20,-2,0],[23,-2,0],[23,-2,2.8],[20,-2,2.8]],'#655e51');poly([[20,-5,0],[20,-2,0],[20,-2,2.8],[20,-5,2.8]],'#454542');poly([[23,-5,0],[23,-2,0],[23,-2,2.8],[23,-5,2.8]],'#454542');poly([[20,-2,0],[23,-2,0],[23,-5,0],[20,-5,0]],'#292b29');poly([[20.005,-4.5,.9],[20.005,-2.2,.9],[20.005,-2.2,2.05],[20.005,-4.5,2.05]],'#172735');poly([[20.9,-2.8,.15],[22.5,-2.8,.15],[22.5,-2.8,.65],[20.9,-2.8,.65]],'#726247');poly([[20.9,-2.8,.65],[22.5,-2.8,.65],[22.5,-2.15,.65],[20.9,-2.15,.65]],'#8a7552');poly([[20.3,-2.03,.8],[20.8,-2.03,.8],[20.8,-2.03,1.65],[20.3,-2.03,1.65]],'#483c2b');
+await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941"><rect width="1672" height="941" fill="#292925"/>${shapes}</svg>`)).png().toFile(out+'/store-guide.png');

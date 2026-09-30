@@ -1,3 +1,5 @@
+import { validBalance, balanceReleases } from './balance';
+import { validShedDigits, shedUnlocks } from './posters';
 import { cargoUnlocks, validCargoDigits } from './cargoDockets';
 import { sameOpening } from './ticketGeometry';
 import { cargoInitial, moveCargo, stairsClear, validCargo } from './cargo';
@@ -8,7 +10,7 @@ import { freshSignals, freshTrain, mounts, stopAt, boardingGeometry, validSignal
 import type { SignalState, TrainState } from './stopping';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'passage' | 'lamp' | 'tunnel' | 'north' | 'return';
 export type Item = 'cargoDocket' | 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
-export type Place = 'cargoChest' | 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
+export type Place = 'lightRack' | 'balanceChest' | 'cargoChest' | 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 export type Side = 'white' | 'black';
 export type Hole = {
@@ -63,7 +65,7 @@ export interface State {
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { passageRevision: [1] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
+export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { passageRevision: [1] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
 export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
 export const done = (s: State, id: string) => s.flags.includes(id);
@@ -102,6 +104,14 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'shedDoor';
+} | {
+    type: 'balanceBox';
+} | {
+    type: 'balanceWeight';
+    index: 0 | 1;
+    position: number;
+} | {
     type: 'cargoChest';
 } | {
     type: 'cargoMove';
@@ -246,6 +256,12 @@ export function reduce(s: State, a: Action): State {
     if (s.room === 'return' && !['look', 'end', 'sound', 'tick', 'record'].includes(a.type))
         return s;
     switch (a.type) {
+        case 'shedDoor': return s.room !== 'forecourt' || !shedUnlocks(s.values.shedDigits ?? []) ? s : { ...s, values: { ...s.values, shedOpen: [1] } };
+        case 'balanceWeight': return s.room !== 'lamp' || s.values.balanceOpen?.[0] === 1 || ![0, 1].includes(a.index) || !Number.isInteger(a.position) || a.position < 0 || a.position > 3 ? s : { ...s, values: { ...s.values, balancePositions: (s.values.balancePositions ?? [1, 1]).map((n, i) => i === a.index ? a.position : n) } };
+        case 'balanceBox': {
+            const open = s.values.balanceOpen?.[0] === 1;
+            return s.room !== 'lamp' || !open && !balanceReleases(s.values.balancePositions ?? [1, 1]) ? s : { ...s, values: { ...s.values, balanceOpen: [open ? 0 : 1] } };
+        }
         case 'cargoChest': {
             if (s.room !== 'cargo')
                 return s;
@@ -328,6 +344,8 @@ export function reduce(s: State, a: Action): State {
             return { ...s, camera, visited: append(s.visited, s.room + ':' + camera) };
         }
         case 'move': {
+            if (a.room === 'lamp' && (s.room !== 'forecourt' || s.values.shedOpen?.[0] !== 1))
+                return s;
             if ((s.room === 'bridge' && a.room === 'north' || s.room === 'north' && a.room === 'bridge') && s.values.gateOpen?.[0] !== 1)
                 return s;
             if ((s.room === 'cargo' && a.room === 'passage' || s.room === 'passage' && a.room === 'cargo') && s.values.stairDoor?.[0] !== 1 || (s.room === 'north' && a.room === 'passage' || s.room === 'passage' && a.room === 'north') && s.values.northHatch?.[0] !== 1)
@@ -357,6 +375,8 @@ export function reduce(s: State, a: Action): State {
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
             const at = s.locations[a.item];
+            if (at === 'lightRack' && s.room !== 'lamp' || at === 'balanceChest' && (s.room !== 'lamp' || s.values.balanceOpen?.[0] !== 1))
+                return s;
             if (at === 'cargoChest' && (s.room !== 'cargo' || s.values.cargoOpen?.[0] !== 1))
                 return s;
             if (a.item === 'support' && at === 'bridgeGate')
@@ -375,7 +395,7 @@ export function reduce(s: State, a: Action): State {
                 return s;
             return { ...s, locations: { ...s.locations, [a.item]: 'inventory' } };
         }
-        case 'put': return !s.locations[a.item] || ['signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
+        case 'put': return !s.locations[a.item] || ['lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
         case 'seat': return { ...s, seats: s.seats.map((v, i) => i === a.index ? 1 - v : v) };
         case 'heard': {
             if (!Number.isFinite(a.seconds))
@@ -384,7 +404,7 @@ export function reduce(s: State, a: Action): State {
             const seconds = Math.max(s.values[id]?.[0] ?? 0, Math.min(tapeDuration, Math.max(0, a.seconds)));
             return { ...s, values: { ...s.values, [id]: [seconds] } };
         }
-        case 'values': return a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
+        case 'values': return a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return !nodes[a.index] || !connections[nodes[a.index]][a.value] || ['approaching', 'passing', 'leaving', 'stopped'].includes(s.train.position) && trace(s.route).path.includes(nodes[a.index]) ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
@@ -441,6 +461,19 @@ export function restore(value: unknown): State | null {
         return null;
     if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('point-observation-') && (!numeric(n.values) || n.values.length !== 2 || !Number.isInteger(n.values[0]) || n.values[0] < 0 || n.values[0] > 5 || !Number.isInteger(n.values[1]) || n.values[1] < 0 || n.values[1] >= connections[nodes[n.values[0]]].length)))
         return null;
+    if (s.values.shedDigits && !validShedDigits(s.values.shedDigits) || s.values.balancePositions && !validBalance(s.values.balancePositions))
+        return null;
+    for (const name of ['shedOpen', 'balanceOpen'])
+        if (s.values[name] && (s.values[name].length !== 1 || ![0, 1].includes(s.values[name][0])))
+            return null;
+    if (s.values.balanceOpen?.[0] === 1 && !balanceReleases(s.values.balancePositions ?? [1, 1]))
+        return null;
+    if (s.values.posterPair && (s.values.posterPair.length !== 2 || !s.values.posterPair.every(n => Number.isInteger(n) && n >= 0 && n < 4)))
+        return null;
+    if (s.values.posterBacks && (new Set(s.values.posterBacks).size !== s.values.posterBacks.length || !s.values.posterBacks.every(n => Number.isInteger(n) && n >= 0 && n < 4)))
+        return null;
+    if (s.notes.some(n => n?.id === 'posters' && (!numeric(n.values) || n.values.length < 2 || n.values.length > 6 || !n.values.every(v => Number.isInteger(v) && v >= 0 && v < 4))))
+        return null;
     if (s.values.cargoDigits && !validCargoDigits(s.values.cargoDigits))
         return null;
     if (s.values.cargo && !validCargo(s.values.cargo as Cargo))
@@ -481,7 +514,7 @@ export function restore(value: unknown): State | null {
     if (!s.notes.every(n => n && typeof n.id === 'string' && numeric(n.values) && (n.id !== 'arrivalPhotos' || order(n.values))))
         return null;
     const notes = s.notes.filter(n => n.id !== 'toolTrial' || !s.notes.some(other => other.id.startsWith('toolTrial-') && other.values.length === n.values.length && other.values.every((v, i) => v === n.values[i])));
-    const locations = { spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } as State['locations'];
+    const locations = { lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', ...s.locations } as State['locations'];
     if (legacy)
         for (const item of ['lamp', 'spareLamp', 'hood'] as Item[])
             if (locations[item] === 'signal')
