@@ -20,7 +20,7 @@ it('荷物箱を先に調べる別順を、作業完了フラグで止めない'
 it('北ホームの閉じた地下蓋は外から先取りできない', () => {
     const north: State = { ...newState(), room: 'north', camera: 2 };
     expect(reduce(north, { type: 'northHatch' })).toBe(north);
-    expect(reduce(north, { type: 'move', room: 'tunnel' })).toBe(north);
+    expect(reduce(north, { type: 'move', room: 'passage' })).toBe(north);
 });
 it('保存された荷物配置の短い配列、干渉、範囲外を復元しない', () => {
     for (const cargo of [[1], [1, 0, 1, 2], [4, 0, 1, 1]])
@@ -38,11 +38,13 @@ it('荷物を実際に動かしてから階段戸を開き、保存後も逆操�
     const saved = restore(JSON.parse(JSON.stringify(s)))!;
     expect(saved.values.cargo).toEqual(s.values.cargo);
     expect(reduce(saved, { type: 'cargoMove', index: 2, direction: -1 })).toBe(saved);
-    const tunnel = reduce(saved, { type: 'move', room: 'tunnel' });
-    expect(tunnel.room).toBe('tunnel');
+    const tunnel = reduce(saved, { type: 'move', room: 'passage' });
+    expect(tunnel.room).toBe('passage');
     expect(reduce(tunnel, { type: 'move', room: 'north' })).toBe(tunnel);
-    const opened = reduce(tunnel, { type: 'northHatch' });
+    const midway = reduce(tunnel, { type: 'look', camera: 1 });
+    const landing = reduce(midway, { type: 'look', camera: 2 });
+    const opened = reduce(landing, { type: 'northHatch' });
     const north = reduce(opened, { type: 'move', room: 'north', camera: 2 });
     expect(north.room).toBe('north');
-    expect(reduce(north, { type: 'move', room: 'tunnel' }).room).toBe('tunnel');
+    expect(reduce(north, { type: 'move', room: 'passage' }).room).toBe('passage');
 });

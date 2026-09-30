@@ -5,7 +5,7 @@ import { arrivalCaseSides } from './arrivalPhotos';
 import { duration as tapeDuration } from './recordings';
 import { freshSignals, freshTrain, mounts, stopAt, boardingGeometry, validSignals, validTrain } from './stopping';
 import type { SignalState, TrainState } from './stopping';
-export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'lamp' | 'tunnel' | 'north' | 'return';
+export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'passage' | 'lamp' | 'tunnel' | 'north' | 'return';
 export type Item = 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
 export type Place = 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
@@ -62,8 +62,8 @@ export interface State {
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: {}, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
-export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, lamp: 2, tunnel: 2, north: 3, return: 2 };
+export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { passageRevision: [1] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
+export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 3, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 3, return: 2 };
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
 export const done = (s: State, id: string) => s.flags.includes(id);
 const append = <T,>(a: T[], v: T) => a.includes(v) ? a : [...a, v];
@@ -250,7 +250,7 @@ export function reduce(s: State, a: Action): State {
             return next ? { ...s, values: { ...s.values, cargo: next } } : s;
         }
         case 'stairDoor': return s.room !== 'cargo' || !stairsClear((s.values.cargo ?? cargoInitial) as Cargo) ? s : { ...s, values: { ...s.values, stairDoor: [s.values.stairDoor?.[0] === 1 ? 0 : 1] } };
-        case 'northHatch': return s.room !== 'tunnel' && (s.room !== 'north' || s.values.northHatch?.[0] !== 1) ? s : { ...s, values: { ...s.values, northHatch: [s.values.northHatch?.[0] === 1 ? 0 : 1] } };
+        case 'northHatch': return (s.room !== 'passage' || s.camera !== 2) && (s.room !== 'north' || s.values.northHatch?.[0] !== 1) ? s : { ...s, values: { ...s.values, northHatch: [s.values.northHatch?.[0] === 1 ? 0 : 1] } };
         case 'rackRing': return s.room !== 'office' || s.camera !== 1 || s.locations.hook !== 'toolRack' ? s : { ...s, values: { ...s.values, rackRing: [s.values.rackRing?.[0] === 1 ? 0 : 1] } };
         case 'tagInsert': return s.room !== 'bridge' || s.camera !== 1 || !owns(s, 'hook') || s.locations.pin !== 'railTag' || s.values.tagDepth?.[0] ? s : { ...s, values: { ...s.values, tagDepth: [1] } };
         case 'tagExtend': return s.room !== 'bridge' || s.camera !== 1 || s.values.tagDepth?.[0] !== 1 ? s : { ...s, values: { ...s.values, tagDepth: [2] } };
@@ -314,15 +314,19 @@ export function reduce(s: State, a: Action): State {
         case 'start': return { ...s, started: true };
         case 'look': {
             const camera = (a.camera + cameraCounts[s.room]) % cameraCounts[s.room];
+            if (s.room === 'passage' && !([[1], [0, 2], [3], [0, 2]][s.camera]).includes(camera))
+                return s;
             return { ...s, camera, visited: append(s.visited, s.room + ':' + camera) };
         }
         case 'move': {
             if ((s.room === 'bridge' && a.room === 'north' || s.room === 'north' && a.room === 'bridge') && s.values.gateOpen?.[0] !== 1)
                 return s;
-            if ((s.room === 'cargo' && a.room === 'tunnel' || s.room === 'tunnel' && a.room === 'cargo') && s.values.stairDoor?.[0] !== 1 || (s.room === 'north' && a.room === 'tunnel' || s.room === 'tunnel' && a.room === 'north') && s.values.northHatch?.[0] !== 1)
+            if ((s.room === 'cargo' && a.room === 'passage' || s.room === 'passage' && a.room === 'cargo') && s.values.stairDoor?.[0] !== 1 || (s.room === 'north' && a.room === 'passage' || s.room === 'passage' && a.room === 'north') && s.values.northHatch?.[0] !== 1)
+                return s;
+            if (s.room === 'passage' && (a.room === 'north' && s.camera !== 2 || a.room === 'cargo' && ![0, 3].includes(s.camera)))
                 return s;
             const camera = a.camera ?? 0;
-            return { ...s, room: a.room, camera, visited: append(s.visited, a.room + ':' + camera) };
+            return { ...s, room: a.room, camera, values: { ...s.values, passageRevision: [1] }, visited: append(s.visited, a.room + ':' + camera) };
         }
         case 'bagStrap': return s.bag.mouth ? s : { ...s, bag: { ...s.bag, strap: Math.max(0, Math.min(1, a.position)) } };
         case 'windowLift': return s.window.open ? s : { ...s, window: { ...s.window, supported: !s.window.supported } };
@@ -396,7 +400,10 @@ export function reduce(s: State, a: Action): State {
 export function restore(value: unknown): State | null {
     if (!value || typeof value !== 'object')
         return null;
-    const s = value as State;
+    let s = value as State;
+    // Earlier representative saves used the exterior-sidepath name for this underpass.
+    if (s.room === 'tunnel' && s.values && !s.values.passageRevision && [0, 1].includes(s.camera))
+        s = { ...s, room: 'passage', camera: s.camera === 0 ? 2 : 3, values: { ...s.values, passageRevision: [1] }, visited: Array.isArray(s.visited) ? s.visited.map(v => v === 'tunnel:0' ? 'passage:2' : v === 'tunnel:1' ? 'passage:3' : v) : s.visited };
     const legacy = s.signals === undefined;
     const signals = legacy ? freshSignals() : s.signals;
     const train = legacy ? (s.room === 'return' ? { service: 2, position: 'departed' as const, firstDoor: 7 } : freshTrain()) : s.train;

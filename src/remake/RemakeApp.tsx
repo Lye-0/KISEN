@@ -61,7 +61,7 @@ function load() {
 }
 const labels: Record<Item, string> = { spareLamp: '交換灯具', photos: '写真', receipt: '受取票', envelope: '封筒', ownTicket: '到着券', officeKey: '駅務室の鍵', knob: '黒いつまみ', hook: '鉤付き棒', pin: '薄い片', support: '支え', lamp: '灯具', punch: '鋏', paper: '用紙', fragments: '券の断片', hood: '覆い', ticket: '切符', counterRecords: '帳票' };
 const documentFocus: Partial<Record<Item, Focus>> = { photos: 'photos', receipt: 'receipt', envelope: 'map', ownTicket: 'arrivalTicket', paper: 'paperView', counterRecords: 'notices' };
-const roomLabels: Record<Room, string> = { train: '到着車内', platform: '南ホーム', waiting: '待合室', forecourt: '駅前', office: '駅務室', lost: '忘れ物室', bridge: '跨線橋', cargo: '荷物室', lamp: '灯具小屋', tunnel: 'トンネル側道', north: '北ホーム', return: '帰りの車内' };
+const roomLabels: Record<Room, string> = { train: '到着車内', platform: '南ホーム', waiting: '待合室', forecourt: '駅前', office: '駅務室', lost: '忘れ物室', bridge: '跨線橋', cargo: '荷物室', passage: '地下横断通路', lamp: '灯具小屋', tunnel: 'トンネル側道', north: '北ホーム', return: '帰りの車内' };
 export default function RemakeApp() {
     const [s, setS] = useState(load), [view, setView] = useState<{
         focus: Focus;
@@ -122,7 +122,7 @@ export default function RemakeApp() {
     const world = <World s={s} dispatch={dispatch} inspect={inspect} say={say} selected={selected}/>;
     return <main id="rm-game" className={targets ? 'rm-targets' : ''}>
  <div className={'rm-stage ' + (focus === 'bag' ? 'rm-close' : '')}>{focus ? <><div className="rm-focus-backdrop" aria-hidden="true" inert>{world}</div><div className="rm-focused-scene"><FocusView focus={focus} s={s} dispatch={dispatch} say={say} selected={selected} onSelect={setSelected} close={close} inspect={inspect}/></div></> : world}</div>
- {!focus && views.length > 1 && <nav className="rm-world-nav" aria-label="周囲を見る"><button aria-label="左を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + views.length - 1) % views.length })}>‹</button><button aria-label="右を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + 1) % views.length })}>›</button></nav>}
+ {!focus && s.room !== 'passage' && views.length > 1 && <nav className="rm-world-nav" aria-label="周囲を見る"><button aria-label="左を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + views.length - 1) % views.length })}>‹</button><button aria-label="右を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + 1) % views.length })}>›</button></nav>}
  <div className="rm-top">{focus ? <button onClick={close} aria-label="前の場面へ戻る">〈 戻る</button> : <div><span className="rm-wordmark">帰線</span><span className="rm-area-name">{roomLabels[s.room]}</span></div>}<div><button onClick={() => setPanel('notes')}>記録</button><button onClick={() => setPanel('settings')} aria-label="設定と保存">⋯</button></div></div>
  {showSelected && <div className="rm-held-item"><div className="rm-held-icon"><ItemImage item={selected} state={s}/></div><button aria-label="選んだ持ち物を見る" onClick={() => inspect(documentFocus[selected] ?? 'item')}>見る</button></div>}
  <div className="rm-bottom"><div className="rm-inventory" aria-label="持ち物">{inv.map(item => <button key={item} aria-label={labels[item]} className={selected === item ? 'selected' : ''} aria-pressed={selected === item} onClick={() => {

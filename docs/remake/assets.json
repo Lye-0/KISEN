@@ -84,30 +84,44 @@
     "method": "built-in image_gen; WebP encoding only"
   },
   {
-    "id": "tunnel/landing",
+    "id": "passage/landing",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a44b94fe-9311-417b-9532-bf0730cfeeba.png",
-    "file": "public/assets/remake/tunnel/landing.webp",
+    "file": "public/assets/remake/passage/landing.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
   },
   {
-    "id": "tunnel/landing-closed",
+    "id": "passage/landing-closed",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-603383a7-0912-4991-ab81-b153fa01cbbe.png",
-    "file": "public/assets/remake/tunnel/landing-closed.webp",
+    "file": "public/assets/remake/passage/landing-closed.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
   },
   {
-    "id": "tunnel/window",
+    "id": "passage/window",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-80039a5f-e71b-4f17-9882-385b0503618c.png",
-    "file": "public/assets/remake/tunnel/window.webp",
+    "file": "public/assets/remake/passage/window.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
   },
   {
-    "id": "tunnel/return",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ec6d3842-62a1-4b0d-b926-2b43ee22b91f.png",
-    "file": "public/assets/remake/tunnel/return.webp",
+    "id": "passage/entry",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-d723f684-42d9-4af6-a752-32c060159d7e.png",
+    "file": "public/assets/remake/passage/entry.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "passage/north",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-5764d308-eb2e-435e-b605-c54821c734b8.png",
+    "file": "public/assets/remake/passage/north.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "passage/south",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e739f5e3-c54e-40f8-904a-a8819863fcfb.png",
+    "file": "public/assets/remake/passage/south.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
   },
