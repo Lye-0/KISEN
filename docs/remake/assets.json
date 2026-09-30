@@ -516,5 +516,19 @@
     "file": "public/assets/remake/bag/empty.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "audio/tape-A",
+    "source": "src/remake/recordings.ts",
+    "file": "public/assets/remake/audio/tape-A.wav",
+    "status": "representative-review",
+    "method": "deterministic original WAV; scripts/prepare-recordings.mjs"
+  },
+  {
+    "id": "audio/tape-B",
+    "source": "src/remake/recordings.ts",
+    "file": "public/assets/remake/audio/tape-B.wav",
+    "status": "representative-review",
+    "method": "deterministic original WAV; scripts/prepare-recordings.mjs"
   }
 ]
