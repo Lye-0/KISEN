@@ -1,5 +1,250 @@
 [
   {
+    "id": "bridge/gate-mechanism-open-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-d6b6a1ac-6fcd-4496-b993-8c64ddeafe85.png",
+    "file": "public/assets/remake/bridge/gate-mechanism-open-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/gate-mechanism-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-78ca52c0-8b3c-4502-9110-d5ceb2c872b7.png",
+    "file": "public/assets/remake/bridge/gate-mechanism-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/north-gate-open-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-549fcebf-f621-49ef-8e63-bfa96fc0245e.png",
+    "file": "public/assets/remake/bridge/north-gate-open-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/north-gate-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f79c51fe-94ad-44e6-a672-b237e73a9bec.png",
+    "file": "public/assets/remake/bridge/north-gate-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/folding-support",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4c08b5ba-b38f-4362-a8d7-da6e57ab00fe.png",
+    "file": "public/assets/remake/parts/folding-support.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "bridge/rail-tag",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-7e06567d-00d1-4e7d-ae49-aa5715801189.png",
+    "file": "public/assets/remake/bridge/rail-tag.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/rail-tag-inserted",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-0003eb8c-c919-438e-a31a-41a4e49e920d.png",
+    "file": "public/assets/remake/bridge/rail-tag-inserted.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/rail-tag-extended",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2d9c1e13-aaaa-410d-921d-bce08ebf3fc4.png",
+    "file": "public/assets/remake/bridge/rail-tag-extended.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/rail-tag-caught",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c3e39c32-5d33-46bd-b529-2f09c3ffed1c.png",
+    "file": "public/assets/remake/bridge/rail-tag-caught.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/rail-tag-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-79705f9f-e401-45ef-8211-a8156a8eb28d.png",
+    "file": "public/assets/remake/bridge/rail-tag-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/east-tag",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c916f5ca-52de-474e-b859-5852d0ad14c1.png",
+    "file": "public/assets/remake/bridge/east-tag.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/east-tag-inserted",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f6014d11-7fed-4cd7-b85c-d5983aa01ec9.png",
+    "file": "public/assets/remake/bridge/east-tag-inserted.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/east-tag-extended",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-5d0dcee3-b6ed-40ea-a049-305c9c237aa7.png",
+    "file": "public/assets/remake/bridge/east-tag-extended.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/east-tag-caught",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-1cdd219a-0737-4bf6-b9e3-d208fd4f5854.png",
+    "file": "public/assets/remake/bridge/east-tag-caught.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/east-tag-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-5d3e879a-d629-47da-9544-c3770bf62fab.png",
+    "file": "public/assets/remake/bridge/east-tag-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/maintenance-tab",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-23265543-e292-4a8e-8c7b-58d5a568c1cf.png",
+    "file": "public/assets/remake/parts/maintenance-tab.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "office/north-hook",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-15a2d077-4637-40c9-b5ba-f534fba979a0.png",
+    "file": "public/assets/remake/office/north-hook.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "office/north-hook-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-73dfe88e-3e38-4d60-98fd-0187dec7dee6.png",
+    "file": "public/assets/remake/office/north-hook-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "office/hook-close",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-efcdbdd6-be00-4f49-a538-67a982efa20a.png",
+    "file": "public/assets/remake/office/hook-close.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "office/hook-ring-turned",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e9024297-05af-4b14-9b65-aab99b7a40b5.png",
+    "file": "public/assets/remake/office/hook-ring-turned.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "office/hook-empty",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-6c490743-0022-4dbd-8755-158c342b006c.png",
+    "file": "public/assets/remake/office/hook-empty.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/maintenance-hook",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-96eead91-99ef-4e32-bd48-4145dd3438ee.png",
+    "file": "public/assets/remake/parts/maintenance-hook.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "north/west-bridge",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c7c19d71-dee0-4558-86fc-12197fefd8eb.png",
+    "file": "public/assets/remake/north/west-bridge.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "north/west-bridge-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2a8b6849-f603-4a29-8b08-f5e01b8d2f12.png",
+    "file": "public/assets/remake/north/west-bridge-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/north-gate-braced",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e28beca1-3cfb-4557-ab99-260cd4888ffb.png",
+    "file": "public/assets/remake/bridge/north-gate-braced.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/north-gate-released",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-aac363c9-445b-4add-8b7f-294743dba002.png",
+    "file": "public/assets/remake/bridge/north-gate-released.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/north-gate-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-669b2356-2477-4fcf-bc87-82eab6087150.png",
+    "file": "public/assets/remake/bridge/north-gate-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/gate-mechanism-braced",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ce074082-7cdd-4e40-90a1-41e7449cf403.png",
+    "file": "public/assets/remake/bridge/gate-mechanism-braced.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/gate-mechanism-released",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e6de3e5e-3266-4b83-a85e-fe3372bfbfc5.png",
+    "file": "public/assets/remake/bridge/gate-mechanism-released.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/gate-mechanism-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-eb55a745-6cfe-4704-b36e-97001723478f.png",
+    "file": "public/assets/remake/bridge/gate-mechanism-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/east-tracks",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-860632e4-b85d-49fc-a36b-fbb0cf18044b.png",
+    "file": "public/assets/remake/bridge/east-tracks.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/north-gate",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-8c07032d-4619-41b8-a376-13c0a229533f.png",
+    "file": "public/assets/remake/bridge/north-gate.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/gate-mechanism",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-76ce73a1-7e5a-407d-bf2c-2cd714e7f365.png",
+    "file": "public/assets/remake/bridge/gate-mechanism.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "bridge/west-roof",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-0e4265e1-16ff-45f5-9081-59f5d97cd05e.png",
+    "file": "public/assets/remake/bridge/west-roof.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "platform/west-bridge",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c631cfcd-c316-43f5-874f-86d346586ad2.png",
+    "file": "public/assets/remake/platform/west-bridge.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
     "id": "train/floor-clear",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ef8abfe8-14f9-4986-b49a-21bdbc838e9c.png",
     "file": "public/assets/remake/train/floor-clear.webp",

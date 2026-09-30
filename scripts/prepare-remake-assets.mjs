@@ -3,6 +3,41 @@ import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['bridge/gate-mechanism-open-empty','d6b6a1ac-6fcd-4496-b993-8c64ddeafe85'],
+ ['bridge/gate-mechanism-empty','78ca52c0-8b3c-4502-9110-d5ceb2c872b7'],
+ ['bridge/north-gate-open-empty','549fcebf-f621-49ef-8e63-bfa96fc0245e'],
+ ['bridge/north-gate-empty','f79c51fe-94ad-44e6-a672-b237e73a9bec'],
+ ['parts/folding-support','4c08b5ba-b38f-4362-a8d7-da6e57ab00fe'],
+ ['bridge/rail-tag','7e06567d-00d1-4e7d-ae49-aa5715801189'],
+ ['bridge/rail-tag-inserted','0003eb8c-c919-438e-a31a-41a4e49e920d'],
+ ['bridge/rail-tag-extended','2d9c1e13-aaaa-410d-921d-bce08ebf3fc4'],
+ ['bridge/rail-tag-caught','c3e39c32-5d33-46bd-b529-2f09c3ffed1c'],
+ ['bridge/rail-tag-empty','79705f9f-e401-45ef-8211-a8156a8eb28d'],
+ ['bridge/east-tag','c916f5ca-52de-474e-b859-5852d0ad14c1'],
+ ['bridge/east-tag-inserted','f6014d11-7fed-4cd7-b85c-d5983aa01ec9'],
+ ['bridge/east-tag-extended','5d0dcee3-b6ed-40ea-a049-305c9c237aa7'],
+ ['bridge/east-tag-caught','1cdd219a-0737-4bf6-b9e3-d208fd4f5854'],
+ ['bridge/east-tag-empty','5d3e879a-d629-47da-9544-c3770bf62fab'],
+ ['parts/maintenance-tab','23265543-e292-4a8e-8c7b-58d5a568c1cf'],
+ ['office/north-hook','15a2d077-4637-40c9-b5ba-f534fba979a0'],
+ ['office/north-hook-empty','73dfe88e-3e38-4d60-98fd-0187dec7dee6'],
+ ['office/hook-close','efcdbdd6-be00-4f49-a538-67a982efa20a'],
+ ['office/hook-ring-turned','e9024297-05af-4b14-9b65-aab99b7a40b5'],
+ ['office/hook-empty','6c490743-0022-4dbd-8755-158c342b006c'],
+ ['parts/maintenance-hook','96eead91-99ef-4e32-bd48-4145dd3438ee'],
+ ['north/west-bridge','c7c19d71-dee0-4558-86fc-12197fefd8eb'],
+ ['north/west-bridge-open','2a8b6849-f603-4a29-8b08-f5e01b8d2f12'],
+ ['bridge/north-gate-braced','e28beca1-3cfb-4557-ab99-260cd4888ffb'],
+ ['bridge/north-gate-released','aac363c9-445b-4add-8b7f-294743dba002'],
+ ['bridge/north-gate-open','669b2356-2477-4fcf-bc87-82eab6087150'],
+ ['bridge/gate-mechanism-braced','ce074082-7cdd-4e40-90a1-41e7449cf403'],
+ ['bridge/gate-mechanism-released','e6de3e5e-3266-4b83-a85e-fe3372bfbfc5'],
+ ['bridge/gate-mechanism-open','eb55a745-6cfe-4704-b36e-97001723478f'],
+ ['bridge/east-tracks','860632e4-b85d-49fc-a36b-fbb0cf18044b'],
+ ['bridge/north-gate','8c07032d-4619-41b8-a376-13c0a229533f'],
+ ['bridge/gate-mechanism','76ce73a1-7e5a-407d-bf2c-2cd714e7f365'],
+ ['bridge/west-roof','0e4265e1-16ff-45f5-9081-59f5d97cd05e'],
+ ['platform/west-bridge','c631cfcd-c316-43f5-874f-86d346586ad2'],
  ['train/floor-clear','ef8abfe8-14f9-4986-b49a-21bdbc838e9c'],
  ['parts/return-car-gap6-closed','24cbffdd-e431-4483-949a-fe69ae52a286'],
  ['parts/inventory-paper','ef4b30e0-e69d-4047-8909-5e3041b566b5'],
@@ -80,7 +115,7 @@ const entries=[
  ['bag/empty','576ac99e-3630-4ab4-95f2-784c208449a0'],
 ];
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||['parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||['parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');await mkdir(path.dirname(file),{recursive:true});if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);manifest.push({id,source,file,status:'representative-review',method:rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 for(const tape of ['A','B'])manifest.push({id:`audio/tape-${tape}`,source:'src/remake/recordings.ts',file:`public/assets/remake/audio/tape-${tape}.wav`,status:'representative-review',method:'deterministic original WAV; scripts/prepare-recordings.mjs'});
 await mkdir('docs/remake',{recursive:true});await writeFile('docs/remake/assets.json',JSON.stringify(manifest,null,2)+'\n');
 console.log('Encoded '+manifest.length+' representative assets.');

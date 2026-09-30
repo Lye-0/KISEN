@@ -11,6 +11,9 @@ const art: Partial<Record<Item, string>> = {
     lamp: 'parts/marker-lamp.png',
     spareLamp: 'parts/marker-lamp.png',
     counterRecords: 'parts/counter-folder.png',
+    hook: 'parts/maintenance-hook.png',
+    pin: 'parts/maintenance-tab.png',
+    support: 'parts/folding-support.png',
 };
 export function ItemImage({ item, state }: {
     item: Item;

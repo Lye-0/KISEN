@@ -1,3 +1,5 @@
+import { BridgeGateWide } from './BridgeGate';
+import { RailTagWide } from './RailTag';
 import { NorthPlatform } from './NorthPlatform';
 import { ToolScene } from './ToolScene';
 import { Photo, Touch } from './Photo';
@@ -7,9 +9,10 @@ import { HatchImage } from './Hatch';
 import { DrawerImage } from './CounterDrawer';
 import { RecordCard } from './ServiceRecords';
 import { RecorderImage } from './Recorder';
+import { owns } from './model';
 import type { Action, Item, Room, State } from './model';
-export type Focus = 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
-export const availableViews: Partial<Record<Room, string[]>> = { train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前'], office: ['机と南の窓', '北の保管区画'] };
+export type Focus = 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
+export const availableViews: Partial<Record<Room, string[]>> = { train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側', '西の階段'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前'], office: ['机と南の窓', '北の保管区画'], bridge: ['駅舎の屋根と北壁', '線路と屋根', '北端の保守柵'], north: ['停車灯と踏み板', '西の橋階段'] };
 function CounterObjects({ s }: {
     s: State;
 }) { const open = s.values.drawerOpen?.[0] === 1; return <svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="978" y="254" width="256" height="275" viewBox="436 166 784 632" preserveAspectRatio="none"><HatchImage s={s}/></svg><svg x={open ? 945 : 965} y={open ? 552 : 557} width={open ? 339 : 299} height={open ? 139 : 76} viewBox={open ? '55 252 1555 638' : '125 296 1415 350'} preserveAspectRatio="none"><DrawerImage s={s}/></svg><foreignObject x="690" y="275" width="100" height="195"><RecordCard id={0} inkOnly/></foreignObject><foreignObject x="800" y="310" width="72" height="141"><RecordCard id={1} inkOnly/></foreignObject></svg>; }
@@ -23,11 +26,13 @@ export function World({ s, dispatch, inspect, selected, say }: {
     const move = (room: Room, camera = 0) => dispatch({ type: 'move', room, camera });
     const image = (src: string, label: string, children?: React.ReactNode) => <Photo src={'/assets/remake/' + src + '.webp'} label={label}>{children}</Photo>;
     if (s.room === 'north')
-        return <NorthPlatform s={s} dispatch={dispatch} inspect={inspect} selected={selected} say={say}/>;
+        return s.camera === 1 ? image('north/west-bridge' + (s.values.gateOpen?.[0] === 1 ? '-open' : ''), '北ホームの西端から見た橋の階段', <Touch name="跨線橋へ上がる" rect={[23, 19, 24, 62]} act={() => s.values.gateOpen?.[0] === 1 ? move('bridge', 2) : say('上の保守柵が閉じている。')}/>) : <NorthPlatform s={s} dispatch={dispatch} inspect={inspect} selected={selected} say={say}/>;
     if (s.room === 'train')
         return <Train s={s} dispatch={dispatch} inspect={() => inspect('bag')} inspectCase={() => inspect('case')} inspectSeat={i => { dispatch({ type: 'values', id: 'seatFocus', values: [i] }); inspect('seat'); }} exit={() => move('platform', 0)}/>;
     if (s.room === 'platform')
-        return s.camera === 1 ? image('platform/train', 'ホームに停まる列車', <Touch name="車内へ入る" rect={[37, 23, 22, 57]} act={() => move('train')}/>) : image('platform/station', '南ホームから見た待合室', <><Clock minutes={23 * 60 + 17} transform="translate(1030 302) scale(.72)"/><Touch name="待合室へ入る" rect={[36, 34, 20, 44]} act={() => move('waiting', 0)}/><Touch name="ホームの時計" rect={[57, 25, 9, 16]} act={() => inspect('platformClock')}/></>);
+        return s.camera === 2 ? image('platform/west-bridge', '南ホーム西端の跨線橋階段', <Touch name="西の跨線橋へ上がる" rect={[34, 17, 18, 55]} act={() => move('bridge', 0)}/>) : s.camera === 1 ? image('platform/train', 'ホームに停まる列車', <Touch name="車内へ入る" rect={[37, 23, 22, 57]} act={() => move('train')}/>) : image('platform/station', '南ホームから見た待合室', <><Clock minutes={23 * 60 + 17} transform="translate(1030 302) scale(.72)"/><Touch name="待合室へ入る" rect={[36, 34, 20, 44]} act={() => move('waiting', 0)}/><Touch name="ホームの時計" rect={[57, 25, 9, 16]} act={() => inspect('platformClock')}/></>);
+    if (s.room === 'bridge')
+        return s.camera === 1 ? <RailTagWide s={s} inspect={() => inspect('railTag')}/> : s.camera === 2 ? <BridgeGateWide s={s} dispatch={dispatch} inspect={() => inspect('bridgeGate')} enterNorth={() => move('north', 0)}/> : image('bridge/west-roof', '跨線橋から見える駅舎の北壁と西端', <Touch name="南ホームへ下りる" rect={[0, 56, 23, 44]} act={() => move('platform', 2)}/>);
     if (s.room === 'waiting') {
         if (s.camera === 0)
             return image('waiting/south', '待合室の二つの南窓とベンチ');
@@ -43,6 +48,6 @@ export function World({ s, dispatch, inspect, selected, say }: {
     if (s.room === 'forecourt')
         return image('forecourt/station', '六つの窓が並ぶ駅舎', <Touch name="待合室へ戻る" rect={[13, 44, 7, 27]} act={() => move('waiting', 2)}/>);
     if (s.room === 'office')
-        return s.camera === 1 ? image('office/north', '駅務室の北側の保管区画', <><Touch name="待合室へ戻る" rect={[0, 23, 16, 65]} act={() => move('waiting', 1)}/></>) : image('office/south', '駅務室の机と二つの窓', <><Clock /><svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="457" y="502" width="180" height="147" viewBox="160 0 890 710" preserveAspectRatio="none"><RecorderImage s={s}/></svg></svg><ToolScene s={s}/><Touch name="机の録音機" rect={[26, 51, 20, 22]} act={() => inspect('recorder')}/><Touch name="机の鋏と用紙" rect={[44.8, 65.3, 29.5, 7.6]} act={() => inspect('tools')}/></>);
+        return s.camera === 1 ? image(owns(s, 'hook') ? 'office/north-hook-empty' : 'office/north-hook', '駅務室の北側の保管区画', <><Touch name="待合室へ戻る" rect={[0, 23, 16, 65]} act={() => move('waiting', 1)}/><Touch name="傘立ての鉤付き棒" rect={[39, 47, 11, 32]} act={() => inspect('hookRack')}/></>) : image('office/south', '駅務室の机と二つの窓', <><Clock /><svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="457" y="502" width="180" height="147" viewBox="160 0 890 710" preserveAspectRatio="none"><RecorderImage s={s}/></svg></svg><ToolScene s={s}/><Touch name="机の録音機" rect={[26, 51, 20, 22]} act={() => inspect('recorder')}/><Touch name="机の鋏と用紙" rect={[44.8, 65.3, 29.5, 7.6]} act={() => inspect('tools')}/></>);
     return <p role="status">この場面はまだ用意されていません。</p>;
 }

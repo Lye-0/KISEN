@@ -1,0 +1,37 @@
+import { expect, it } from 'vitest';
+import { newState, reduce, restore } from './model';
+it('工具輪を傾けて棒を外し、柵の低い隙間から札の穴まで順に届く', () => {
+    let s = newState();
+    s.room = 'office';
+    s.camera = 1;
+    expect(reduce(s, { type: 'take', item: 'hook' })).toBe(s);
+    s = reduce(s, { type: 'rackRing' });
+    s = reduce(s, { type: 'take', item: 'hook' });
+    expect(s.locations.hook).toBe('inventory');
+    s = reduce(s, { type: 'move', room: 'bridge', camera: 1 });
+    expect(reduce(s, { type: 'tagExtend' })).toBe(s);
+    s = reduce(s, { type: 'tagInsert' });
+    expect(s.values.tagDepth).toEqual([1]);
+    expect(reduce(s, { type: 'tagTurn' })).toBe(s);
+    s = reduce(s, { type: 'tagExtend' });
+    s = reduce(s, { type: 'tagTurn' });
+    expect(s.values.tagCaught).toEqual([1]);
+    s = restore(JSON.parse(JSON.stringify(s)))!;
+    s = reduce(s, { type: 'tagWithdraw' });
+    expect(s.locations.pin).toBe('inventory');
+    expect(s.locations.hook).toBe('inventory');
+    expect(s.values.tagDepth).toEqual([0]);
+});
+it('札に掛けずに引けば道具は戻るが札は残り、任意値の書換えで飛ばせない', () => {
+    let s = newState();
+    s.room = 'bridge';
+    s.camera = 1;
+    s.locations.hook = 'inventory';
+    s = reduce(reduce(s, { type: 'tagInsert' }), { type: 'tagExtend' });
+    s = reduce(s, { type: 'tagWithdraw' });
+    expect(s.locations.pin).toBe('railTag');
+    expect(s.values.tagDepth).toEqual([0]);
+    expect(reduce(s, { type: 'take', item: 'pin' })).toBe(s);
+    expect(reduce(s, { type: 'values', id: 'tagCaught', values: [1] })).toBe(s);
+    expect(restore({ ...s, values: { ...s.values, tagCaught: [1] } })).toBeNull();
+});
