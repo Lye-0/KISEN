@@ -4,7 +4,8 @@ import { newState, reduce, restore, owns } from './model';
 import type { Action, Item, Room } from './model';
 import { World, availableViews } from './World';
 import type { Focus } from './World';
-import { FocusView, itemArt } from './FocusView';
+import { FocusView } from './FocusView';
+import { ItemImage } from './ItemImage';
 import { PhotoRecord } from './Photos';
 import { RecordingStrips } from './Recorder';
 import { ServiceRecordNote } from './ServiceRecords';
@@ -120,13 +121,13 @@ export default function RemakeApp() {
  <div className={'rm-stage ' + (focus === 'bag' ? 'rm-close' : '')}>{focus ? <><div className="rm-focus-backdrop" aria-hidden="true" inert>{world}</div><div className="rm-focused-scene"><FocusView focus={focus} s={s} dispatch={dispatch} say={say} selected={selected} onSelect={setSelected} close={close} inspect={inspect}/></div></> : world}</div>
  {!focus && views.length > 1 && <nav className="rm-world-nav" aria-label="周囲を見る"><button aria-label="左を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + views.length - 1) % views.length })}>‹</button><button aria-label="右を見る" onClick={() => dispatch({ type: 'look', camera: (s.camera + 1) % views.length })}>›</button></nav>}
  <div className="rm-top">{focus ? <button onClick={close} aria-label="前の場面へ戻る">〈 戻る</button> : <div><span className="rm-wordmark">帰線</span><span className="rm-area-name">{roomLabels[s.room]}</span></div>}<div><button onClick={() => setPanel('notes')}>記録</button><button onClick={() => setPanel('settings')} aria-label="設定と保存">⋯</button></div></div>
- {showSelected && <div className="rm-held-item">{itemArt[selected] && !['officeLock', 'recorder', 'ticket', 'reader'].includes(focus ?? '') && <img src={itemArt[selected]} alt={labels[selected]} draggable={false}/>}<button aria-label="選んだ持ち物を見る" onClick={() => inspect(documentFocus[selected] ?? 'item')}>見る</button></div>}
- <div className="rm-bottom"><div className="rm-inventory" aria-label="持ち物">{inv.map(item => <button key={item} className={selected === item ? 'selected' : ''} aria-pressed={selected === item} onClick={() => {
+ {showSelected && <div className="rm-held-item"><div className="rm-held-icon"><ItemImage item={selected} state={s}/></div><button aria-label="選んだ持ち物を見る" onClick={() => inspect(documentFocus[selected] ?? 'item')}>見る</button></div>}
+ <div className="rm-bottom"><div className="rm-inventory" aria-label="持ち物">{inv.map(item => <button key={item} aria-label={labels[item]} className={selected === item ? 'selected' : ''} aria-pressed={selected === item} onClick={() => {
                 if (selected === item)
                     inspect(documentFocus[item] ?? 'item');
                 else
                     setSelected(item);
-            }}>{labels[item]}</button>)}</div><button className="rm-target-toggle" aria-pressed={targets} onClick={() => setTargets(!targets)}>調べる場所</button></div>
+            }}><span className="rm-inventory-art"><ItemImage item={item} state={s}/></span><span>{labels[item]}</span></button>)}</div><button className="rm-target-toggle" aria-pressed={targets} onClick={() => setTargets(!targets)}>調べる場所</button></div>
  {message && <div className="rm-feedback" role="status">{message}</div>}
  {panel && <div ref={panelRef} className="rm-scrim" onClick={e => {
                 if (e.target === e.currentTarget)
@@ -151,6 +152,5 @@ export default function RemakeApp() {
                     }
                     e.target.value = '';
                 }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
- <span className="rm-dev-label">代表場面の検証 / {group === 'stopping' ? 'Q28–30' : group === 'ticket' ? 'Q31–32' : group === 'recorder' ? 'Q12' : group === 'counter' ? 'Q04–05' : '探索一巡'}</span>
  </main>;
 }

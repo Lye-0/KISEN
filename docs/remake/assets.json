@@ -1,7 +1,28 @@
 [
   {
+    "id": "parts/return-car-gap6-closed",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-24cbffdd-e431-4483-949a-fe69ae52a286.png",
+    "file": "public/assets/remake/parts/return-car-gap6-closed.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "parts/inventory-paper",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ef4b30e0-e69d-4047-8909-5e3041b566b5.png",
+    "file": "public/assets/remake/parts/inventory-paper.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
+    "id": "parts/inventory-photos",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-e3f1a5c7-52a8-469e-a329-5e769eea5e69.png",
+    "file": "public/assets/remake/parts/inventory-photos.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha and canvas preserved"
+  },
+  {
     "id": "parts/return-car-closed",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-14df9097-4e18-4e8e-942b-f9a61d48c052.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-45376324-c5b6-41ca-80ac-c71490726462.png",
     "file": "public/assets/remake/parts/return-car-closed.png",
     "status": "representative-review",
     "method": "built-in image_gen; alpha and canvas preserved"
@@ -36,7 +57,7 @@
   },
   {
     "id": "parts/return-car",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f9204ca9-0838-40cc-9936-ff12b2f07ad5.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f0b33e5b-fe9c-43f6-ad10-c12fd522fbfb.png",
     "file": "public/assets/remake/parts/return-car.png",
     "status": "representative-review",
     "method": "built-in image_gen; alpha and canvas preserved"

@@ -17,37 +17,46 @@ function Carriage({ s }: {
     const target = stopAt(s.train.service, s.signals, s.locations.hood === 'signal', trace(s.route).end === 'O').firstDoor ?? 7;
     const progress = s.train.progress ?? 0;
     const first = s.train.position === 'stopped' ? s.train.firstDoor! : s.train.position === 'approaching' ? target - 28 * (1 - progress) ** 2 : (s.train.position === 'leaving' ? s.train.firstDoor! : target) + 28 * progress;
-    const extra = car.gap - 4, pxPerMetre = (1465 - 486) / 4;
-    const pieces = [{ a: 0, b: 920, extra }, { a: 920, b: 1020, extra: 0 }, { a: 1020, b: 1942, extra: 0 }];
-    const z = (y: number) => (600 - y) * 2.05 / 350 + .04;
-    return <Surface>{pieces.map(({ a, b, extra: shift }, i) => {
-            const xa = first + (1465 - a) / pxPerMetre + (i === 1 ? extra : shift), xb = first + (1465 - b) / pxPerMetre + shift;
-            const quad = [[xa, carriageSideY, z(0)], [xb, carriageSideY, z(0)], [xb, carriageSideY, z(809)], [xa, carriageSideY, z(809)]].map(([x, y, z]) => {
-                const p = platformPoint(x, y, z);
-                return [p.x, p.y] as [
-                    number,
-                    number
-                ];
-            }) as [
-                [
-                    number,
-                    number
-                ],
-                [
-                    number,
-                    number
-                ],
-                [
-                    number,
-                    number
-                ],
-                [
-                    number,
-                    number
-                ]
+    // Both boarding doors keep their physical separation inside a longer carriage.
+    // A second carriage is coupled at its west end.
+    const longGap = car.gap === 6;
+    const doorPixel = longGap ? 1561 : 1540;
+    const pxPerMetre = longGap ? (1561 - 687) / 6 : (1540 - 813) / 4;
+    const westEnd = first + (doorPixel - 2172) / pxPerMetre;
+    const z = (y: number) => (longGap ? 493 - y : 523 - y) * 2.05 / (longGap ? 245 : 280) + .04;
+    const projectPiece = (a: number, b: number, xa: number, xb: number, image: string, shade: number, key: string) => {
+        const quad = [[xa, carriageSideY, z(0)], [xb, carriageSideY, z(0)], [xb, carriageSideY, z(724)], [xa, carriageSideY, z(724)]].map(([x, y, z]) => {
+            const p = platformPoint(x, y, z);
+            return [p.x, p.y] as [
+                number,
+                number
             ];
-            return <div key={i} style={{ position: 'absolute', width: b - a, height: 809, transformOrigin: '0 0', transform: 'matrix3d(' + planeMatrix(b - a, 809, quad).join(',') + ')', overflow: 'hidden', filter: 'brightness(.64)' }}><img src={'/assets/remake/parts/return-car' + (s.train.position === 'stopped' ? '' : '-closed') + '.png'} style={{ position: 'absolute', left: -a, width: 1942, height: 809, maxWidth: 'none' }} alt=""/></div>;
-        })}</Surface>;
+        }) as [
+            [
+                number,
+                number
+            ],
+            [
+                number,
+                number
+            ],
+            [
+                number,
+                number
+            ],
+            [
+                number,
+                number
+            ]
+        ];
+        return <div key={key} style={{ position: 'absolute', width: b - a, height: 724, transformOrigin: '0 0', transform: 'matrix3d(' + planeMatrix(b - a, 724, quad).join(',') + ')', overflow: 'hidden', filter: `brightness(${shade})` }}><img src={image} style={{ position: 'absolute', left: -a, width: 2172, height: 724, maxWidth: 'none' }} alt=""/></div>;
+    };
+    const closed = '/assets/remake/parts/' + (longGap ? 'return-car-gap6-closed' : 'return-car-closed') + '.png';
+    const current = !longGap && s.train.position === 'stopped' ? '/assets/remake/parts/return-car.png' : closed;
+    return <Surface>
+        {projectPiece(0, 750, westEnd + .3, westEnd + .3 - 750 / pxPerMetre, closed, .58, 'coupled-car')}
+        {projectPiece(0, 2172, first + doorPixel / pxPerMetre, westEnd, current, .64, 'board-car')}
+    </Surface>;
 }
 export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
     s: State;
