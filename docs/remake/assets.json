@@ -1,5 +1,12 @@
 [
   {
+    "id": "parts/retaining-pin",
+    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-a56718f0-3149-487d-9da9-7fcfa0e7e6f5.png",
+    "file": "public/assets/remake/parts/retaining-pin.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim only"
+  },
+  {
     "id": "journeys/f-white",
     "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-0a6009bd-8e92-4b4c-ba40-59b9e6643f0a.png",
     "file": "public/assets/remake/journeys/f-white.webp",

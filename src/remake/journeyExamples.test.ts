@@ -14,7 +14,7 @@ it('四つの控えは実際の二口経路の途中記録で、同じ地点で�
 });
 it('控えの選択と観察記録は保存され、不正な番号から画面を壊さない', () => {
     const s = newState();
-    s.values = { journeySelected: [3], journeyStop: [1], journeyFrame: [1], journeyCompare: [1], journeyBacks: [1, 3] };
+    s.values = { ...s.values, journeySelected: [3], journeyStop: [1], journeyFrame: [1], journeyCompare: [1], journeyBacks: [1, 3] };
     s.notes = [{ id: 'journey-record-3-1', values: [3, 1, 1], at: 0 }];
     expect(restore(JSON.parse(JSON.stringify(s)))?.values).toEqual(s.values);
     for (const [id, v] of Object.entries({ journeySelected: [2.5], journeyStop: [2], journeyBacks: [0, 0] }))

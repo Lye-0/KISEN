@@ -1,0 +1,41 @@
+import { describe, expect, it } from 'vitest';
+import { newState, reduce, restore, signalReady } from './model';
+describe('shutter retaining pin', () => {
+    it('takes the pin only from the open balance box and uses both physical parts to install', () => {
+        let s = newState();
+        s.room = 'lamp';
+        expect(reduce(s, { type: 'take', item: 'retainingPin' })).toBe(s);
+        s = reduce(s, { type: 'balanceWeight', index: 0, position: 3 });
+        s = reduce(s, { type: 'balanceWeight', index: 1, position: 2 });
+        s = reduce(s, { type: 'balanceBox' });
+        s = reduce(s, { type: 'take', item: 'hood' });
+        s.room = 'north';
+        expect(reduce(s, { type: 'signalHood' })).toBe(s);
+        s.room = 'lamp';
+        s = reduce(s, { type: 'take', item: 'retainingPin' });
+        s.room = 'north';
+        s = reduce(s, { type: 'signalHood' });
+        expect(signalReady(s)).toBe(true);
+        expect(s.locations.retainingPin).toBe('signal');
+        expect(reduce(s, { type: 'take', item: 'retainingPin' })).toBe(s);
+        expect(restore(JSON.parse(JSON.stringify(s)))).toEqual(s);
+        s = reduce(s, { type: 'signalHood' });
+        expect(s.locations.hood).toBe('inventory');
+        expect(s.locations.retainingPin).toBe('inventory');
+        expect(signalReady(s)).toBe(false);
+        expect(signalReady(reduce(s, { type: 'signalHood' }))).toBe(true);
+    });
+    it('preserves older installed mechanisms and rejects a broken current installation', () => {
+        const old = newState();
+        delete old.values.retainingPinRevision;
+        delete old.locations.retainingPin;
+        old.locations.hood = 'signal';
+        const migrated = restore(old)!;
+        expect(signalReady(migrated)).toBe(true);
+        expect(migrated.values.retainingPinRevision).toEqual([1]);
+        expect(restore({ ...migrated, locations: { ...migrated.locations, retainingPin: 'inventory' } })).toBeNull();
+        const fresh = newState();
+        delete fresh.locations.retainingPin;
+        expect(restore(fresh)?.locations.retainingPin).toBe('balanceChest');
+    });
+});

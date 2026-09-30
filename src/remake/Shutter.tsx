@@ -1,4 +1,4 @@
-import { liveCircuit } from './model';
+import { liveCircuit, signalReady, owns } from './model';
 import { useId, useRef, useState } from 'react';
 import { Photo, Touch } from './Photo';
 import { shutterSlotCenters } from './stopping';
@@ -14,11 +14,12 @@ export function ShutterImage({ s, controls = false, dispatch }: {
         step: number;
         scale: number;
     } | null>(null);
-    const fitted = s.locations.hood === 'signal';
+    const fitted = signalReady(s);
     return <svg viewBox="0 0 1672 941" className="rm-object-overlay" style={{ touchAction: controls ? 'none' : undefined }} aria-label="二枚の遮光羽根">
  <text x="733" y="647" textAnchor="middle" fontSize="30" fill="#c3bfae">{s.values.callService?.[0] ?? 1}</text><text x="970" y="591" textAnchor="middle" fontSize="17" fill="#999b8c">呼出</text><defs><clipPath id={id + 'cavity'}><rect x="381" y="281" width="909" height="226"/></clipPath>
  {[0, 1].map(plate => <mask key={plate} id={id + plate} maskUnits="userSpaceOnUse" x="300" y="270" width="1040" height="270"><rect x="300" y="270" width="1040" height="270" fill="white"/>{shutterSlotCenters(plate, s.signals.shutters[plate]).map(x => <rect key={x} x={origin + x * unit - 52} y="352" width="104" height="100" rx="4" fill="black"/>)}</mask>)}
  <linearGradient id={id + 'grip'} x2="0" y2="1"><stop stopColor="#818481"/><stop offset=".4" stopColor="#383c39"/><stop offset="1" stopColor="#161b19"/></linearGradient></defs>
+    {fitted && <image href="/assets/remake/parts/retaining-pin.png" x="1284" y="264" width="54" height="234"/>}{[306, 465].map(y => <g key={y}><rect x="1287" y={y} width="51" height="22" rx="5" fill={'url(#' + id + 'grip)'} stroke="#777971"/><ellipse cx="1311" cy={y + 4} rx="8" ry="3" fill="#090e0c"/>{fitted && <rect x="1308" y={y - 4} width="6" height="12" fill="#575b55"/>}</g>)}
  {!liveCircuit(s) && <rect x="381" y="281" width="909" height="226" fill="#080b09"/>}{fitted && <><g clipPath={'url(#' + id + 'cavity)'}>{[0, 1].map(plate => <g key={plate} mask={'url(#' + id + plate + ')'}><rect x="380" y="280" width="920" height="230" fill={plate ? '#343a39' : '#171c1c'}/><svg x={-230 + s.signals.shutters[plate] * unit * 10} y="280" width="1640" height="230" viewBox="60 205 2040 315" preserveAspectRatio="none" opacity={plate ? .75 : .5}><image href="/assets/remake/parts/shutter-blade.png" width="2172" height="724"/></svg></g>)}</g>
  {[0, 1].map(plate => {
                 const step = s.signals.shutters[plate], x = origin + (18 + step * 10) * unit, y = plate ? 509 : 264;
@@ -37,14 +38,22 @@ export function ShutterImage({ s, controls = false, dispatch }: {
             })}</>}
  </svg>;
 }
-export function Shutter({ s, dispatch, reader }: {
+export function Shutter({ s, dispatch, reader, say }: {
     s: State;
     dispatch: (a: Action) => void;
     reader: () => void;
+    say: (m: string) => void;
 }) {
-    const [detail, setDetail] = useState(false), fitted = s.locations.hood === 'signal';
+    const [detail, setDetail] = useState(false), fitted = signalReady(s);
     const service = s.values.callService?.[0] ?? 1;
-    return <div className="rm-shutter"><Photo src="/assets/remake/signal/housing.webp" label="停車灯へつながる遮光器" view={detail ? [330, 220, 1000, 360] : undefined}><ShutterImage s={s} controls dispatch={dispatch}/>{!fitted && <Touch name="覆いを取り付ける" rect={[24, 30, 52, 26]} act={() => dispatch({ type: 'signalHood' })}/>}{!detail && <><Touch name="呼び出す便を選ぶ" rect={[40, 61, 8, 12]} act={() => dispatch({ type: 'values', id: 'callService', values: [service % 6 + 1] })}/><Touch name="呼出ボタンを押す" rect={[55, 62, 7, 10]} act={() => dispatch({ type: 'call', service })}/></>}</Photo>
- <div className="rm-document-controls"><button onClick={() => setDetail(!detail)}>{detail ? '全体を見る' : '羽根を近くで見る'}</button><button onClick={() => dispatch({ type: 'signalHood' })}>{fitted ? '覆いを取り外す' : '覆いを取り付ける'}</button><button onClick={reader}>切符受けを見る</button></div>
+    const fit = () => { if (!fitted && !owns(s, 'hood')) {
+        say('覆いがない。');
+        return;
+    } if (!fitted && !owns(s, 'retainingPin')) {
+        say('右端の抜け止めを留められない。');
+        return;
+    } dispatch({ type: 'signalHood' }); };
+    return <div className="rm-shutter"><Photo src="/assets/remake/signal/housing.webp" label="停車灯へつながる遮光器" view={detail ? [330, 220, 1000, 360] : undefined}><ShutterImage s={s} controls dispatch={dispatch}/>{!fitted && <Touch name="覆いを取り付ける" rect={[24, 30, 52, 26]} act={fit}/>}{!detail && <><Touch name="呼び出す便を選ぶ" rect={[40, 61, 8, 12]} act={() => dispatch({ type: 'values', id: 'callService', values: [service % 6 + 1] })}/><Touch name="呼出ボタンを押す" rect={[55, 62, 7, 10]} act={() => dispatch({ type: 'call', service })}/></>}</Photo>
+ <div className="rm-document-controls"><button onClick={() => setDetail(!detail)}>{detail ? '全体を見る' : '羽根を近くで見る'}</button><button onClick={fit}>{fitted ? '覆いを取り外す' : '覆いを取り付ける'}</button><button onClick={reader}>切符受けを見る</button></div>
  </div>;
 }

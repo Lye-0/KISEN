@@ -24,7 +24,7 @@ function ready() {
     s.room = 'north';
     s.values.bellChannel = [1];
     s.route = [0, 1, 0, 1, 1, 1];
-    s.locations = { ...s.locations, lamp: 'inventory', spareLamp: 'inventory', hood: 'inventory' };
+    s.locations = { ...s.locations, lamp: 'inventory', spareLamp: 'inventory', hood: 'inventory', retainingPin: 'inventory' };
     s = reduce(s, { type: 'signalHood' });
     s = reduce(s, { type: 'shutter', plate: 0, step: 2 });
     s = reduce(s, { type: 'shutter', plate: 1, step: 3 });

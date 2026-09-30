@@ -6,7 +6,7 @@ import { planeMatrix } from './plane';
 import { ShutterImage } from './Shutter';
 import { platformPoint, platformPolygon, carriageSideY, lampRowY } from './platformGeometry';
 import { illuminatedPorts, mounts, planks, services, stopAt, doorCenters, boardingGeometry } from './stopping';
-import { liveCircuit, validTicket, trace } from './model';
+import { signalReady, liveCircuit, validTicket, trace } from './model';
 import type { Action, State, Item } from './model';
 import type { Focus } from './World';
 function Carriage({ s }: {
@@ -15,7 +15,7 @@ function Carriage({ s }: {
     if (s.train.position === 'absent' || s.train.position === 'departed')
         return null;
     const car = services.find(c => c.id === s.train.service)!;
-    const target = stopAt(s.train.service, s.signals, s.locations.hood === 'signal', trace(s.route).end === 'O' && liveCircuit(s)).firstDoor ?? 7;
+    const target = stopAt(s.train.service, s.signals, signalReady(s), trace(s.route).end === 'O' && liveCircuit(s)).firstDoor ?? 7;
     const progress = s.train.progress ?? 0;
     const first = s.train.position === 'stopped' ? s.train.firstDoor! : s.train.position === 'approaching' ? target - 28 * (1 - progress) ** 2 : (s.train.position === 'leaving' ? s.train.firstDoor! : target) + 28 * progress;
     // Both boarding doors keep their physical separation inside a longer carriage.
@@ -69,7 +69,7 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
     const id = useId().replace(/:/g, ''), [detail, setDetail] = useState(false), [boardIndex, setBoardIndex] = useState(0);
     const center = platformPoint(boardIndex === 0 ? 7 : 11, carriageSideY);
     const visible = (x: number) => !detail || Math.abs(platformPoint(x, carriageSideY).x - center.x) < 210;
-    const light = illuminatedPorts(s.signals, s.locations.hood === 'signal' && liveCircuit(s));
+    const light = illuminatedPorts(s.signals, signalReady(s) && liveCircuit(s));
     const bell = useBell(s, false), beacon = platformPoint(5, 8, 1.3), foot = platformPoint(5, 8, 0), beaconHeight = (foot.y - beacon.y) / .85;
     const lampIndex = selected === 'lamp' ? 0 : selected === 'spareLamp' ? 1 : null;
     return <div className="rm-north"><Photo src="/assets/remake/north/platform.webp" label="北ホームの二つの踏み板と停車灯の取付列" view={detail ? [center.x - 210, 400, 420, 365] : undefined}>
@@ -101,7 +101,7 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
             return <Touch key={i} name="扉へ足を渡す" rect={[(p.x - 36) / 16.72, (p.y - 70) / 9.41, 72 / 16.72, 140 / 9.41]} act={() => {
                     if (!liveCircuit(s))
                         say('停車灯が消えている。');
-                    else if (!boardingGeometry(s.train, s.signals, s.locations.hood === 'signal'))
+                    else if (!boardingGeometry(s.train, s.signals, signalReady(s)))
                         say('踏み板から扉へ、足を渡せない。');
                     else if (!validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0) {
                         inspect('reader');
