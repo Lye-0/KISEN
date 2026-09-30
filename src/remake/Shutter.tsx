@@ -1,3 +1,4 @@
+import { DispatchPocket } from './ReturnDispatch';
 import { liveCircuit, signalReady, owns } from './model';
 import { useId, useRef, useState } from 'react';
 import { Photo, Touch } from './Photo';
@@ -36,24 +37,29 @@ export function ShutterImage({ s, controls = false, dispatch }: {
                     }} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}>
  <rect x={x - 70} y={y - 56} width="140" height="112" fill="transparent"/><rect x={x - 48} y={y - 10} width="96" height="20" rx="8" fill={'url(#' + id + 'grip)'} stroke="#828079" strokeWidth="1.5"/>{[0, 1, 2].map(n => <path key={n} d={`M${x - 10 + n * 10},${y - 5}v10`} stroke="#131817" strokeWidth="2"/>)}</g>;
             })}</>}
- </svg>;
+ <DispatchPocket /></svg>;
 }
-export function Shutter({ s, dispatch, reader, say }: {
+export function Shutter({ s, dispatch, reader, say, papers }: {
     s: State;
     dispatch: (a: Action) => void;
     reader: () => void;
+    papers: () => void;
     say: (m: string) => void;
 }) {
     const [detail, setDetail] = useState(false), fitted = signalReady(s);
     const service = s.values.callService?.[0] ?? 1;
-    const fit = () => { if (!fitted && !owns(s, 'hood')) {
-        say('覆いがない。');
-        return;
-    } if (!fitted && !owns(s, 'retainingPin')) {
-        say('右端の抜け止めを留められない。');
-        return;
-    } dispatch({ type: 'signalHood' }); };
-    return <div className="rm-shutter"><Photo src="/assets/remake/signal/housing.webp" label="停車灯へつながる遮光器" view={detail ? [330, 220, 1000, 360] : undefined}><ShutterImage s={s} controls dispatch={dispatch}/>{!fitted && <Touch name="覆いを取り付ける" rect={[24, 30, 52, 26]} act={fit}/>}{!detail && <><Touch name="呼び出す便を選ぶ" rect={[40, 61, 8, 12]} act={() => dispatch({ type: 'values', id: 'callService', values: [service % 6 + 1] })}/><Touch name="呼出ボタンを押す" rect={[55, 62, 7, 10]} act={() => dispatch({ type: 'call', service })}/></>}</Photo>
- <div className="rm-document-controls"><button onClick={() => setDetail(!detail)}>{detail ? '全体を見る' : '羽根を近くで見る'}</button><button onClick={fit}>{fitted ? '覆いを取り外す' : '覆いを取り付ける'}</button><button onClick={reader}>切符受けを見る</button></div>
+    const fit = () => {
+        if (!fitted && !owns(s, 'hood')) {
+            say('覆いがない。');
+            return;
+        }
+        if (!fitted && !owns(s, 'retainingPin')) {
+            say('右端の抜け止めを留められない。');
+            return;
+        }
+        dispatch({ type: 'signalHood' });
+    };
+    return <div className="rm-shutter"><Photo src="/assets/remake/signal/housing.webp" label="停車灯へつながる遮光器" view={detail ? [330, 220, 1000, 360] : undefined}><ShutterImage s={s} controls dispatch={dispatch}/>{!fitted && <Touch name="覆いを取り付ける" rect={[24, 30, 52, 26]} act={fit}/>}{!detail && <><Touch name="呼出機の運行控" rect={[14, 75, 18, 24]} act={papers}/><Touch name="呼び出す便を選ぶ" rect={[40, 61, 8, 12]} act={() => dispatch({ type: 'values', id: 'callService', values: [service % 6 + 1] })}/><Touch name="呼出ボタンを押す" rect={[55, 62, 7, 10]} act={() => dispatch({ type: 'call', service })}/></>}</Photo>
+ <div className="rm-document-controls"><button onClick={() => setDetail(!detail)}>{detail ? '全体を見る' : '羽根を近くで見る'}</button><button onClick={fit}>{fitted ? '覆いを取り外す' : '覆いを取り付ける'}</button><button onClick={reader}>切符受けを見る</button><button onClick={papers}>運行控を見る</button></div>
  </div>;
 }

@@ -3,6 +3,11 @@ import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['parts/dispatch-pocket','c3beb91d-caaa-464e-9bbf-b824e0d0bd3b'],
+ ['dispatch/car-short','d20f83b0-2d4c-4ff3-a7dd-94a5663605f9'],
+ ['dispatch/car-long','9f6131ca-e36d-4cdc-a85c-f65304b80f23'],
+ ['dispatch/window-short','714e94f7-08b4-412a-a6b5-575202b0a2af'],
+ ['dispatch/window-long','d2bfcca2-dcee-40be-aae6-f275f03852ca'],
  ['parts/glass-tower','c437c490-e128-4c9c-a442-d8db46257867'],
  ['tunnel/glass-0','970a03f3-1226-4872-b55f-f11af56738dc'],
  ['tunnel/glass-1','f588fb55-682a-4498-95dc-2dff0bf857fd'],
@@ -12,7 +17,7 @@ const entries=[
  ['bridge/freight','16b0a8d7-3905-4a75-ac1d-7afbc781b885'],
  ['forecourt/notice-board','e5d9d868-926f-41d8-b979-9adc4ea96bda'],
  ['parts/retaining-pin','a56718f0-3149-487d-9da9-7fcfa0e7e6f5'],
- ['journeys/f-white','0a6009bd-8e92-4b4c-ba40-59b9e6643f0a'],
+ ['journeys/f-white','421ae174-5b42-485c-a4ae-f38f7c7aaf09'],
  ['lost/table','49f2835d-acf4-4e05-ab30-88708de51437'],
  ['lost/tray-open','99d2aa80-e61f-466d-97d1-19239f2d685d'],
  ['lost/tray-closed','6d40686f-011e-4a75-9317-eef3fd4c3dbc'],
@@ -183,7 +188,7 @@ const entries=[
 ];
 const requested=new Set(process.argv.slice(2));
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/field-posts','parts/response-beacon','parts/lamp-rear','parts/balance-weights','parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='parts/glass-tower'||id==='parts/retaining-pin'||id==='parts/balance-beam'||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');if(!requested.size||requested.has(id)){await mkdir(path.dirname(file),{recursive:true});if(id==='parts/retaining-pin')await sharp(source).trim().png().toFile(file);else if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);}manifest.push({id,source,file,status:'representative-review',method:id==='parts/retaining-pin'?'built-in image_gen; alpha preserved, trim only':rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/field-posts','parts/response-beacon','parts/lamp-rear','parts/balance-weights','parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='parts/dispatch-pocket'||id==='parts/glass-tower'||id==='parts/retaining-pin'||id==='parts/balance-beam'||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');if(!requested.size||requested.has(id)){await mkdir(path.dirname(file),{recursive:true});if(id==='parts/retaining-pin')await sharp(source).trim().png().toFile(file);else if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);}manifest.push({id,source,file,status:'representative-review',method:id==='parts/retaining-pin'?'built-in image_gen; alpha preserved, trim only':rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 for(const tape of ['A','B'])manifest.push({id:`audio/tape-${tape}`,source:'src/remake/recordings.ts',file:`public/assets/remake/audio/tape-${tape}.wav`,status:'representative-review',method:'deterministic original WAV; scripts/prepare-recordings.mjs'});
 let previous=[];try{previous=JSON.parse(await readFile('docs/remake/assets.json','utf8'));}catch{}
 const previousIndex=new Map(previous.map((v,i)=>[v.id,i]));const previousById=new Map(previous.map(v=>[v.id,v]));

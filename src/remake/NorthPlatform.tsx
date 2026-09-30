@@ -1,3 +1,4 @@
+import { firstDoorAt } from './dispatchEvidence';
 import { useBell } from './Bell';
 import { useId, useState } from 'react';
 import { Photo, Touch } from './Photo';
@@ -16,8 +17,7 @@ function Carriage({ s }: {
         return null;
     const car = services.find(c => c.id === s.train.service)!;
     const target = stopAt(s.train.service, s.signals, signalReady(s), trace(s.route).end === 'O' && liveCircuit(s)).firstDoor ?? 7;
-    const progress = s.train.progress ?? 0;
-    const first = s.train.position === 'stopped' ? s.train.firstDoor! : s.train.position === 'approaching' ? target - 28 * (1 - progress) ** 2 : (s.train.position === 'leaving' ? s.train.firstDoor! : target) + 28 * progress;
+    const first = firstDoorAt(s.train, target);
     // Both boarding doors keep their physical separation inside a longer carriage.
     // A second carriage is coupled at its west end.
     const longGap = car.gap === 6;
@@ -50,7 +50,7 @@ function Carriage({ s }: {
                 number
             ]
         ];
-        return <div key={key} style={{ position: 'absolute', width: b - a, height: 724, transformOrigin: '0 0', transform: 'matrix3d(' + planeMatrix(b - a, 724, quad).join(',') + ')', overflow: 'hidden', filter: `brightness(${shade})` }}><img src={image} style={{ position: 'absolute', left: -a, width: 2172, height: 724, maxWidth: 'none' }} alt=""/></div>;
+        return <div key={key} style={{ position: 'absolute', width: b - a, height: 724, transformOrigin: '0 0', transform: 'matrix3d(' + planeMatrix(b - a, 724, quad).join(',') + ')', overflow: 'hidden', filter: `brightness(${shade})` }}><img src={image} style={{ position: 'absolute', left: -a, width: 2172, height: 724, maxWidth: 'none' }} alt=""/><svg viewBox="0 0 2172 724" style={{ position: "absolute", left: -a, top: 0, width: 2172, height: 724 }} aria-hidden="true"><rect x="1050" y="220" width="180" height="32" rx="3" fill="#d7ceae"/><text x="1140" y="244" fontFamily="serif" fontSize="24" textAnchor="middle" fill="#373b32">{car.direction === 'return' ? '白沢' : '山上'}</text></svg></div>;
     };
     const closed = '/assets/remake/parts/' + (longGap ? 'return-car-gap6-closed' : 'return-car-closed') + '.png';
     const current = !longGap && s.train.position === 'stopped' ? '/assets/remake/parts/return-car.png' : closed;

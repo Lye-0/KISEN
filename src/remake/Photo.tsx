@@ -9,9 +9,13 @@ export function decode(src: string) {
     }
     return p;
 }
-export function Photo({ src, label, children, zoomable = false, zoomOrigin, limitZoomToSource = false, zoomButtonOnly = false, view }: {
+export function Photo({ src, label, children, zoomable = false, zoomOrigin, limitZoomToSource = false, zoomButtonOnly = false, view, dimensions }: {
     src: string;
     label: string;
+    dimensions?: readonly [
+        number,
+        number
+    ];
     children?: ReactNode;
     zoomable?: boolean;
     zoomOrigin?: string;
@@ -39,10 +43,13 @@ export function Photo({ src, label, children, zoomable = false, zoomOrigin, limi
         });
         return () => { active = false; };
     }, [src]);
-    useEffect(() => { if (zoomOrigin)
-        setOrigin(zoomOrigin); }, [zoomOrigin]);
-    const [x, y, w, h] = view ?? [0, 0, 1672, 941];
-    return <div className="rm-photo" aria-busy={loaded !== src} style={{ aspectRatio: `${w}/${h}`, maxWidth: view ? `min(calc(100dvh * ${w / h}), ${w * 2}px)` : undefined }}><div className="rm-photo-content" style={{ left: `${-x / w * 100}%`, top: `${-y / h * 100}%`, width: `${1672 / w * 100}%`, height: `${941 / h * 100}%`, transform: zoom ? 'scale(' + zoomScale + ')' : undefined, transformOrigin: origin }}><img src={loaded || src} alt={label} draggable={false}/>{loaded === src && children}</div>{loaded === src ? <>{zoomable && <button className={"rm-photo-zoom" + (zoomButtonOnly ? " rm-zoom-button-only" : "")} aria-label={zoom ? '写真の全体を見る' : '写真を拡大する'} onClick={e => {
+    useEffect(() => {
+        if (zoomOrigin)
+            setOrigin(zoomOrigin);
+    }, [zoomOrigin]);
+    const [sourceWidth, sourceHeight] = dimensions ?? [1672, 941];
+    const [x, y, w, h] = view ?? [0, 0, sourceWidth, sourceHeight];
+    return <div className="rm-photo" aria-busy={loaded !== src} style={{ aspectRatio: `${w}/${h}`, maxWidth: view ? `min(calc(100dvh * ${w / h}), ${w * 2}px)` : undefined }}><div className="rm-photo-content" style={{ left: `${-x / w * 100}%`, top: `${-y / h * 100}%`, width: `${sourceWidth / w * 100}%`, height: `${sourceHeight / h * 100}%`, transform: zoom ? 'scale(' + zoomScale + ')' : undefined, transformOrigin: origin }}><img src={loaded || src} alt={label} draggable={false}/>{loaded === src && children}</div>{loaded === src ? <>{zoomable && <button className={"rm-photo-zoom" + (zoomButtonOnly ? " rm-zoom-button-only" : "")} aria-label={zoom ? '写真の全体を見る' : '写真を拡大する'} onClick={e => {
                     const r = e.currentTarget.getBoundingClientRect();
                     if (limitZoomToSource) {
                         const bounds = e.currentTarget.closest('.rm-photo')!.getBoundingClientRect();

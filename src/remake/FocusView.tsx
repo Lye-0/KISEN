@@ -1,3 +1,4 @@
+import { ReturnDispatch } from './ReturnDispatch';
 import { FreightFocus } from './Freight';
 import { NoticeBoard } from './NoticeBoard';
 import { FragmentBoard, FragmentPhoto } from './FragmentBoard';
@@ -63,7 +64,8 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'points': return <PointControls s={s} dispatch={dispatch} say={say}/>;
         case 'passageWindow': return <div className="rm-route-focus"><Photo src="/assets/remake/passage/window.webp" view={[330, 130, 1000, 700]} label="踊り場の窓から見える旧線の橋脚と、その下を抜ける線路"/></div>;
         case 'crossing': return <div className="rm-route-focus"><Photo src={'/assets/remake/bridge/east-tag' + (owns(s, 'pin') ? '-empty' : '') + '.webp'} view={[425, 150, 800, 620]} label="旧線の橋脚とその下を続く線路"/></div>;
-        case 'signal': return <Shutter s={s} dispatch={dispatch} say={say} reader={() => inspect('reader')}/>;
+        case 'dispatch': return <ReturnDispatch s={s} dispatch={dispatch} say={say}/>;
+        case 'signal': return <Shutter s={s} dispatch={dispatch} say={say} reader={() => inspect('reader')} papers={() => inspect('dispatch')}/>;
         case 'tools': return <ToolTrial s={s} dispatch={dispatch} say={say} openTicket={() => inspect('ticket')}/>;
         case 'seat': return <Train s={s} dispatch={dispatch} closeSeat={s.values.seatFocus?.[0] ?? 2} inspect={() => { }} inspectCase={() => { }} say={say}/>;
         case 'bag': return <Bag s={s} dispatch={dispatch} say={say}/>;

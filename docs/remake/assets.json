@@ -8,7 +8,7 @@
   },
   {
     "id": "journeys/f-white",
-    "source": "C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97/exec-0a6009bd-8e92-4b4c-ba40-59b9e6643f0a.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-421ae174-5b42-485c-a4ae-f38f7c7aaf09.png",
     "file": "public/assets/remake/journeys/f-white.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
@@ -1249,6 +1249,41 @@
     "id": "parts/glass-tower",
     "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c437c490-e128-4c9c-a442-d8db46257867.png",
     "file": "public/assets/remake/parts/glass-tower.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
+  },
+  {
+    "id": "dispatch/car-short",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-d20f83b0-2d4c-4ff3-a7dd-94a5663605f9.png",
+    "file": "public/assets/remake/dispatch/car-short.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "dispatch/car-long",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-9f6131ca-e36d-4cdc-a85c-f65304b80f23.png",
+    "file": "public/assets/remake/dispatch/car-long.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "dispatch/window-short",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-714e94f7-08b4-412a-a6b5-575202b0a2af.png",
+    "file": "public/assets/remake/dispatch/window-short.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "dispatch/window-long",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-d2bfcca2-dcee-40be-aae6-f275f03852ca.png",
+    "file": "public/assets/remake/dispatch/window-long.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/dispatch-pocket",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c3beb91d-caaa-464e-9bbf-b824e0d0bd3b.png",
+    "file": "public/assets/remake/parts/dispatch-pocket.png",
     "status": "representative-review",
     "method": "built-in image_gen; alpha preserved, trim and resize"
   }

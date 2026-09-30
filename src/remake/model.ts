@@ -1,3 +1,4 @@
+import { validDispatchRecord } from './dispatchEvidence';
 import { validGlassRecord } from './glassGeometry';
 import { validNoticeLift } from './notice';
 import { fragmentInitial, moveFragment, validFragments } from './ticketFragments';
@@ -556,6 +557,8 @@ export function restore(value: unknown): State | null {
     if (s.values.lightAim && !validAim(s.values.lightAim) || s.values.bellInputs && !validBellTimes(s.values.bellInputs) || s.values.bellChannel && (s.values.bellChannel.length !== 1 || ![0, 1].includes(s.values.bellChannel[0])))
         return null;
     if (s.locations.lamp === 'glassStand' && s.locations.spareLamp === 'glassStand' || Object.entries(s.locations).some(([item, at]) => at === 'glassStand' && !['lamp', 'spareLamp'].includes(item)))
+        return null;
+    if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('dispatch-record-') && (!numeric(n.values) || !validDispatchRecord(n.values))))
         return null;
     if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('glass-observation-') && (!numeric(n.values) || !validGlassRecord(n.values))))
         return null;

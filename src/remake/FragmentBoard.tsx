@@ -100,5 +100,5 @@ export function FragmentPhoto({ dispatch, say }: {
     dispatch?: (a: Action) => void;
     say?: (m: string) => void;
 }) {
-    return <section className="rm-fragment-photo"><figure className="rm-print"><Photo src="/assets/remake/journeys/f-white.webp" label="紙片と同じ束に残ったトンネルと標柱の車窓写真" zoomOrigin="48% 62%" zoomable limitZoomToSource zoomButtonOnly/></figure>{dispatch && <div className="rm-document-controls"><button onClick={() => { dispatch({ type: 'record', id: 'fragmentPhoto', values: [] }); say?.('車窓の写真を記録した。'); }}>記録に残す</button></div>}</section>;
+    return <section className="rm-fragment-photo"><figure className="rm-print"><Photo src="/assets/remake/journeys/f-white.webp" label="紙片と同じ束に残ったトンネルと標柱の車窓写真" zoomOrigin="56% 53%" zoomable limitZoomToSource zoomButtonOnly/></figure>{dispatch && <div className="rm-document-controls"><button onClick={() => { dispatch({ type: 'record', id: 'fragmentPhoto', values: [] }); say?.('車窓の写真を記録した。'); }}>記録に残す</button></div>}</section>;
 }
