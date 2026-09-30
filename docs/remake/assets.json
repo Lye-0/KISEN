@@ -1216,5 +1216,40 @@
     "file": "public/assets/remake/forecourt/notice-board.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "tunnel/glass-0",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-970a03f3-1226-4872-b55f-f11af56738dc.png",
+    "file": "public/assets/remake/tunnel/glass-0.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "tunnel/glass-1",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-f588fb55-682a-4498-95dc-2dff0bf857fd.png",
+    "file": "public/assets/remake/tunnel/glass-1.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "north/west-sidepath",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a0e6457f-fd72-43f7-9439-d1d640204698.png",
+    "file": "public/assets/remake/north/west-sidepath.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "north/west-sidepath-open",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-eb512111-216f-4474-a76a-f60d45157344.png",
+    "file": "public/assets/remake/north/west-sidepath-open.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "parts/glass-tower",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-c437c490-e128-4c9c-a442-d8db46257867.png",
+    "file": "public/assets/remake/parts/glass-tower.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; alpha preserved, trim and resize"
   }
 ]

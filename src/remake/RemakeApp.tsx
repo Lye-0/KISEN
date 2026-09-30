@@ -1,3 +1,4 @@
+import { GlassNote } from './GlassWindow';
 import { FreightNote } from './Freight';
 import { NoticeBoardNote } from './NoticeBoard';
 import { FragmentLayout, FragmentPhoto } from './FragmentBoard';
@@ -22,11 +23,16 @@ import { JourneyRecordNote } from './JourneyRecords';
 import { useModal } from './useModal';
 import './remake.css';
 const fixture = new URLSearchParams(location.search).get('remake');
-const group = fixture === 'freight' ? 'freight' : fixture === 'fragments' ? 'fragments' : fixture === 'lost' ? 'lost' : fixture === 'optics' ? 'optics' : fixture === 'shed' ? 'shed' : fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : fixture === 'points' ? 'points' : fixture === 'cargo' ? 'cargo' : '';
+const group = fixture === 'glass' ? 'glass' : fixture === 'freight' ? 'freight' : fixture === 'fragments' ? 'fragments' : fixture === 'lost' ? 'lost' : fixture === 'optics' ? 'optics' : fixture === 'shed' ? 'shed' : fixture === 'reader' || fixture === 'ticket' ? 'ticket' : fixture === 'recorder' ? 'recorder' : fixture === 'photos' ? 'photos' : fixture === 'counter' ? 'counter' : fixture === 'stopping' ? 'stopping' : fixture === 'journeys' ? 'journeys' : fixture === 'points' ? 'points' : fixture === 'cargo' ? 'cargo' : '';
 const saveKey = 'kisen-remake-v2' + (group ? ':' + group : '');
 const initialFocus: Focus = fixture === 'fragments' ? 'fragments' : fixture === 'shed' ? 'posters' : fixture === 'reader' ? 'reader' : fixture === 'ticket' ? 'ticket' : fixture === 'journeys' ? 'journeyRecords' : fixture === 'cargo' ? 'cargoChest' : null;
 function seed() {
     const s = newState();
+    if (group === 'glass') {
+        s.room = 'north';
+        s.camera = 1;
+        s.locations.spareLamp = 'inventory';
+    }
     if (group === 'freight') {
         s.room = 'bridge';
         s.camera = 3;
@@ -192,6 +198,6 @@ export default function RemakeApp() {
                         say('この記録は読み込めません。');
                     }
                     e.target.value = '';
-                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id === 'fragmentPhoto' ? <FragmentPhoto /> : n.id === 'fragments' ? <FragmentLayout values={n.values}/> : n.id === 'receiptTray' ? <ReceiptNote values={n.values}/> : n.id === 'clockChecks' ? <ClockChecks s={{ ...s, values: { ...s.values, clockAdjust: n.values } }} dispatch={() => { }} say={() => { }} readOnly/> : n.id.startsWith('bell-record-') ? <BellNote values={n.values}/> : n.id.startsWith('lamp-observation-') ? <LampNote values={n.values}/> : n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id === 'freight' ? <FreightNote /> : n.id === 'noticeBoard' ? <NoticeBoardNote values={n.values}/> : n.id === 'posters' ? <PosterNote values={n.values}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
+                }}/><button onClick={() => { setS(seed()); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>試作を初期状態へ戻す</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}>{n.id === 'fragmentPhoto' ? <FragmentPhoto /> : n.id === 'fragments' ? <FragmentLayout values={n.values}/> : n.id === 'receiptTray' ? <ReceiptNote values={n.values}/> : n.id === 'clockChecks' ? <ClockChecks s={{ ...s, values: { ...s.values, clockAdjust: n.values } }} dispatch={() => { }} say={() => { }} readOnly/> : n.id.startsWith('bell-record-') ? <BellNote values={n.values}/> : n.id.startsWith('lamp-observation-') ? <LampNote values={n.values}/> : n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id.startsWith('glass-observation-') ? <GlassNote values={n.values}/> : n.id === 'freight' ? <FreightNote /> : n.id === 'noticeBoard' ? <NoticeBoardNote values={n.values}/> : n.id === 'posters' ? <PosterNote values={n.values}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
  </main>;
 }

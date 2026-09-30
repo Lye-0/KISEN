@@ -1,5 +1,5 @@
 import type { Node } from './model';
-export type Site = Node | 'S' | 'R' | 'O' | 'X' | 'bend';
+export type Site = Node | 'S' | 'R' | 'O' | 'X' | 'bend' | 'f-throat' | 'portal' | 'portal-west' | 'd-curve';
 export type Position = {
     x: number;
     y: number;
@@ -13,11 +13,13 @@ export const sites: Record<Site, Position> = {
     E: { x: -33, y: 30, z: 0 }, F: { x: -49, y: 30, z: 0 },
     O: { x: -65, y: 0, z: 0 }, X: { x: -49, y: 20, z: 4.5 },
     bend: { x: -26, y: 180, z: 0 },
+    'f-throat': { x: -53, y: 30, z: 0 }, portal: { x: -61, y: 36, z: 0 },
+    'portal-west': { x: -68, y: 36, z: 0 }, 'd-curve': { x: -57, y: 12, z: 0 },
 };
 export const railLines: Record<string, Site[]> = {
     'S-A': ['S', 'A'], 'A-B': ['A', 'B'], 'A-C': ['A', 'C'],
     'B-D': ['B', 'D'], 'B-E': ['B', 'E'], 'C-E': ['C', 'E'], 'C-X': ['C', 'X'],
-    'E-F': ['E', 'F'], 'R-F': ['R', 'bend', 'F'], 'F-D': ['F', 'D'], 'D-O': ['D', 'O'],
+    'E-F': ['E', 'F'], 'R-F': ['R', 'bend', 'portal-west', 'portal', 'f-throat', 'F'], 'F-D': ['F', 'f-throat', 'd-curve', 'D'], 'D-O': ['D', 'O'],
 };
 export function crossing2d(a: Position, b: Position, c: Position, d: Position) {
     const abx = b.x - a.x, aby = b.y - a.y, cdx = d.x - c.x, cdy = d.y - c.y;

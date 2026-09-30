@@ -1,3 +1,4 @@
+import { GlassWindow } from './GlassWindow';
 import { FreightWide } from './Freight';
 import { NoticeBoardSurface } from './NoticeBoard';
 import { ForgottenRoom, ReceiptBoardImage } from './ForgottenShelf';
@@ -20,7 +21,7 @@ import { RecorderImage } from './Recorder';
 import { owns } from './model';
 import type { Action, Item, Room, State } from './model';
 export type Focus = 'noticeBoard' | 'freight' | 'fragmentPhoto' | 'fragments' | 'receiptTray' | 'clockChecks' | 'bell' | 'posters' | 'shedDoor' | 'balanceBox' | 'lampWindow' | 'cargoChest' | 'cargoDockets' | 'cargoDocket' | 'points' | 'journeyRecords' | 'passageWindow' | 'crossing' | 'railTag' | 'hookRack' | 'bridgeGate' | 'arrivalTicket' | 'signal' | 'tools' | 'bag' | 'photos' | 'recorder' | 'case' | 'map' | 'ticket' | 'reader' | 'hatch' | 'counterDrawer' | 'notices' | 'platformClock' | 'receipt' | 'officeLock' | 'paperView' | 'item' | 'seat' | null;
-export const availableViews: Partial<Record<Room, string[]>> = { lost: ['傘と受取棚', '比較台'], lamp: ['保管箱と灯具', '西の窓'], train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側', '西の階段'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前', '東の側道'], office: ['机と南の窓', '北の保管区画'], cargo: ['箱と台車', '南の窓と柱'], passage: ['南の階段', '地下通路・北向き', '北の踊り場', '地下通路・南向き'], bridge: ['駅舎の屋根と北壁', '線路と屋根', '北端の保守柵', '西の留置線'], north: ['停車灯と踏み板', '西の橋階段', '東の線路と地下入口', '分岐操作器'] };
+export const availableViews: Partial<Record<Room, string[]>> = { tunnel: ['観測窓の左', '観測窓の右'], lost: ['傘と受取棚', '比較台'], lamp: ['保管箱と灯具', '西の窓'], train: ['座席と鞄', '前方の座席', '車端'], platform: ['駅舎側', '列車側', '西の階段'], waiting: ['南の窓', '窓口', '出入口'], forecourt: ['駅前', '東の側道'], office: ['机と南の窓', '北の保管区画'], cargo: ['箱と台車', '南の窓と柱'], passage: ['南の階段', '地下通路・北向き', '北の踊り場', '地下通路・南向き'], bridge: ['駅舎の屋根と北壁', '線路と屋根', '北端の保守柵', '西の留置線'], north: ['停車灯と踏み板', '西の橋階段', '東の線路と地下入口', '分岐操作器'] };
 function CounterObjects({ s }: {
     s: State;
 }) { const open = s.values.drawerOpen?.[0] === 1; return <svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="978" y="254" width="256" height="275" viewBox="436 166 784 632" preserveAspectRatio="none"><HatchImage s={s}/></svg><svg x={open ? 945 : 965} y={open ? 552 : 557} width={open ? 339 : 299} height={open ? 139 : 76} viewBox={open ? '55 252 1555 638' : '125 296 1415 350'} preserveAspectRatio="none"><DrawerImage s={s}/></svg><foreignObject x="690" y="275" width="100" height="195"><RecordCard id={0} inkOnly/></foreignObject><foreignObject x="800" y="310" width="72" height="141"><RecordCard id={1} inkOnly/></foreignObject></svg>; }
@@ -33,8 +34,10 @@ export function World({ s, dispatch, inspect, selected, say }: {
 }) {
     const move = (room: Room, camera = 0) => dispatch({ type: 'move', room, camera });
     const image = (src: string, label: string, children?: React.ReactNode) => <Photo src={'/assets/remake/' + src + '.webp'} label={label}>{children}</Photo>;
+    if (s.room === 'tunnel')
+        return <GlassWindow s={s} dispatch={dispatch} selected={selected} say={say}/>;
     if (s.room === 'north')
-        return s.camera === 3 ? <PointControls s={s} dispatch={dispatch} say={say}/> : s.camera === 2 ? image('north/east-crossing' + (s.values.northHatch?.[0] === 1 ? '' : '-closed'), '北ホーム東端の地下入口と線路', <><Touch name={s.values.northHatch?.[0] === 1 ? '地下への開いた階段を下りる' : '閉じた地下の蓋'} rect={[5, 40, 34, 48]} act={() => s.values.northHatch?.[0] === 1 ? move('passage', 2) : say('取っ手はあるが、内側から掛かっている。')}/><Touch name="旧線の橋脚と線路" rect={[30, 13, 60, 25]} act={() => say('上の線路と、下を続く線路が見える。')}/></>) : s.camera === 1 ? image('north/west-bridge' + (s.values.gateOpen?.[0] === 1 ? '-open' : ''), '北ホームの西端から見た橋の階段', <Touch name="跨線橋へ上がる" rect={[23, 19, 24, 62]} act={() => s.values.gateOpen?.[0] === 1 ? move('bridge', 2) : say('上の保守柵が閉じている。')}/>) : <NorthPlatform s={s} dispatch={dispatch} inspect={inspect} selected={selected} say={say}/>;
+        return s.camera === 3 ? <PointControls s={s} dispatch={dispatch} say={say}/> : s.camera === 2 ? image('north/east-crossing' + (s.values.northHatch?.[0] === 1 ? '' : '-closed'), '北ホーム東端の地下入口と線路', <><Touch name={s.values.northHatch?.[0] === 1 ? '地下への開いた階段を下りる' : '閉じた地下の蓋'} rect={[5, 40, 34, 48]} act={() => s.values.northHatch?.[0] === 1 ? move('passage', 2) : say('取っ手はあるが、内側から掛かっている。')}/><Touch name="旧線の橋脚と線路" rect={[30, 13, 60, 25]} act={() => say('上の線路と、下を続く線路が見える。')}/></>) : s.camera === 1 ? image('north/west-sidepath' + (s.values.gateOpen?.[0] === 1 ? '-open' : ''), '北ホームの西端から見た橋の階段と保守側道', <><Touch name="跨線橋へ上がる" rect={[23, 19, 24, 62]} act={() => s.values.gateOpen?.[0] === 1 ? move('bridge', 2) : say('上の保守柵が閉じている。')}/><Touch name="山側の保守側道を進む" rect={[0, 55, 20, 42]} act={() => move('tunnel', 0)}/></>) : <NorthPlatform s={s} dispatch={dispatch} inspect={inspect} selected={selected} say={say}/>;
     if (s.room === 'train')
         return <Train s={s} dispatch={dispatch} inspect={() => inspect('bag')} inspectCase={() => inspect('case')} inspectSeat={i => { dispatch({ type: 'values', id: 'seatFocus', values: [i] }); inspect('seat'); }} exit={() => move('platform', 0)}/>;
     if (s.room === 'platform')

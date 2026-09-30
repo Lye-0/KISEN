@@ -1,3 +1,4 @@
+import { validGlassRecord } from './glassGeometry';
 import { validNoticeLift } from './notice';
 import { fragmentInitial, moveFragment, validFragments } from './ticketFragments';
 import { placeReceipt, receiptInitial, receiptTrayReleases, validClockAdjust, validReceiptSlots } from './lostProperty';
@@ -15,7 +16,7 @@ import { freshSignals, freshTrain, mounts, stopAt, boardingGeometry, validSignal
 import type { SignalState, TrainState } from './stopping';
 export type Room = 'train' | 'platform' | 'waiting' | 'forecourt' | 'office' | 'lost' | 'bridge' | 'cargo' | 'passage' | 'lamp' | 'tunnel' | 'north' | 'return';
 export type Item = 'retainingPin' | 'cargoDocket' | 'spareLamp' | 'counterRecords' | 'photos' | 'receipt' | 'envelope' | 'ownTicket' | 'officeKey' | 'knob' | 'hook' | 'pin' | 'support' | 'lamp' | 'punch' | 'paper' | 'fragments' | 'hood' | 'ticket';
-export type Place = 'lostDrawer' | 'lightRack' | 'balanceChest' | 'cargoChest' | 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'signal' | 'reader';
+export type Place = 'lostDrawer' | 'lightRack' | 'balanceChest' | 'cargoChest' | 'bridgeGate' | 'toolRack' | 'railTag' | 'toolBench' | 'counter' | 'cashDrawer' | 'case' | 'bag' | 'handle' | 'seat' | 'floor' | 'inventory' | 'recorder' | 'lightStand' | 'glassStand' | 'signal' | 'reader';
 export type Node = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
 export type Side = 'white' | 'black';
 export type Hole = {
@@ -111,6 +112,9 @@ export function validTicket(s: State, t: Ticket | null) {
     return t.holes.every(h => expected.some(e => e.column === h.column && e.side === h.side)) && expected.every(e => sameOpening(t.holes.filter(h => h.column === e.column && h.side === e.side), e.node));
 }
 export type Action = {
+    type: 'glassLamp';
+    item: 'lamp' | 'spareLamp';
+} | {
     type: 'fragmentMove';
     id: number;
     pose: number[];
@@ -309,6 +313,14 @@ export function reduce(s: State, a: Action): State {
             const open = s.values.receiptOpen?.[0] === 1;
             return s.room !== 'lost' || !open && !receiptTrayReleases(s.values.receiptSlots ?? receiptInitial) ? s : { ...s, values: { ...s.values, receiptOpen: [open ? 0 : 1] } };
         }
+        case 'glassLamp': {
+            if (s.room !== 'tunnel' || !['lamp', 'spareLamp'].includes(a.item))
+                return s;
+            const mounted = s.locations[a.item] === 'glassStand';
+            if (!mounted && (!owns(s, a.item) || s.locations.lamp === 'glassStand' || s.locations.spareLamp === 'glassStand'))
+                return s;
+            return { ...s, locations: { ...s.locations, [a.item]: mounted ? 'inventory' : 'glassStand' } };
+        }
         case 'lightMount': {
             if (s.room !== 'lamp')
                 return s;
@@ -424,6 +436,8 @@ export function reduce(s: State, a: Action): State {
             return { ...s, camera, visited: append(s.visited, s.room + ':' + camera) };
         }
         case 'move': {
+            if (a.room === 'tunnel' && (s.room !== 'north' || s.camera !== 1) || s.room === 'tunnel' && (a.room !== 'north' || (a.camera ?? 0) !== 1))
+                return s;
             if (a.room === 'lamp' && (s.room !== 'forecourt' || s.values.shedOpen?.[0] !== 1))
                 return s;
             if ((s.room === 'bridge' && a.room === 'north' || s.room === 'north' && a.room === 'bridge') && s.values.gateOpen?.[0] !== 1)
@@ -457,7 +471,7 @@ export function reduce(s: State, a: Action): State {
             const at = s.locations[a.item];
             if (at === 'lostDrawer' && (s.room !== 'lost' || s.values.receiptOpen?.[0] !== 1))
                 return s;
-            if (at === 'lightStand')
+            if (at === 'lightStand' || at === 'glassStand')
                 return s;
             if (at === 'lightRack' && s.room !== 'lamp' || at === 'balanceChest' && (s.room !== 'lamp' || s.values.balanceOpen?.[0] !== 1))
                 return s;
@@ -479,7 +493,7 @@ export function reduce(s: State, a: Action): State {
                 return s;
             return { ...s, locations: { ...s.locations, [a.item]: 'inventory' } };
         }
-        case 'put': return !s.locations[a.item] || ['lostDrawer', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
+        case 'put': return !s.locations[a.item] || ['lostDrawer', 'glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
         case 'seat': return { ...s, seats: s.seats.map((v, i) => i === a.index ? 1 - v : v) };
         case 'heard': {
             if (!Number.isFinite(a.seconds))
@@ -540,6 +554,10 @@ export function restore(value: unknown): State | null {
         if (s.values[name] && (s.values[name].length !== 1 || !Number.isInteger(s.values[name][0]) || s.values[name][0] < 0 || s.values[name][0] > max))
             return null;
     if (s.values.lightAim && !validAim(s.values.lightAim) || s.values.bellInputs && !validBellTimes(s.values.bellInputs) || s.values.bellChannel && (s.values.bellChannel.length !== 1 || ![0, 1].includes(s.values.bellChannel[0])))
+        return null;
+    if (s.locations.lamp === 'glassStand' && s.locations.spareLamp === 'glassStand' || Object.entries(s.locations).some(([item, at]) => at === 'glassStand' && !['lamp', 'spareLamp'].includes(item)))
+        return null;
+    if (s.notes.some(n => typeof n?.id === 'string' && n.id.startsWith('glass-observation-') && (!numeric(n.values) || !validGlassRecord(n.values))))
         return null;
     if (s.locations.lamp === 'lightStand' && s.locations.spareLamp === 'lightStand')
         return null;
