@@ -12,8 +12,8 @@ export const journeyExamples = [
     const ticket: Ticket = { id: 100 + i, service: 0, back: false, holes: path.flatMap((name, index) => nodes.includes(name as Node) ? [{ node: name as Node, column: index - 1, side: entrySide[path[index - 1] + '>' + name], tool: 1 }] : []) };
     return { ...r, path, ticket, observed: [1, 2] };
 });
-export function examplePhoto(node: Node, side: Side, frame: 0 | 1) {
-    const e = encounterFor(node, side);
+export function examplePhoto(node: Node, side: Side, frame: 0 | 1, incoming?: string) {
+    const e = encounterFor(node, side, incoming);
     if (!e)
         throw new Error('The excerpt has no observation for this passage');
     return '/assets/remake/journeys/' + e.id + '-' + frame + '.webp';

@@ -1,3 +1,4 @@
+import { sites } from './routeGeometry.ts';
 export type Vec3 = [
     number,
     number,
@@ -32,5 +33,6 @@ export function clipCameraPolygon(vertices: Vec3[], camera: Camera, near = .02):
 export const towerCameras: Record<'west' | 'east', Camera> = { west: { position: [-18, -8, 2.4], target: [0, 0, 6], focal: 1400, width: 1672, height: 941 }, east: { position: [18, -8, 2.4], target: [0, 0, 6], focal: 1400, width: 1672, height: 941 } };
 export const tower = { corners: [[-1.2, -1.2], [1.2, -1.2], [1.2, 1.2], [-1.2, 1.2]], height: 12, ladderX: -1.22, ladderY: -.95 };
 export const poles = [{ id: 'scarred', base: [-6, -3.1, 0] as Vec3, height: 10, radius: .15, scar: 6.3 }, { id: 'plain', base: [6, -3.1, 0] as Vec3, height: 10, radius: .15, scar: null }];
+export const towerWorld = (x: number, y: number, z: number): Vec3 => [sites.D.x + x, sites.D.y + 8 + y, z];
 export const stationBuilding = { width: 18, depth: 6, bay: 3, knownRooms: [{ id: 'waiting', from: 0, to: 6 }, { id: 'office', from: 6, to: 12 }, { id: 'cargo', from: 12, to: 15 }], stairs: { from: 15, to: 18 }, windowCenters: [1.5, 4.5, 7.5, 10.5, 13.5, 16.5] };
 export const buildingCameras: Record<string, Camera> = { street: { position: [-6, -27, 2], target: [9, -9, 2.6], focal: 1050, width: 1672, height: 941 }, bridge: { position: [-6, -1, 6.5], target: [9, -9, 2.7], focal: 900, width: 1672, height: 941 }, waiting: { position: [3, -6.4, 1.65], target: [3, -12, 1.9], focal: 1000, width: 1672, height: 941 }, office: { position: [9, -6.4, 1.65], target: [9, -12, 1.9], focal: 1000, width: 1672, height: 941 }, cargo: { position: [13.5, -11.8, 1.55], target: [13.5, -7.7, 1.2], focal: 580, width: 1672, height: 941 } };

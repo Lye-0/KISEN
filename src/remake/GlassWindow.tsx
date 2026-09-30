@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import { Photo, Touch } from './Photo';
 import { glass, glassCameras, glassPosts, reflect, projectedPost, glassExposure } from './glassGeometry';
-import { project, clipCameraPolygon, tower } from './geometry';
+import { project, clipCameraPolygon, tower, towerWorld } from './geometry';
 import type { Vec3 } from './geometry';
 import { owns } from './model';
 import { railLines, sites } from './routeGeometry';
@@ -13,7 +13,7 @@ function GlassReflection({ view }: {
         Vec3,
         Vec3
     ][] = [];
-    const local = (x: number, y: number, z: number): Vec3 => [-54 - y, 8 + x, z];
+    const local = towerWorld;
     const corners = tower.corners.flatMap(([x, y]) => [project(reflect(local(x, y, 0)), c), project(reflect(local(x, y, 12)), c)]);
     const x = Math.min(...corners.map(p => p.x)), y = Math.min(...corners.map(p => p.y)), w = Math.max(...corners.map(p => p.x)) - x, h = Math.max(...corners.map(p => p.y)) - y;
     const sleepers: [

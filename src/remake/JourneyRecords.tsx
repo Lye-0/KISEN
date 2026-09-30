@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Photo } from './Photo';
+import { JourneyPhoto } from './JourneyPhoto';
 import { TicketPaper } from './TicketBench';
-import { journeyExamples, examplePhoto, journeyExtractViews } from './journeyExamples';
+import { journeyExamples, journeyExtractViews } from './journeyExamples';
 import { useCompact } from './useCompact';
 import type { Action, Node, State, Ticket } from './model';
 const names: Record<Node, string> = { A: '踏切', B: '給水槽', C: '保守小屋', D: '鉄塔', E: '分岐橋', F: 'トンネル' };
@@ -35,7 +35,7 @@ export function JourneyRecords({ s, dispatch, say }: {
         <div className="rm-journey-layout">
             {!paperOnly && <div className="rm-journey-film">
                 <nav className="rm-journey-stops" aria-label="写真の順序">{record.observed.map((col, i) => <button key={col} aria-pressed={selected === i} onClick={() => { dispatch({ type: 'values', id: 'journeyStop', values: [i] }); dispatch({ type: 'values', id: 'journeyFrame', values: [0] }); }}>写真 {col + 1}</button>)}</nav>
-                <div className="rm-journey-frames">{(compact ? [frame] : [0, 1]).map(f => <figure className="rm-print" key={index + ':' + selected + ':' + f}><Photo src={examplePhoto(hole.node, hole.side, f as 0 | 1)} label={names[hole.node] + 'と標柱の連続写真'} zoomable zoomOrigin="50% 50%"/><figcaption>{column + 1}-{f + 1}</figcaption></figure>)}</div>
+                <div className="rm-journey-frames">{(compact ? [frame] : [0, 1]).map(f => <figure className="rm-print" key={index + ':' + selected + ':' + f}><JourneyPhoto node={hole.node} side={hole.side} incoming={record.path[column]} frame={f as 0 | 1} label={names[hole.node] + 'と標柱の連続写真'}/><figcaption>{column + 1}-{f + 1}</figcaption></figure>)}</div>
                 {compact && <div className="rm-document-controls"><button onClick={() => dispatch({ type: 'values', id: 'journeyFrame', values: [1 - frame] })}>{frame ? '前の写真' : '続きの写真'}</button></div>}
             </div>}
             <div className={'rm-journey-papers' + (compare ? ' compare' : '')}>
@@ -62,5 +62,5 @@ export function JourneyRecordNote({ values }: {
 }) {
     const index = Math.max(0, Math.min(3, values[0] ?? 0)), stop = Math.max(0, Math.min(1, values[1] ?? 0));
     const r = journeyExamples[index], hole = r.ticket.holes[r.observed[stop]];
-    return <div className="rm-journey-note"><p>{r.id}　{r.title}</p><div>{[0, 1].map(frame => <figure key={frame}><Photo src={examplePhoto(hole.node, hole.side, frame as 0 | 1)} label={names[hole.node] + 'の連続写真 ' + (frame + 1)} zoomable zoomOrigin="50% 50%"/></figure>)}</div><TicketExtract ticket={r.ticket} back={values[2] === 1}/></div>;
+    return <div className="rm-journey-note"><p>{r.id}　{r.title}</p><div>{[0, 1].map(frame => <figure key={frame}><JourneyPhoto node={hole.node} side={hole.side} incoming={r.path[r.observed[stop]]} frame={frame as 0 | 1} label={names[hole.node] + 'の連続写真 ' + (frame + 1)}/></figure>)}</div><TicketExtract ticket={r.ticket} back={values[2] === 1}/></div>;
 }

@@ -13,7 +13,7 @@ export function RailTagWide({ s, inspect, observe }: {
         for (const name of ['east-tag', 'east-tag-empty'])
             void decode(root + name + '.webp').catch(() => { });
     }, []);
-    return <Photo src={root + 'east-tag' + (stage(s) === 'empty' ? '-empty' : '') + '.webp'} label="跨線橋から東の線路と濡れた手すり">
+    return <Photo src={root + 'east-tag' + (stage(s) === 'empty' ? '-empty' : '') + '.webp'} label="跨線橋から見た線路と濡れた手すり">
         <Touch name="線路を跨ぐ古い高架" rect={[12, 13, 72, 24]} act={observe}/>
         <Touch name="濡れた手すりの下側" rect={[27, 69, 47, 30]} act={inspect}/>
     </Photo>;

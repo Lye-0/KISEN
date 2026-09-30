@@ -1,12 +1,19 @@
 import { it, expect } from 'vitest';
 import { clipCameraPolygon } from './geometry';
 import { opticalCameras } from './lampOptics';
-it('窓辺のカメラより後ろに回る窓枠を投影前に切り、全頂点を可視の近接面へ保つ', () => { const camera = opticalCameras.field; const vertices: [
-    number,
-    number,
-    number
-][] = [[20, -4.5, .9], [20, -2.2, .9], [20, -2.2, 2.05], [20, -4.5, 2.05]]; expect(vertices.some(v => project(v, camera).depth < 0)).toBe(true); const clipped = clipCameraPolygon(vertices, camera); expect(clipped).toHaveLength(4); expect(clipped.every(v => project(v, camera).depth >= .019999)).toBe(true); });
-import { project, towerCameras, poles, tower, stationBuilding } from './geometry';
+it('窓辺のカメラより後ろに回る窓枠を投影前に切り、全頂点を可視の近接面へ保つ', () => {
+    const camera = opticalCameras.field;
+    const vertices: [
+        number,
+        number,
+        number
+    ][] = [[20, -4.5, .9], [20, -2.2, .9], [20, -2.2, 2.05], [20, -4.5, 2.05]];
+    expect(vertices.some(v => project(v, camera).depth < 0)).toBe(true);
+    const clipped = clipCameraPolygon(vertices, camera);
+    expect(clipped).toHaveLength(4);
+    expect(clipped.every(v => project(v, camera).depth >= .019999)).toBe(true);
+});
+import { project, towerCameras, poles, tower, towerWorld, stationBuilding } from './geometry';
 it('同じ塔の西と東で、傷のある柱と無傷の柱の前後が入れ替わる', () => {
     for (const side of ['west', 'east'] as const) {
         const c = towerCameras[side];
@@ -43,4 +50,13 @@ it('柱が塔の同じ側に並ぶ観測は、東西の撮影側に限定され�
         }
     expect(west).toBeGreaterThan(20);
     expect(east).toBeGreaterThan(20);
+});
+it('塔の局所見取図を北を保って広域へ置き、二本の柱と西梯子の方位を維持する', () => {
+    const origin = towerWorld(0, 0, 0), north = towerWorld(0, 1, 0), scar = towerWorld(...poles[0].base), plain = towerWorld(...poles[1].base);
+    expect(north).toEqual([origin[0], origin[1] + 1, 0]);
+    expect(scar[0]).toBeLessThan(origin[0]);
+    expect(plain[0]).toBeGreaterThan(origin[0]);
+    expect(scar[1]).toBeCloseTo(origin[1] - 3.1);
+    expect(plain[1]).toBeCloseTo(scar[1]);
+    expect(towerWorld(tower.ladderX, tower.ladderY, 6)[0]).toBeLessThan(origin[0]);
 });
