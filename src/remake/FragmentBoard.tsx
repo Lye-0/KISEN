@@ -64,7 +64,7 @@ export function FragmentBoard({ s, dispatch, say, photos }: {
     const order = [0, 1, 2, 3, 4, 5].filter(id => id !== selected);
     if (selected !== null)
         order.push(selected);
-    return <section className="rm-fragment-board"><div className="rm-fragment-toolbar"><button onClick={() => setZoom(!zoom)} aria-pressed={zoom}>{zoom ? '全体を見る' : '紙片を拡大'}</button><div className="rm-fragment-selected">{selected !== null && <><button onClick={() => { const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], 1 - p[2], p[3]]); }}>半回転</button><button onClick={() => { const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], p[2], 1 - p[3]]); }}>裏返す</button></>}</div><button onClick={() => { dispatch({ type: 'record', id: 'fragments', values: poses }); say('紙片の配置を記録した。'); }}>配置を記録する</button></div>
+    return <section className="rm-fragment-board"><div className="rm-fragment-toolbar"><button onClick={() => setZoom(!zoom)} aria-pressed={zoom}>{zoom ? '全体を見る' : '紙片を拡大'}</button><div className="rm-fragment-selected"><button disabled={selected === null} onClick={() => { if (selected === null) return; const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], 1 - p[2], p[3]]); }}>半回転</button><button disabled={selected === null} onClick={() => { if (selected === null) return; const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], p[2], 1 - p[3]]); }}>裏返す</button></div><button onClick={() => { dispatch({ type: 'record', id: 'fragments', values: poses }); say('紙片の配置の写しを記録した。'); }}>配置の写しを残す</button></div>
     <div className={'rm-fragment-viewport' + (zoom ? ' is-zoomed' : '')}><svg ref={svg} viewBox="0 0 1100 734" className="rm-fragment-surface" aria-label="六枚の紙片を並べる比較台" onPointerMove={e => {
             const d = drag.current;
             if (!d)
@@ -88,12 +88,12 @@ export function FragmentBoard({ s, dispatch, say, photos }: {
             }
         }}/>
       {order.map(id => <g key={id} role="button" tabIndex={0} aria-label={'紙片' + (id + 1)} aria-pressed={selected === id} className="rm-fragment-piece" transform={`translate(${displayed[id * 4]} ${displayed[id * 4 + 1]}) rotate(${displayed[id * 4 + 2] * 180}) translate(-240 ${-partCenters[fragmentParts[id]]})`} onPointerDown={e => begin(e, id)} onKeyDown={e => keyboard(e, id)}>
-        <polygon points={fragmentOutlines[fragmentParts[id]]} transform={displayed[id * 4 + 3] ? 'translate(480 0) scale(-1 1)' : undefined} fill="transparent" stroke="transparent" strokeWidth="18"/>
+        <polygon points={fragmentOutlines[fragmentParts[id]]} transform={displayed[id * 4 + 3] ? 'translate(480 0) scale(-1 1)' : undefined} fill="transparent" stroke="transparent" strokeWidth={fragmentParts[id] === 1 ? 18 : 28}/>
         <g pointerEvents="none"><FragmentArt id={id} back={displayed[id * 4 + 3] === 1}/></g>
-        {selected === id && <path d={`M-7 ${partCenters[fragmentParts[id]] - 10}v20M487 ${partCenters[fragmentParts[id]] - 10}v20`} fill="none" stroke="#ddd0a8" strokeWidth="2" pointerEvents="none"/>}
+        {selected === id && <polygon points={fragmentOutlines[fragmentParts[id]]} transform={displayed[id * 4 + 3] ? 'translate(480 0) scale(-1 1)' : undefined} fill="none" stroke="#e7d2a0" strokeWidth="3" vectorEffect="non-scaling-stroke" strokeDasharray="7 4" pointerEvents="none"/>}
       </g>)}
     </svg></div><div className="rm-fragment-picker">{[0, 1, 2, 3, 4, 5].map(id => <button key={id} aria-label={'紙片' + (id + 1) + 'を選ぶ'} aria-pressed={selected === id} onClick={() => setSelected(id)}><svg viewBox={`-10 ${partCenters[fragmentParts[id]] - 35} 500 70`}><FragmentArt id={id} back={poses[id * 4 + 3] === 1}/></svg></button>)}</div>
-    <div className="rm-document-controls"><button onClick={photos}>同じ束の写真を見る</button></div><p className="rm-fragment-help">紙片を動かす・選んで置く</p>
+    <div className="rm-document-controls"><button onClick={photos}>同じ束の写真を見る</button></div><p className="rm-fragment-help">紙片を動かす・選んで置く。配置の写しは記録で見比べられる</p>
   </section>;
 }
 export function FragmentPhoto({ dispatch, say }: {

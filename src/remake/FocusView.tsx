@@ -73,7 +73,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'routeSketch': return <RouteSketch s={s} dispatch={dispatch} say={say}/>;
         case 'dispatch': return <ReturnDispatch s={s} dispatch={dispatch} say={say}/>;
         case 'signal': return <Shutter s={s} dispatch={dispatch} say={say} reader={() => inspect('reader')} papers={() => inspect('dispatch')}/>;
-        case 'tools': return <ToolTrial s={s} dispatch={dispatch} say={say} openTicket={() => inspect('ticket')}/>;
+        case 'tools': return <ToolTrial s={s} dispatch={dispatch} say={say} openTicket={() => inspect('ticket')} records={() => inspect('journeyRecords')}/>;
         case 'seat': return <Train s={s} dispatch={dispatch} closeSeat={s.values.seatFocus?.[0] ?? 2} inspect={() => { }} inspectCase={() => { }} say={say}/>;
         case 'bag': return <Bag s={s} dispatch={dispatch} say={say}/>;
         case 'photos': return <Photos s={s} dispatch={dispatch} say={say}/>;
@@ -81,7 +81,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'case': return <RouteCase s={s} dispatch={dispatch} say={say}/>;
         case 'map': return <MaintenanceMap sketch={() => inspect('routeSketch')}/>;
         case 'ticket': return <TicketBench s={s} dispatch={dispatch} say={say} records={() => inspect('journeyRecords')}/>;
-        case 'journeyRecords': return <JourneyRecords s={s} dispatch={dispatch} say={say}/>;
+        case 'journeyRecords': return <JourneyRecords s={s} dispatch={dispatch} say={say} sketch={() => inspect('routeSketch')}/>;
         case 'reader': return <TicketReader s={s} dispatch={dispatch} say={say}/>;
         case 'hatch': return <Hatch s={s} dispatch={dispatch} say={say}/>;
         case 'counterDrawer': return <CounterDrawer s={s} dispatch={dispatch} say={say}/>;

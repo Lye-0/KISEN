@@ -72,7 +72,7 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
     const light = illuminatedPorts(s.signals, signalReady(s) && liveCircuit(s));
     const bell = useBell(s, false), beacon = platformPoint(5, 8, 1.3), foot = platformPoint(5, 8, 0), beaconHeight = (foot.y - beacon.y) / .85;
     const lampIndex = selected === 'lamp' ? 0 : selected === 'spareLamp' ? 1 : null;
-    return <div className="rm-north"><Photo src="/assets/remake/north/platform.webp" label="北ホームの二つの踏み板と停車灯の取付列" view={detail ? [center.x - 210, 400, 420, 365] : undefined}>
+    return <div className="rm-north"><Photo src="/assets/remake/north/platform.webp" label="北ホームの二つの踏み板と停車灯の取付列" viewScaleLimit={1.5} view={detail ? [center.x - 210, 400, 420, 365] : undefined}>
  <Carriage s={s}/><svg className="rm-object-overlay" viewBox="0 0 1672 941"><defs><clipPath id={id + 'front'}><rect x="0" y={platformPoint(7, 7).y} width="1672" height={941 - platformPoint(7, 7).y}/>{planks.map(([a, b]) => <polygon key={a} points={platformPolygon([[a, 6.22, .04], [b, 6.22, .04], [b, 7.1, .04], [a, 7.1, .04]])}/>)}</clipPath><radialGradient id={id + 'glow'}><stop stopColor="#fff1b7" stopOpacity=".75"/><stop offset="1" stopColor="#ddbc73" stopOpacity="0"/></radialGradient></defs>
  <image href="/assets/remake/north/platform.webp" width="1672" height="941" clipPath={'url(#' + id + 'front)'}/>
  {s.signals.mounts.map((mark, i) => { const p = mark === null ? { x: 1190 - i * 26, y: 754 } : platformPoint(mark, lampRowY); const d = `M1280,750 C1180,778 ${p.x + 150},${p.y + 55} ${p.x},${p.y}`; return <g key={'cable' + i}><path d={d} fill="none" stroke="#000" strokeOpacity=".55" strokeWidth="5" transform="translate(1 2)"/><path d={d} fill="none" stroke="#262c27" strokeWidth="2.5"/></g>; })}

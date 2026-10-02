@@ -30,9 +30,9 @@ export function BridgeGateDetail({ s, dispatch, say, selected }: {
             void decode(root + name + '.webp').catch(() => { });
     }, []);
     const state = imageState(s);
-    return <Photo src={root + (state === 'closed' ? 'gate-mechanism' : 'gate-mechanism-' + state) + '.webp'} label="保守柵のばね、受け口と折り畳み支え">
+    return <section className="rm-gate-detail"><Photo src={root + (state === 'closed' ? 'gate-mechanism' : 'gate-mechanism-' + state) + '.webp'} label="保守柵のばね、受け口と折り畳み支え">
         {state === 'open' && <Touch name="折り畳み支えを外す" rect={[56, 46, 17, 39]} act={() => dispatch({ type: 'take', item: 'support' })}/>}
         {state === 'empty' && <Touch name="支えを元の金具へ戻す" rect={[38, 49, 16, 30]} act={() => selected === 'support' ? dispatch({ type: 'gateInstallSupport' }) : say('支えの取り付け跡。')}/>}
-        {state !== 'open' && state !== 'open-empty' && state !== 'empty' && <><Touch name="折り畳み支え" rect={[38, 49, 16, 30]} act={() => state === 'released' ? say('支えがばねを受けている。') : dispatch({ type: 'gateSupport' })}/><Touch name="ばね付きの横棒" rect={[31, 32, 26, 20]} act={() => state === 'closed' ? say('手を離すと戻る。') : !owns(s, 'pin') || selected !== 'pin' ? say('留めの奥へ届かない。') : dispatch({ type: 'gateRod' })}/></>}
-    </Photo>;
+        {state !== 'open' && state !== 'open-empty' && state !== 'empty' && <><Touch name="折り畳み支え" rect={[38, 49, 16, 30]} act={() => state === 'released' ? say('支えがばねを受けている。') : dispatch({ type: 'gateSupport' })}/><Touch name="ばね付きの横棒" rect={[31, 32, 26, 20]} act={() => state === 'released' ? dispatch({ type: 'gateDoor' }) : state === 'closed' ? say('ばねが横棒を押し戻す。') : !owns(s, 'pin') || selected !== 'pin' ? say(selected === 'retainingPin' ? '丸い軸は、留めの溝に収まらない。' : selected ? 'この形では、留めの溝に入らない。' : '留めの奥に、細い溝がある。') : (() => { dispatch({ type: 'gateRod' }); say('横棒が受けから抜け、留めが外れた。'); })()}/></>}
+    </Photo>{state === 'released' && <div className="rm-document-controls"><span className="rm-operation-note">留めが外れている。</span><button onClick={() => dispatch({ type: 'gateDoor' })}>柵を押す</button><button onClick={() => dispatch({ type: 'gateRod' })}>留めを戻す</button></div>}</section>;
 }

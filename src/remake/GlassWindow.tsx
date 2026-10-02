@@ -79,18 +79,19 @@ export function GlassWindow({ s, dispatch, selected, say }: {
     say: (m: string) => void;
 }) {
     const mounted = s.locations.lamp === 'glassStand' ? 'lamp' : s.locations.spareLamp === 'glassStand' ? 'spareLamp' : null;
+    const fittingItem = selected === 'lamp' || selected === 'spareLamp' ? (owns(s, selected) ? selected : null) : owns(s, 'spareLamp') ? 'spareLamp' : owns(s, 'lamp') ? 'lamp' : null;
     const fit = () => {
         if (mounted) {
             dispatch({ type: 'glassLamp', item: mounted });
             return;
         }
-        const item = selected === 'lamp' || selected === 'spareLamp' ? selected : owns(s, 'spareLamp') ? 'spareLamp' : owns(s, 'lamp') ? 'lamp' : null;
+        const item = fittingItem;
         if (item)
             dispatch({ type: 'glassLamp', item });
         else
             say('灯具の軸が入る受け口がある。');
     };
-    return <section className="rm-glass-window"><GlassView view={s.camera} lit={Boolean(mounted)}><Touch name={mounted ? '観測窓の灯具を外す' : '観測窓の受け口'} rect={s.camera === 0 ? [37, 63, 11, 31] : [38, 58, 11, 33]} act={fit}/></GlassView><div className="rm-document-controls"><button onClick={fit}>{mounted ? '灯具を外す' : '灯具を取り付ける'}</button><button onClick={() => { dispatch({ type: 'record', id: 'glass-observation-' + s.camera + '-' + Number(Boolean(mounted)), values: [s.camera, Number(Boolean(mounted))] }); say('窓越しの景色を記録した。'); }}>記録する</button><button onClick={() => dispatch({ type: 'move', room: 'north', camera: 1 })}>側道を戻る</button></div></section>;
+    return <section className="rm-glass-window"><GlassView view={s.camera} lit={Boolean(mounted)}><Touch name={mounted ? '観測窓の灯具を外す' : '観測窓の受け口'} rect={s.camera === 0 ? [37, 63, 11, 31] : [38, 58, 11, 33]} act={fit}/></GlassView><div className="rm-document-controls"><button onClick={fit} disabled={!mounted && !fittingItem}>{mounted ? '灯具を外す' : fittingItem === 'spareLamp' ? '交換灯具を取り付ける' : '灯具を取り付ける'}</button><button onClick={() => { dispatch({ type: 'record', id: 'glass-observation-' + s.camera + '-' + Number(Boolean(mounted)), values: [s.camera, Number(Boolean(mounted))] }); say('窓越しの景色を記録した。'); }}>記録する</button><button onClick={() => dispatch({ type: 'move', room: 'north', camera: 1 })}>側道を戻る</button></div></section>;
 }
 export function GlassNote({ values }: {
     values: number[];

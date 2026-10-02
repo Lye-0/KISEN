@@ -119,3 +119,77 @@
 @media(min-width:601px){.rm-ticket-bench{width:min(100vw,calc((100dvh - 320px)*1.77683))}.rm-ticket-bench>.rm-photo{width:100%}}@media(max-width:600px){.rm-ticket-actions{bottom:130px}}
 
 @media(max-width:600px){.rm-ticket-actions{gap:8px;padding:6px}.rm-ticket-actions>span{flex-basis:100%;text-align:center;line-height:1.5}}
+
+/* 読解を補助する表示。正解の位置・形・接点は示さない。 */
+.rm-arrival-comparison{width:min(750px,100%);margin:12px auto;padding:12px;background:#282a22;border:1px solid #b8a78240}.rm-arrival-comparison figcaption{font-size:13px;margin-bottom:8px}.rm-arrival-comparison .rm-ticket-paper{width:100%}.rm-operation-note{font-size:12px;color:#c2b9a1;text-align:center;margin:8px 0}.rm-tool-state{font-size:12px;letter-spacing:.04em;color:#c8bfa8;pointer-events:none}.rm-shutter-grip:focus-visible{outline:2px dashed #d9c49c;outline-offset:4px}.rm-shutter-grip:active{cursor:grabbing!important}.rm-clock-check-photos figure:first-child .rm-photo{width:240px!important}.rm-clock-check-photos figure:nth-child(2) .rm-photo{width:210px!important}.rm-panel .rm-clock-check-photos{gap:12px}.rm-panel .rm-clock-check-photos figure{width:min(100%,270px)}.rm-panel .rm-clock-check-photos .rm-photo{max-width:100%}@media(max-width:600px){.rm-arrival-comparison{padding:8px}.rm-clock-check-photos figure{max-width:100%}.rm-clock-check-photos .rm-photo{max-width:100%}.rm-operation-note{font-size:11px}}
+
+/* 選択・参照・移動を分離し、物理操作の結果を維持する。 */
+.rm-location-controls{align-items:center;max-width:calc(100% - 100px)}.rm-location-controls .rm-area-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:#bbb9a7}.rm-held-name{font-size:12px;color:#d4cbb5}.rm-held-item{gap:5px}.rm-held-item button{font-size:12px!important}.rm-train-observation{position:absolute;top:72px;right:22px;z-index:5;display:flex;align-items:center;gap:8px;padding:3px 4px 3px 12px;background:#080e11dc;border:1px solid #b1a28340;font-size:12px;max-width:calc(100vw - 44px)}.rm-train-observation button{font-size:14px!important}.rm-receipt-selection{grid-column:1/-1;font-size:12px;color:#c2b9a1;text-align:center;margin:0}.rm-receipt-bank{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center}.rm-receipt-bank button{width:100%;max-width:none!important}.rm-receipt-placeholder{aspect-ratio:340/230;min-width:0}.rm-north>.rm-photo{margin-inline:auto}@media(max-width:600px){.rm-location-controls{gap:1px!important}.rm-location-controls button{padding:7px 8px!important;font-size:12px!important}.rm-held-name{display:none}.rm-train-observation{top:64px;right:12px;font-size:11px;max-width:calc(100vw - 24px)}.rm-receipt-bank{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.rm-journey-records{max-height:calc(100dvh - 240px);overflow:auto}.rm-journey-controls{position:sticky;bottom:0;z-index:3;flex-wrap:wrap;background:#0d1514f5;padding:8px;margin-bottom:0}@media(max-width:600px){.rm-journey-records{max-height:calc(100dvh - 230px)}.rm-journey-controls{gap:4px;padding:5px}}
+
+.rm-clock-check-photos figure button{margin-top:9px;font-size:12px!important;border:1px solid #554c3d66!important;background:#e8ddc933!important}.rm-clock-checks.is-close .rm-clock-check-photos .rm-photo{width:min(320px,76vw)!important}.rm-receipt-bank.is-open{display:none}
+
+/* Fixed chrome reserves its own space; scene images and actions share the rest. */
+#rm-game{--rm-scene-height:calc(100dvh - 190px)}
+.rm-stage{inset:64px 0 126px;overflow:auto;align-items:safe center;justify-content:safe center;scrollbar-width:thin;scrollbar-color:#768066 #111915}
+.rm-focused-scene{position:relative;inset:auto;width:100%;height:100%;align-items:safe center}
+.rm-focus-backdrop{overflow:hidden}
+.rm-photo{width:min(100%,calc(var(--rm-scene-height,100dvh)*var(--photo-ratio,1.77683)));flex-shrink:0}
+.rm-stage>section,.rm-stage>div:not(.rm-focus-backdrop),.rm-focused-scene>section,.rm-focused-scene>div{max-height:100%}
+.rm-notice-board{max-height:100%;overflow:auto;scrollbar-width:thin}
+.rm-notice-face{max-height:none;width:min(100%,calc((var(--rm-scene-height) - 90px)*900/730))}
+.rm-notice-face.rm-notice-near{width:min(100%,calc((var(--rm-scene-height) - 90px)*540/650))}
+.rm-return-controls{position:static;margin:10px 0 0}
+.rm-return-train{width:min(100%,calc((var(--rm-scene-height) - 110px)*1.77683))}
+.rm-gate-detail{width:100%;max-height:100%;overflow:auto;text-align:center}
+.rm-gate-detail>.rm-photo{margin:auto;width:min(100%,calc((var(--rm-scene-height) - 85px)*1.77683))}
+.rm-gate-detail>.rm-document-controls{align-items:center;flex-wrap:wrap}
+.rm-shutter{max-height:100%;overflow:auto;scrollbar-width:thin}
+.rm-shutter .rm-photo{margin:auto;width:min(100%,calc((var(--rm-scene-height) - 120px)*var(--photo-ratio,1.77683)))}
+.rm-shutter .rm-operation-note{margin:8px 10px}
+.rm-clock-checks{max-height:100%;overflow:auto;scrollbar-width:thin}
+.rm-clock-check-photos .rm-photo{max-width:100%}
+.rm-journey-records{display:flex;flex-direction:column;height:var(--rm-scene-height);max-height:100%;overflow:hidden;padding:8px}
+.rm-journey-tabs{flex-shrink:0}
+.rm-journey-scroll{min-height:0;flex:1;overflow:auto;padding:4px 8px 16px;scrollbar-width:thin;scrollbar-color:#768066 #111915}
+.rm-journey-controls{position:static;flex-shrink:0;margin-top:8px;padding:8px}
+.rm-notes-panel{overflow:auto;max-height:calc(100dvh - 48px)}
+.rm-notes-panel article{overflow:visible!important;margin:8px 0!important}
+.rm-notes-panel summary{cursor:pointer;padding:12px;border:1px solid #7d80674d;font-size:14px}
+.rm-record-body{padding:12px 0;overflow-x:auto}
+.rm-notes-panel .rm-clock-checks,.rm-notes-panel .rm-sketch-note{max-height:none;overflow:visible}
+.rm-notes-panel .rm-clock-check-photos{flex-direction:column}
+.rm-fragment-toolbar{display:grid;grid-template-columns:1fr auto;min-height:108px;align-content:center}
+.rm-fragment-selected{grid-column:1/-1;grid-row:2;justify-content:center}
+.rm-fragment-toolbar button:disabled{opacity:.3;cursor:default}
+.rm-fragment-picker button[aria-pressed=true]{outline:2px solid #e7d2a0;outline-offset:-2px}
+.rm-scene-zoom-toggle{display:none}
+@media(max-width:600px){
+ #rm-game{--rm-scene-height:calc(100dvh - 180px)}
+ .rm-stage{inset:60px 0 120px}
+ .rm-top{padding:8px}
+ .rm-top>div{gap:0}
+ .rm-scene-zoom-toggle{display:block;font-size:11px!important;padding:6px!important}
+ .rm-scene-zoomed .rm-stage{justify-content:flex-start;align-items:flex-start}
+ .rm-scene-zoomed .rm-stage>.rm-photo,.rm-scene-zoomed .rm-stage>section>.rm-photo,.rm-scene-zoomed .rm-stage>div>.rm-photo{width:900px!important;max-width:none!important}
+ .rm-scene-zoomed .rm-stage>section,.rm-scene-zoomed .rm-stage>div:not(.rm-focused-scene){width:900px;flex-shrink:0}
+ .rm-scene-zoomed .rm-stage .rm-document-controls{max-width:100vw}
+ .rm-return-train{width:100%}
+ .rm-fragment-toolbar{min-height:110px}
+ .rm-fragment-selected{margin:0}
+ .rm-journey-controls{gap:3px;padding:4px}
+ .rm-journey-scroll{padding:4px 2px 12px}
+}
+/* Result messages leave the action band readable. */
+.rm-feedback{top:64px;bottom:auto}
+.rm-fragment-board{display:flex;flex-direction:column;height:var(--rm-scene-height);overflow:hidden}
+.rm-fragment-toolbar,.rm-fragment-picker,.rm-fragment-board>.rm-document-controls,.rm-fragment-help{flex-shrink:0}
+.rm-fragment-viewport{flex:1;min-height:0;max-height:none}
+.rm-fragment-surface{width:min(100%,calc((var(--rm-scene-height) - 260px)*1.4986));margin:auto}
+.rm-fragment-viewport.is-zoomed .rm-fragment-surface{width:1100px}
+@media(max-width:600px){.rm-feedback{top:60px;bottom:auto}}
+/* These viewers used to reserve the chrome padding themselves. */
+.rm-shutter,.rm-north,.rm-tool-trial,.rm-cargo{padding:6px 0}
+.rm-north>.rm-photo{width:min(100%,calc((var(--rm-scene-height) - 80px)*var(--photo-ratio,1.77683)))}
+.rm-tool-trial>.rm-photo{width:min(100%,calc((var(--rm-scene-height) - 135px)*var(--trial-ratio)))}

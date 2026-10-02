@@ -1,5 +1,5 @@
 import { BenchStamp } from './BenchFixtures';
-import { PunchGraphic } from './ToolTrial';
+import { PunchGraphic, toolNames } from './ToolTrial';
 import { useCompact } from './useCompact';
 import { useModal } from './useModal';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -10,9 +10,10 @@ import { CutShape } from './CutShape';
 import { owns } from './model';
 const dieNames = ['丸形', '長方形', '半円形', '三角形', '菱形', '星形'];
 const paperOutline = 'M0 0H800V235H0V70A18 18 0 0 0 0 34V0Z';
-export function TicketPaper({ ticket, aim, view, returnMark }: {
+export function TicketPaper({ ticket, aim, view, returnMark, highlightColumn }: {
     ticket: Ticket;
     returnMark?: boolean;
+    highlightColumn?: number;
     aim?: (column: number, side: 'white' | 'black') => void;
     view?: [
         number,
@@ -27,6 +28,7 @@ export function TicketPaper({ ticket, aim, view, returnMark }: {
  <defs><mask id={id}><path d={paperOutline} fill="white"/>{ticket.holes.map((h, i) => <g key={i} transform={`translate(${80 + h.column * 160} ${h.side === 'white' ? 35 : 200})`}><CutShape cut={h} fill="black"/></g>)}</mask></defs>
  <g transform={ticket.back ? 'translate(800 0) scale(-1 1)' : undefined}>
  <g mask={`url(#${id})`}><image href="/assets/remake/parts/photo-back.webp" width="800" height="235" preserveAspectRatio="none"/>
+ {highlightColumn !== undefined && <rect x={highlightColumn * 160 + 3} y="4" width="154" height="226" fill="#aa884a" fillOpacity=".09" stroke="#8e7543" strokeWidth="2"/>}
  <g fill="#565340" stroke="#696753" opacity={ticket.back ? .3 : .85} fontFamily="serif"><path d="M18 83H782M18 152H782" fill="none" strokeWidth="1.1"/>{[0, 1, 2, 3, 4].map(c => <g key={c}><path d={`M${c * 160} 9V226`} strokeWidth=".7"/><text x={80 + c * 160} y="126" textAnchor="middle" stroke="none" fontSize="24">{['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ'][c]}</text></g>)}<text x="28" y="177" stroke="none" fontSize="14">乗車券</text></g>
  {marks.map((m, i) => <g key={i} transform={m.back ? 'translate(800 0) scale(-1 1)' : undefined} opacity={m.back === ticket.back ? .85 : .22}><text x={770 - i % 2 * 2} y={178 + i % 2 * 2} fill="#813e30" fontFamily="serif" fontSize="19" textAnchor="end">第 {m.service} 便</text></g>)}
  {returnMark && ticket.back && <g transform="translate(570 111) rotate(-11)" fill="none" stroke="#503933" strokeWidth="2.4" opacity=".63"><circle r="22"/><path d="M-11 12V-9H9M-11 2H4L12-8M-2 2V13"/></g>}
@@ -128,5 +130,5 @@ export function TicketBench({ s, dispatch, say, records }: {
                     setAim(null);
                 }
             }}/>}
- {compact && detail === 'wide' && <><Touch name="用紙を近くで見る" rect={[25, 40, 52, 38]} act={() => setDetail('paper')}/><Touch name="刃置き場を近くで見る" rect={[28, 3, 37, 21]} act={() => setDetail('dies')}/><Touch name="便印を近くで見る" rect={[71, 0, 12, 31]} act={() => setDetail('stamp')}/></>}{(!compact || detail === 'wide') && <Touch name="乗車券控を見る" rect={[0, 23, 12, 45]} act={records}/>} </Photo>{archive && <div ref={archiveRef} className="rm-ticket-archive" role="dialog" aria-modal="true" aria-label="切った券の比較"><div className={archiveZoom ? 'rm-paper-expanded' : ''}>{[...s.savedTickets, s.draft].map(t => <figure key={t.id}><TicketPaper ticket={t}/><figcaption>{t.id === s.draft.id ? '手元の券' : '前に切った券'}</figcaption></figure>)}</div><div className="rm-document-controls"><button onClick={() => setArchiveZoom(!archiveZoom)}>{archiveZoom ? '全体を見る' : '拡大する'}</button><button onClick={() => setArchive(false)}>机へ戻す</button></div></div>}<div className="rm-ticket-actions">{compact && detail !== 'wide' && <><button onClick={() => setDetail('wide')}>机の全体へ</button>{detail === 'paper' && <><button onClick={() => setDetail('dies')}>刃を選ぶ</button><button onClick={() => setDetail('stamp')}>便印を見る</button></>}</>}{hasPaper && (!compact || detail === 'paper') && <button disabled={squeezed || stamping} onClick={() => { dispatch({ type: 'flipTicket' }); setAim(null); }}>券を裏返す</button>}{aim && <><button onClick={cut} disabled={squeezed || stamping}>鋏を握る</button><button onClick={() => setAim(null)} disabled={squeezed || stamping}>鋏を引く</button></>}{(s.savedTickets.length > 0 || s.draft.holes.length > 0) && <button onClick={() => setArchive(true)}>切った券を見る</button>}<span>{hasDie ? dieNames[die] + 'の刃' : '刃を選ぶ'}</span></div></section>;
+ {compact && detail === 'wide' && <><Touch name="用紙を近くで見る" rect={[25, 40, 52, 38]} act={() => setDetail('paper')}/><Touch name="刃置き場を近くで見る" rect={[28, 3, 37, 21]} act={() => setDetail('dies')}/><Touch name="便印を近くで見る" rect={[71, 0, 12, 31]} act={() => setDetail('stamp')}/></>}{(!compact || detail === 'wide') && <Touch name="乗車券控を見る" rect={[0, 23, 12, 45]} act={records}/>} </Photo>{archive && <div ref={archiveRef} className="rm-ticket-archive" role="dialog" aria-modal="true" aria-label="切った券の比較"><div className={archiveZoom ? 'rm-paper-expanded' : ''}>{[...s.savedTickets, s.draft].map(t => <figure key={t.id}><TicketPaper ticket={t}/><figcaption>{t.id === s.draft.id ? '手元の券' : '前に切った券'}</figcaption></figure>)}</div><div className="rm-document-controls"><button onClick={() => setArchiveZoom(!archiveZoom)}>{archiveZoom ? '全体を見る' : '拡大する'}</button><button onClick={() => setArchive(false)}>机へ戻す</button></div></div>}<div className="rm-ticket-actions">{compact && detail !== 'wide' && <><button onClick={() => setDetail('wide')}>机の全体へ</button>{detail === 'paper' && <><button onClick={() => setDetail('dies')}>刃を選ぶ</button><button onClick={() => setDetail('stamp')}>便印を見る</button></>}</>}{hasPaper && (!compact || detail === 'paper') && <button disabled={squeezed || stamping} onClick={() => { dispatch({ type: 'flipTicket' }); setAim(null); }}>券を裏返す</button>}{aim && <><button onClick={cut} disabled={squeezed || stamping}>鋏を握る</button><button onClick={() => setAim(null)} disabled={squeezed || stamping}>鋏を引く</button></>}{(s.savedTickets.length > 0 || s.draft.holes.length > 0) && <button onClick={() => setArchive(true)}>切った券を見る</button>}<span className="rm-tool-state">鋏：{hasTool ? toolNames[s.values.punchTool?.[0] ?? 1] : '机上'}　刃：{hasDie ? dieNames[die] : '未装着'}</span></div></section>;
 }
