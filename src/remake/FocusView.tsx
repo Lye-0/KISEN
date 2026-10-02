@@ -84,14 +84,14 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'map': return <MaintenanceMap sketch={() => inspect('routeSketch')}/>;
         case 'ticket': return <TicketBench s={s} dispatch={dispatch} say={say} records={() => inspect('journeyRecords')} tools={() => inspect('tools')}/>;
         case 'journeyRecords': return <JourneyRecords s={s} dispatch={dispatch} say={say} sketch={() => inspect('routeSketch')}/>;
-        case 'reader': return <TicketReader s={s} dispatch={dispatch} say={say}/>;
+        case 'reader': return <TicketReader s={s} dispatch={dispatch} say={say} selected={selected}/>;
         case 'hatch': return <Hatch s={s} dispatch={dispatch} say={say}/>;
         case 'counterDrawer': return <CounterDrawer s={s} dispatch={dispatch} say={say}/>;
         case 'notices': return <ServiceRecords s={s} dispatch={dispatch} say={say}/>;
         case 'receipt': return <Receipt />;
         case 'platformClock': return <Photo src="/assets/remake/platform/station.webp" view={[935, 207, 188, 195]} label="ホームの時計"><Clock minutes={23 * 60 + 17} transform="translate(1030 302) scale(.72)"/></Photo>;
         case 'officeLock': return <OfficeLock s={s} dispatch={dispatch} say={say} selected={selected} onSelect={onSelect} enter={() => { dispatch({ type: 'move', room: 'office', camera: 0 }); close(); }}/>;
-        case 'paperView': return <div className="rm-hand-paper"><TicketPaper ticket={s.draft}/><button onClick={() => dispatch({ type: 'flipTicket' })}>裏返す</button></div>;
+        case 'paperView': return s.draft && owns(s, 'ticket') ? <div className="rm-hand-paper"><TicketPaper ticket={s.draft}/><button onClick={() => dispatch({ type: 'flipTicket' })}>裏返す</button></div> : null;
         case 'arrivalTicket': return <div className="rm-hand-paper"><TicketPaper ticket={{ ...arrivalTicket, back: s.values.arrivalTicketBack?.[0] === 1 }}/><button onClick={() => dispatch({ type: 'values', id: 'arrivalTicketBack', values: [s.values.arrivalTicketBack?.[0] === 1 ? 0 : 1] })}>裏返す</button></div>;
         case 'bridgeGate': return <BridgeGateDetail s={s} dispatch={dispatch} say={say} selected={selected}/>;
         case 'hookRack': return <HookRack s={s} dispatch={dispatch} say={say}/>;

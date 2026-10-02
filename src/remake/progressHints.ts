@@ -1,4 +1,5 @@
-import { owns, signalReady, liveCircuit, trace, validTicket } from './model';
+import { stagedHint } from './hintStages';
+import { owns, selectedDeskTool, signalReady, liveCircuit, trace, validTicket } from './model';
 import type { State, Room, Item } from './model';
 import type { Focus } from './World';
 import { boardingGeometry, illuminatedPorts, stopAt } from './stopping';
@@ -12,7 +13,7 @@ import type { Cargo } from './cargo';
 export interface ProgressHint {
     id: string;
     title: string;
-    clues: readonly [string, string];
+    clues: readonly [string, string, ...string[]];
 }
 interface Candidate extends ProgressHint { rooms: Room[]; focuses: Focus[] }
 const hint = (id: string, title: string, first: string, detail: string): ProgressHint => ({ id, title, clues: [first, detail] });
@@ -21,7 +22,7 @@ const visited = (s: State, rooms: Room[]) => rooms.includes(s.room) || s.visited
 const obtained = (s: State, item: Item, origin: string) => Boolean(s.locations[item] && s.locations[item] !== origin);
 
 function envelopeHint(s: State): ProgressHint {
-    if (!owns(s, 'receipt')) return hint("arrival-receipt", "鞄の持ち手にある受取票", "車内の鞄を調べ、持ち手に挟まっている受取票を取ってください。", "持ち物の受取票を選び、「見る」を押してください。車内のどの座席を調べればよいかが書かれています。");
+    if (!owns(s, 'receipt')) return hint("arrival-receipt", "鞄の持ち手にある受取票", "車内の鞄を調べ、持ち手に挟まっている受取票を取ってください。", "持ち物の受取票を押して開いてください。車内のどの座席を調べればよいかが書かれています。");
     if (s.seats[2] === 1) return hint("arrival-envelope-take", "座席の裏にある封筒", "動かした座席の裏側に、封筒が残っています。", "座席を動かす取っ手ではなく、ポケットから見えている封筒を押すと取れます。");
     return hint("arrival-seat", "受取票が示す座席", "受取票に書かれた扉を見つけ、そこから座席を数えてください。", "車内には一枚扉と二枚扉があります。受取票に書かれた側から数えた座席の背を動かし、裏側を調べてください。");
 }
@@ -30,7 +31,7 @@ function arrivalHint(s: State): ProgressHint {
     if (on(s, 'caseOpen')) return hint("arrival-key-take", "書類箱から鍵を取る", "開いた書類箱の中に、駅務室の鍵があります。", "鍵を取ったら待合室へ向かい、窓口の隣にある駅務室の扉で使ってください。");
     if (!owns(s, 'receipt')) return envelopeHint(s);
     if (!owns(s, 'photos')) {
-        if (s.bag.mouth) return hint("arrival-photos-take", "鞄から写真を取る", "開いた鞄の中にある写真を取ってください。", "持ち物の写真を選んで「見る」を押すと、4枚を並べられます。それぞれの表と裏を調べてください。");
+        if (s.bag.mouth) return hint("arrival-photos-take", "鞄から写真を取る", "開いた鞄の中にある写真を取ってください。", "持ち物の写真を押すと、4枚の一覧が開きます。それぞれの表と裏を調べてください。");
         if (!s.bag.clasp) return hint("arrival-clasp", "鞄の留め金を外す", "鞄の口を留めている、真鍮の金具を動かしてください。", "留め金を外しても開かない場合は、口の上に掛かっている肩ひもを脇へ動かしてください。");
         if (s.bag.strap < .8) return hint("arrival-strap", "鞄の肩ひもを動かす", "留め金は外れていますが、肩ひもが鞄の口に掛かっています。", "肩ひもを脇へ動かしてから、鞄の口を押して開いてください。");
         return hint("arrival-bag-open", "鞄を開く", "留め金と肩ひもが外れ、鞄を開けられる状態です。", "鞄の口を押して開き、中の写真を取ってください。");
@@ -46,7 +47,7 @@ function cargoHint(s: State): ProgressHint {
     }
     if (cargoUnlocks(s.values.cargoDigits ?? [])) return hint("cargo-release", "木箱の留めを引く", "数字は合っています。木箱の蓋の留めを引いてください。", "数字の輪を回すだけでは開きません。輪の近くにある留めを動かしてください。");
     if (!owns(s, 'counterRecords')) {
-        if (s.window.open) return hint("counter-records", "窓口の帳票を取る", "開いた窓口の中から、帳票を取ってください。", "持ち物の帳票を選び、「見る」を押してください。壁にある古い時刻表と合わせて、今使える便を調べられます。");
+        if (s.window.open) return hint("counter-records", "窓口の帳票を取る", "開いた窓口の中から、帳票を取ってください。", "持ち物の帳票を押して開いてください。壁にある古い時刻表と合わせて、今使える便を調べられます。");
         if (s.window.latch) return hint("counter-open", "窓口の小戸を開く", "掛け金は外れています。小戸そのものを持ち上げてください。", "戸の指掛けを操作すると開きます。中にある帳票を取ってください。");
         if (s.window.supported) return hint("counter-latch", "小戸の掛け金を外す", "小戸が持ち上がっている間に、横の掛け金を外してください。", "戸を少し持ち上げると、掛け金に掛かる重みがなくなります。掛け金を外した後、戸をさらに開けてください。");
         return hint("counter-lift", "窓口の小戸を持ち上げる", "待合室の窓口を調べ、小戸の指掛けを動かしてください。", "まず戸を少し持ち上げてから、横の掛け金を外してください。掛け金が外れたら戸を開けられます。");
@@ -64,7 +65,7 @@ function shedHint(s: State): ProgressHint {
         : hint("shed-code", "破れた紙をつなぐ", "駅前の掲示板にある4枚の紙から、つながる2枚を探してください。", "紙を左右に置き、写真の景色と縁の穴がつながる組を探します。つなぎ目の数字を上から読み、小屋の錠へ入力してください。");
 }
 function gateHint(s: State): ProgressHint {
-    if (on(s, 'gateOpen')) return hint("north-enter", "保守柵の先へ進む", "保守柵は開いています。柵の先から北ホームへ進んでください。", "「全景へ」で跨線橋の景色に戻り、開いた柵の向こうを押すと渡れます。");
+    if (on(s, 'gateOpen')) return hint("north-enter", "保守柵の先へ進む", "保守柵は開いています。柵の先から北ホームへ進んでください。", "「戻る」で跨線橋の景色に戻り、開いた柵の向こうを押すと渡れます。");
     if (s.locations.support !== 'bridgeGate') return hint("gate-restore-support", "保守柵に支えを戻す", "柵を開き直すには、取り外した支えを元に戻す必要があります。", "支えを別の場所で使っている場合は、上に付けた灯具を先に外してから回収してください。支えを持って保守柵へ戻り、元の取付部へ付けてください。");
     if (!owns(s, 'hook') && !owns(s, 'pin')) return on(s, 'rackRing')
         ? hint("hook-take", "鉤付き棒を取る", "固定用の輪が動き、棒を取り出せる状態です。", "駅務室の傘立てにある鉤付き棒を押して、持ち上げてください。")
@@ -81,26 +82,26 @@ function gateHint(s: State): ProgressHint {
 }
 function ticketHint(s: State): ProgressHint {
     if (s.mounted) return hint("ticket-recheck-mounted", "差し込んだ切符を見直す", "切符の穴や便印が、現在の線路のつなぎ方に合っていません。", "切符受けの押さえを開き、券を取り出してください。駅務室の机で見直し、余分な穴や間違った便印があれば新しい用紙で作り直してください。");
-    if (!owns(s, 'paper')) return hint("ticket-paper", "切符の用紙を取る", "駅務室の机の右側にある紙束から、用紙を取ってください。", "机の上部にある「切符を作る」を押すと、取った用紙に穴を開けたり便印を押したりできます。");
-    if (!owns(s, 'punch')) return hint("ticket-tool", "3本のハサミを試す", "「鋏を選ぶ・試す」で、同じ刃を使って3本のハサミを比べてください。", "ハサミと刃を選び、試し紙の縁を押してから「鋏を握る」を押します。乗車券控や券の断片と同じ形の穴を開けられるハサミを選び、「鋏を持つ」で手に取ってください。");
+    if (!s.draft || !owns(s, 'ticket')) return hint("ticket-paper", "切符の用紙を取る", "駅務室の机の右側にある紙束から、用紙を取ってください。", "机の上部にある「切符を作る」を押すと、取った用紙に穴を開けたり便印を押したりできます。");
+    if (selectedDeskTool(s) === null) return hint("ticket-tool", "3本のハサミを試す", "「鋏を選ぶ・試す」で、同じ刃を使って3本のハサミを比べてください。", "ハサミと刃を選び、試し紙の切る位置を押します。乗車券控や券の断片と同じ形の穴を開けられるハサミを選んでください。その選択は「切符を作る」でも使います。");
     if (!s.draft.holes.length) return hint("ticket-derive", "線路の順番を切符に写す", "帰り道で通る地点を順番に並べ、各地点で必要な穴を調べてください。", "乗車券控の写真から、地点と穴の形の対応を調べます。標柱が列車のどちら側に見えるかと、穴が券のどちらの縁にあるかも比べてください。通る順番に、Ⅰ列から穴を開けていきます。");
     return hint("ticket-check", "作った切符を確認する", "各列の穴の形と位置、便印を見直してください。", "通る地点の順番、穴を開ける縁、ハサミによる穴の違いを確認します。便印は運行控で調べてください。間違った穴や便印は消せないので、新しい用紙で作り直せます。");
 }
 
 
 function readerHint(s: State): ProgressHint {
-    return s.draft.back ? hint("reader-face", "切符を表に戻す", "差し込む前に、切符を表に戻してください。", "切符受けの押さえを開き、表を向けた券を差し込んでください。")
-        : hint("reader-insert", "切符受けに券を入れる", "切符受けの押さえを開いてから、券を差し込んでください。", "券を途中で止めず、奥まで送ってください。差し込み終わったら、押さえを閉じて固定してください。");
+    return s.draft?.back ? hint("reader-face", "切符を表に戻す", "差し込む前に、切符を表に戻してください。", "切符受けの押さえを開き、表を向けた券を差し込んでください。")
+        : hint("reader-insert", "切符受けに券を入れる", "切符受けの押さえを開いてから、券を差し込んでください。", "持ち物の切符を選び、受けへ差し込んでください。差し込み終わったら、押さえを閉じて固定してください。");
 }
 function lampObservationHint(s: State): ProgressHint {
-    if (s.locations.lamp === 'lightStand' || s.locations.spareLamp === 'lightStand') return hint("lamp-observe", "灯具の光を動かす", "上下左右のボタンを何回か押し、光が当たる場所を動かしてください。", "窓の外の標柱や線路を照らして観察します。高さを変えたい場合は、一度灯具を外して受け口に支えを取り付けてください。見えた状態は「記録する」で残せます。");
+    if (s.locations.lamp === 'lightStand' || s.locations.spareLamp === 'lightStand') return hint("lamp-observe", "灯具の光を動かす", "左右・上下の調整つまみを動かし、光が当たる場所を変えてください。", "窓の外の標柱や線路を照らして観察します。高さを変えたい場合は、一度灯具を外して受け口に支えを取り付けてください。見えた状態は「記録する」で残せます。");
     if (!owns(s, 'lamp') && !owns(s, 'spareLamp')) return hint("lamp-return-tool", "使った灯具を回収する", "別の場所に取り付けた灯具は、外して持ち運べます。", "北ホームや側道の観測窓に置いた灯具を調べてください。まだ取っていない灯具は、小屋の壁の金具や荷物室の木箱にあります。");
     if (s.locations.support === 'inventory') return hint("lamp-brace", "灯具の取付位置を高くする", "持ち物の支えを、窓辺の空いている受け口に取り付けてください。", "支えを付けてから灯具を取り付けると、光を出す位置が高くなります。窓の外を見て、光が遮られる場所の違いを確かめてください。");
     return hint("lamp-fit", "窓辺に灯具を取り付ける", "持ち物の灯具を選び、窓の下にある受け口を押してください。", "取り付けた後は、窓の外を見ながら光の向きを変えられます。高い位置に取り付けたい場合は、開いた保守柵から支えを回収してください。");
 }
 
 /** Derives advice from live game facts. Looking at a hint never mutates progress. */
-export function getProgressHint(s: State, focus: Focus = null): ProgressHint {
+function baseProgressHint(s: State, focus: Focus = null): ProgressHint {
     if (focus === 'pointDetail' || focus === 'pointSlip') focus = 'points';
     if (s.ended || s.room === 'return' && s.values.returnTrip?.[1] === 1)
         return hint("complete", "脱出できました", "終幕まで到達しました。", "最後の車内、使った切符、携帯電話の写真を見直せます。脱出のために必要な操作は、すべて終わっています。");
@@ -190,7 +191,9 @@ export function getProgressHint(s: State, focus: Focus = null): ProgressHint {
     const contextual = focus ? candidates.find(h => h.focuses.includes(focus)) : undefined;
     const selected = contextual ?? candidates.find(h => h.rooms.includes(s.room)) ?? candidates[0];
     if (selected) return { id: selected.id, title: selected.title, clues: selected.clues };
-    if (!north) return hint("explore", "まだ調べていない場所を探す", "左右の矢印で向きを変え、まだ入っていない出入口を探してください。", "物を拡大しているときは「全景へ」で周囲の景色に戻れます。調べられる位置が分からないときは「調べる場所」を押してください。");
+    if (!north) return hint("explore", "まだ調べていない場所を探す", "左右の矢印で向きを変え、まだ入っていない出入口を探してください。", "物を拡大しているときは「戻る」で周囲の景色に戻れます。調べられる位置が分からないときは「調べる場所」を押してください。");
     if (s.values.callService?.[0] === 2) return hint("call", "列車を呼び出す", "呼出ボタンを押して、北ホームで列車を待ってください。", "列車が止まったら、踏み板へ近づいて開いた扉を押してください。");
     return hint("service", "帰るための便を選ぶ", "携帯電話の写真で行先を確かめ、運行控と方向票から、この駅に停車する便を探してください。", "行先、予鈴と停車の順番、車体の種類を比べて便を選びます。呼出機をその番号に合わせてボタンを押し、北ホームで待ってください。");
 }
+
+export function getProgressHint(s: State, focus: Focus = null): ProgressHint { return stagedHint(baseProgressHint(s, focus), s); }

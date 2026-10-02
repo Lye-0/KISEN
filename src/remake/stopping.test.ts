@@ -30,7 +30,7 @@ function ready() {
     s = reduce(s, { type: 'shutter', plate: 1, step: 3 });
     s = reduce(s, { type: 'signalMount', lamp: 0, mark: 7 });
     s = reduce(s, { type: 'signalMount', lamp: 1, mark: 11 });
-    s.mounted = { id: 1, holes: expectedHoles(s.route), service: 2, back: false };
+    s.locations.ticket = 'reader'; s.mounted = { id: 1, holes: expectedHoles(s.route), service: 2, back: false };
     s.values.readerClamp = [0];
     return s;
 }

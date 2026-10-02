@@ -10,7 +10,7 @@ function office() {
 }
 function ready() {
     const s = office(); s.room = 'north'; s.visited.push('north:0');
-    Object.assign(s.locations, { fragments: 'inventory', lamp: 'signal', spareLamp: 'signal', hood: 'signal', retainingPin: 'signal', cargoDocket: 'inventory', paper: 'inventory', punch: 'inventory' });
+    Object.assign(s.locations, { fragments: 'inventory', lamp: 'signal', spareLamp: 'signal', hood: 'signal', retainingPin: 'signal', cargoDocket: 'inventory', ticket: 'reader', punch: 'inventory' });
     s.values.shedOpen = [1]; s.values.bellChannel = [1]; s.values.readerClamp = [0]; s.values.callService = [2];
     s.route = [0,1,0,1,1,1]; s.signals = { mounts: [7,11], shutters: [2,3] };
     s.mounted = { id: 20, service: 2, back: false, holes: expectedHoles(s.route) };
@@ -98,12 +98,12 @@ describe('progress-sensitive hints', () => {
         expect(id(s)).toBe('train-reposition');
     });
     it('distinguishes a valid loose ticket from an installed ticket and an open clamp', () => {
-        const s=ready(); s.draft=s.mounted!; s.mounted=null;
+        const s=ready(); s.draft=s.mounted!; s.mounted=null; s.locations.ticket='inventory';
         expect(id(s)).toBe('reader-insert');
         s.draft.back=true; expect(id(s)).toBe('reader-face');
         s.draft.back=false; s.train=stopAt(2,s.signals,true,true);
         expect(id(s)).toBe('reader-insert');
-        s.mounted=s.draft; s.values.readerClamp=[1]; expect(id(s)).toBe('reader-close');
+        s.mounted=s.draft; s.draft=null; s.locations.ticket='reader'; s.values.readerClamp=[1]; expect(id(s)).toBe('reader-close');
     });
     it('rechecks a ticket that no longer matches the chosen valid route', () => {
         const s=ready(); s.mounted!.holes=[]; expect(id(s)).toBe('ticket-recheck-mounted');

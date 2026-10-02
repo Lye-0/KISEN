@@ -10,7 +10,7 @@ import { validBellTimes, readBellRecord } from './bellCircuit';
 import { validBalance, balanceReleases } from './balance';
 import { validShedDigits, shedUnlocks } from './posters';
 import { cargoUnlocks, validCargoDigits } from './cargoDockets';
-import { sameOpening } from './ticketGeometry';
+import { dieOrder, sameOpening } from './ticketGeometry';
 import { cargoInitial, moveCargo, stairsClear, validCargo } from './cargo';
 import type { Cargo } from './cargo';
 import { arrivalCaseSides } from './arrivalPhotos';
@@ -40,7 +40,7 @@ export interface Ticket {
     back: boolean;
 }
 export interface State {
-    version: 2;
+    version: 3;
     started: boolean;
     room: Room;
     camera: number;
@@ -65,7 +65,7 @@ export interface State {
         at: number;
     }[];
     route: number[];
-    draft: Ticket;
+    draft: Ticket | null;
     mounted: Ticket | null;
     savedTickets: Ticket[];
     signals: SignalState;
@@ -74,8 +74,9 @@ export interface State {
     sound: boolean;
     ended: boolean;
 }
-export const newState = (): State => ({ version: 2, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { phone: 'inventory', retainingPin: 'balanceChest', fragments: 'lostDrawer', lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { retainingPinRevision: [1], passageRevision: [1], bellChannel: [0] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: { id: 1, holes: [], service: 0, back: false }, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
-export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 2, bridge: 4, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
+export const newState = (): State => ({ version: 3, started: false, room: 'train', camera: 0, visited: ['train:0'], locations: { phone: 'inventory', retainingPin: 'balanceChest', fragments: 'lostDrawer', lamp: 'lightRack', hood: 'balanceChest', spareLamp: 'cargoChest', cargoDocket: 'cargoChest', support: 'bridgeGate', hook: 'toolRack', pin: 'railTag', punch: 'toolBench', paper: 'toolBench', counterRecords: 'counter', knob: 'cashDrawer', photos: 'bag', receipt: 'handle', envelope: 'seat', ownTicket: 'floor' }, bag: { strap: 0, clasp: false, mouth: false }, seats: [0, 0, 0], window: { supported: false, latch: false, open: false }, values: { deskToolRevision: [1], retainingPinRevision: [1], passageRevision: [1], bellChannel: [0] }, flags: [], notes: [], route: [0, 0, 0, 0, 0, 0], draft: null, mounted: null, savedTickets: [], signals: freshSignals(), train: freshTrain(), elapsed: 0, sound: false, ended: false });
+export const selectedDeskTool = (s: State): number | null => s.values.toolSelected?.[0] ?? null;
+export const cameraCounts: Record<Room, number> = { train: 3, platform: 3, waiting: 3, forecourt: 2, office: 2, lost: 1, bridge: 4, cargo: 3, passage: 4, lamp: 2, tunnel: 2, north: 4, return: 2 };
 export const signalReady = (s: State) => s.locations.hood === 'signal' && s.locations.retainingPin === 'signal';
 export const liveCircuit = (s: State) => s.values.bellChannel?.[0] === 1;
 export const owns = (s: State, item: Item) => s.locations[item] === 'inventory';
@@ -215,10 +216,11 @@ export type Action = {
     die: number;
     slot: number;
 } | {
-    type: 'toolTake';
+    type: 'selectTool';
     tool: number;
 } | {
-    type: 'toolReturn';
+    type: 'selectDie';
+    die: number;
 } | {
     type: 'newTrialPaper';
 } | {
@@ -429,10 +431,10 @@ export function reduce(s: State, a: Action): State {
                 ] } };
         case 'trainArrive': return s.train.position !== 'approaching' ? s : { ...s, train: stopAt(s.train.service, s.signals, signalReady(s), trace(s.route).end === 'O' && liveCircuit(s)) };
         case 'releaseTrain': return s.train.position !== 'stopped' || s.room !== 'north' ? s : { ...s, train: { ...s.train, position: 'leaving', progress: 0 } };
-        case 'toolTake': return s.room !== 'office' || owns(s, 'punch') || ![0, 1, 2].includes(a.tool) ? s : { ...s, locations: { ...s.locations, punch: 'inventory' }, values: { ...s.values, punchTool: [a.tool] } };
-        case 'toolReturn': return s.room !== 'office' || !owns(s, 'punch') ? s : { ...s, locations: { ...s.locations, punch: 'toolBench' } };
+        case 'selectTool': return s.room !== 'office' || ![0, 1, 2].includes(a.tool) ? s : { ...s, values: { ...s.values, toolSelected: [a.tool] } };
+        case 'selectDie': return s.room !== 'office' || !Number.isInteger(a.die) || a.die < 0 || a.die > 5 ? s : { ...s, values: { ...s.values, ticketDie: [a.die] } };
         case 'toolCut': {
-            if (s.room !== 'office' || ![0, 1, 2].includes(a.tool) || !Number.isInteger(a.die) || a.die < 0 || a.die > 5 || !Number.isInteger(a.slot) || a.slot < 0 || a.slot > 11)
+            if (s.room !== 'office' || a.tool !== selectedDeskTool(s) || a.die !== s.values.ticketDie?.[0] || ![0, 1, 2].includes(a.tool) || !Number.isInteger(a.die) || a.die < 0 || a.die > 5 || !Number.isInteger(a.slot) || a.slot < 0 || a.slot > 11)
                 return s;
             const cuts = s.values.toolCuts ?? [];
             if (cuts.length >= 648 || cuts.some((n, i) => i % 3 === 0 && n === a.tool && cuts[i + 1] === a.die && cuts[i + 2] === a.slot))
@@ -490,6 +492,8 @@ export function reduce(s: State, a: Action): State {
         case 'bagClasp': return s.bag.mouth ? s : { ...s, bag: { ...s.bag, clasp: !s.bag.clasp } };
         case 'bagMouth': return !s.bag.mouth && (!s.bag.clasp || s.bag.strap < .8) ? s : { ...s, bag: { ...s.bag, mouth: !s.bag.mouth } };
         case 'take': {
+            if (a.item === 'paper') return s.draft || s.mounted ? s : reduce(s, { type: 'newTicket' });
+            if (a.item === 'ticket') return s;
             const at = s.locations[a.item];
             if (at === 'lostDrawer' && (s.room !== 'lost' || s.values.receiptOpen?.[0] !== 1))
                 return s;
@@ -509,13 +513,13 @@ export function reduce(s: State, a: Action): State {
                 return s;
             if (at === 'signal')
                 return s;
-            if (a.item === 'punch' && at === 'toolBench' || a.item === 'paper' && at === 'toolBench' && s.room !== 'office')
+            if (a.item === 'punch' && at === 'toolBench')
                 return s;
             if (!at || at === 'counter' && !s.window.open || at === 'cashDrawer' && s.values.drawerOpen?.[0] !== 1 || at === 'inventory' || at === 'case' && s.values.caseOpen?.[0] !== 1 || at === 'bag' && !s.bag.mouth || at === 'seat' && s.seats[2] !== 1)
                 return s;
             return { ...s, locations: { ...s.locations, [a.item]: 'inventory' } };
         }
-        case 'put': return a.item === 'phone' || !s.locations[a.item] || ['lostDrawer', 'glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
+        case 'put': return ['paper', 'ticket', 'phone', 'punch'].includes(a.item) || !s.locations[a.item] || ['lostDrawer', 'glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(a.place) || ['glassStand', 'lightStand', 'lightRack', 'balanceChest', 'signal', 'toolRack', 'railTag', 'bridgeGate'].includes(s.locations[a.item]!) ? s : { ...s, locations: { ...s.locations, [a.item]: a.place } };
         case 'seat': return { ...s, seats: s.seats.map((v, i) => i === a.index ? 1 - v : v) };
         case 'heard': {
             if (!Number.isFinite(a.seconds))
@@ -524,23 +528,34 @@ export function reduce(s: State, a: Action): State {
             const seconds = Math.max(s.values[id]?.[0] ?? 0, Math.min(tapeDuration, Math.max(0, a.seconds)));
             return { ...s, values: { ...s.values, [id]: [seconds] } };
         }
-        case 'values': return a.id === 'sketchEdges' || a.id === 'returnTrip' || a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['fragments', 'receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
+        case 'values': return ['toolSelected', 'punchTool', 'ticketDie', 'toolDie', 'deskToolRevision'].includes(a.id) || a.id === 'readerDepth' || a.id === 'sketchEdges' || a.id === 'returnTrip' || a.id === 'clockAdjust' && !validClockAdjust(a.values) || ['fragments', 'receiptSlots', 'receiptOpen', 'lightAim', 'bellChannel', 'bellInputs'].includes(a.id) || a.id === 'shedDigits' && !validShedDigits(a.values) || a.id === 'posterPair' && (a.values.length !== 2 || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || a.id === 'posterBacks' && (new Set(a.values).size !== a.values.length || !a.values.every(n => Number.isInteger(n) && n >= 0 && n < 4)) || ['shedOpen', 'balanceOpen', 'balancePositions'].includes(a.id) || a.id === 'cargoDigits' && !validCargoDigits(a.values) || ['cargoOpen', 'gateSupport', 'gateRod', 'gateOpen', 'rackRing', 'tagDepth', 'tagCaught'].includes(a.id) ? s : { ...s, values: { ...s.values, [a.id]: a.values } };
         case 'flag': return { ...s, flags: append(s.flags, a.id) };
         case 'record': return { ...s, notes: [...s.notes.filter(n => n.id !== a.id), { id: a.id, values: [...(a.values ?? s.values[a.id] ?? [])], at: s.elapsed }] };
         case 'route': return !nodes[a.index] || !connections[nodes[a.index]][a.value] || ['approaching', 'passing', 'leaving', 'stopped'].includes(s.train.position) && trace(s.route).path.includes(nodes[a.index]) ? s : { ...s, route: s.route.map((v, i) => i === a.index ? a.value : v) };
-        case 'punch': return !owns(s, 'punch') || !owns(s, 'paper') || !Number.isInteger(a.hole.column) || a.hole.column < 0 || a.hole.column > 4 || !nodes.includes(a.hole.node) || !['white', 'black'].includes(a.hole.side) || s.draft.holes.some(h => h.column === a.hole.column && h.side === a.hole.side && h.node === a.hole.node && (h.tool ?? 1) === (s.values.punchTool?.[0] ?? 1)) ? s : { ...s, draft: { ...s.draft, holes: [...s.draft.holes, { ...a.hole, tool: s.values.punchTool?.[0] ?? 1 }] } };
-        case 'flipTicket': return { ...s, draft: { ...s.draft, back: !s.draft.back } };
+        case 'punch': return s.room !== 'office' || !s.draft || selectedDeskTool(s) === null || dieOrder[s.values.ticketDie?.[0] ?? -1] !== a.hole.node || !owns(s, 'ticket') || !Number.isInteger(a.hole.column) || a.hole.column < 0 || a.hole.column > 4 || !nodes.includes(a.hole.node) || !['white', 'black'].includes(a.hole.side) || s.draft.holes.some(h => h.column === a.hole.column && h.side === a.hole.side && h.node === a.hole.node && (h.tool ?? 1) === selectedDeskTool(s)) ? s : { ...s, draft: { ...s.draft, holes: [...s.draft.holes, { ...a.hole, tool: selectedDeskTool(s)! }] } };
+        case 'flipTicket': return !s.draft || !owns(s, 'ticket') ? s : { ...s, draft: { ...s.draft, back: !s.draft.back } };
         case 'ticketService': {
-            if (!Number.isInteger(a.service) || a.service < 1 || a.service > 6)
+            if (!s.draft || !owns(s, 'ticket') || !Number.isInteger(a.service) || a.service < 1 || a.service > 6)
                 return s;
             const marks = s.draft.marks ?? (s.draft.stamps ?? (s.draft.service ? [s.draft.service] : [])).map(service => ({ service, back: false }));
             const mark = { service: a.service, back: s.draft.back };
             return { ...s, draft: { ...s.draft, service: a.service, stamps: undefined, marks: marks.some(m => m.service === mark.service && m.back === mark.back) ? marks : [...marks, mark] } };
         }
-        case 'newTicket': return !owns(s, 'paper') ? s : { ...s, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets, s.draft] : s.savedTickets, draft: { id: Math.max(s.draft.id, s.mounted?.id ?? 0, ...s.savedTickets.map(t => t.id)) + 1, holes: [], service: 0, back: false } };
-        case 'readerClamp': return (s.values.readerDepth?.[0] ?? 0) > 0 && (s.values.readerDepth?.[0] ?? 0) < 1 ? s : { ...s, values: { ...s.values, readerClamp: [s.values.readerClamp?.[0] === 1 ? 0 : 1] } };
-        case 'mountTicket': return s.mounted || !owns(s, 'paper') || s.draft.back || s.values.readerClamp?.[0] !== 1 || s.values.readerDepth?.[0] !== .65 ? s : { ...s, values: { ...s.values, readerDepth: [1] }, mounted: structuredClone(s.draft), draft: { id: s.draft.id + 1, holes: [], service: 0, back: false } };
-        case 'removeTicket': return !s.mounted || s.values.readerClamp?.[0] !== 1 ? s : { ...s, values: { ...s.values, readerDepth: [0] }, draft: s.mounted, mounted: null, savedTickets: (s.draft.holes.length || s.draft.service > 0) ? [...s.savedTickets, s.draft] : s.savedTickets };
+        case 'newTicket': {
+            if (s.room !== 'office' || s.mounted) return s;
+            const previous = s.draft;
+            const id = Math.max(0, previous?.id ?? 0, ...s.savedTickets.map(t => t.id)) + 1;
+            return { ...s, locations: { ...s.locations, paper: 'toolBench', ticket: 'inventory' },
+                savedTickets: previous && (previous.holes.length || previous.service > 0 || previous.marks?.length || previous.stamps?.length) ? [...s.savedTickets, previous] : s.savedTickets,
+                draft: { id, holes: [], service: 0, back: false } };
+        }
+        case 'readerClamp': return { ...s, values: { ...s.values, readerClamp: [s.values.readerClamp?.[0] === 1 ? 0 : 1] } };
+        case 'mountTicket': return s.room !== 'north' || s.mounted || !s.draft || !owns(s, 'ticket') || s.draft.back || s.values.readerClamp?.[0] !== 1 ? s : {
+            ...s, locations: { ...s.locations, ticket: 'reader' }, values: { ...s.values, readerDepth: [1] }, mounted: s.draft, draft: null
+        };
+        case 'removeTicket': return s.room !== 'north' || !s.mounted || s.draft || s.values.readerClamp?.[0] !== 1 ? s : {
+            ...s, locations: { ...s.locations, ticket: 'inventory' }, values: { ...s.values, readerDepth: [0] }, draft: s.mounted, mounted: null
+        };
         case 'call': return s.room !== 'north' || s.train.position !== 'absent' || !Number.isInteger(a.service) || a.service < 1 || a.service > 6 ? s : { ...s, train: { service: a.service, position: 'approaching', firstDoor: null } };
         case 'board': return !liveCircuit(s) || s.room !== 'north' || !validTicket(s, s.mounted) || s.values.readerClamp?.[0] !== 0 || trace(s.route).end !== 'O' || !boardingGeometry(s.train, s.signals, signalReady(s)) ? s : { ...s, room: 'return', camera: 0, values: { ...s.values, returnTrip: [0, 0] }, train: { ...s.train, position: 'departed' } };
         case 'returnAdvance': return s.room !== 'return' || s.ended || !Number.isFinite(a.seconds) || a.seconds <= 0 || a.seconds > 1 ? s : { ...s, values: { ...s.values, returnTrip: [Math.min(12, (s.values.returnTrip?.[0] ?? 0) + a.seconds), s.values.returnTrip?.[1] ?? 0] } };
@@ -554,6 +569,11 @@ export function restore(value: unknown): State | null {
     if (!value || typeof value !== 'object')
         return null;
     let s = value as State;
+    const savedVersion = (value as { version?: number }).version;
+    // A crop of the same shelf is not a second facing direction.
+    if (s.room === 'lost' && s.camera === 1) s = { ...s, camera: 0 };
+    if (Array.isArray(s.visited) && s.visited.includes('lost:1')) s = { ...s, visited: [...new Set(s.visited.map(v => v === 'lost:1' ? 'lost:0' : v))] };
+
     // Earlier representative saves used the exterior-sidepath name for this underpass.
     if (s.room === 'tunnel' && s.values && !s.values.passageRevision && [0, 1].includes(s.camera))
         s = { ...s, room: 'passage', camera: s.camera === 0 ? 2 : 3, values: { ...s.values, passageRevision: [1] }, visited: Array.isArray(s.visited) ? s.visited.map(v => v === 'tunnel:0' ? 'passage:2' : v === 'tunnel:1' ? 'passage:3' : v) : s.visited };
@@ -566,12 +586,12 @@ export function restore(value: unknown): State | null {
         return null;
     if (!legacy && ['lamp', 'spareLamp'].some((item, i) => (signals.mounts[i] !== null) !== (s.locations?.[item as Item] === 'signal')))
         return null;
-    if (s.version !== 2 || !Object.hasOwn(cameraCounts, s.room) || !Number.isInteger(s.camera) || s.camera < 0 || s.camera >= cameraCounts[s.room] || typeof s.started !== 'boolean' || !s.locations || !s.bag || !Array.isArray(s.seats) || s.seats.length !== 3 || !s.seats.every(n => n === 0 || n === 1) || !Array.isArray(s.flags) || !Array.isArray(s.visited) || !s.values || !Array.isArray(s.notes) || !Number.isFinite(s.elapsed) || s.elapsed < 0 || !Array.isArray(s.route) || s.route.length !== 6 || !s.route.every((n, i) => Number.isInteger(n) && n >= 0 && n < connections[nodes[i]].length))
+    if (![2, 3].includes(savedVersion ?? 0) || !Object.hasOwn(cameraCounts, s.room) || !Number.isInteger(s.camera) || s.camera < 0 || s.camera >= cameraCounts[s.room] || typeof s.started !== 'boolean' || !s.locations || !s.bag || !Array.isArray(s.seats) || s.seats.length !== 3 || !s.seats.every(n => n === 0 || n === 1) || !Array.isArray(s.flags) || !Array.isArray(s.visited) || !s.values || !Array.isArray(s.notes) || !Number.isFinite(s.elapsed) || s.elapsed < 0 || !Array.isArray(s.route) || s.route.length !== 6 || !s.route.every((n, i) => Number.isInteger(n) && n >= 0 && n < connections[nodes[i]].length))
         return null;
     if (!Number.isFinite(s.bag.strap) || s.bag.strap < 0 || s.bag.strap > 1 || typeof s.bag.clasp !== 'boolean' || typeof s.bag.mouth !== 'boolean')
         return null;
-    const ticket = (t: Ticket) => t && Number.isInteger(t.id) && t.id > 0 && Array.isArray(t.holes) && t.holes.length <= 180 && [0, 1, 2, 3, 4, 5, 6].includes(t.service) && typeof t.back === 'boolean' && (t.marks === undefined || Array.isArray(t.marks) && t.marks.length <= 12 && t.marks.every(m => m && Number.isInteger(m.service) && m.service >= 1 && m.service <= 6 && typeof m.back === 'boolean')) && (t.stamps === undefined || Array.isArray(t.stamps) && t.stamps.length <= 6 && t.stamps.every(n => Number.isInteger(n) && n >= 1 && n <= 6)) && t.holes.every(h => Number.isInteger(h.column) && h.column >= 0 && h.column < 5 && nodes.includes(h.node) && (h.tool === undefined || [0, 1, 2].includes(h.tool)) && ['white', 'black'].includes(h.side));
-    if (!ticket(s.draft) || s.mounted && !ticket(s.mounted) || !Array.isArray(s.savedTickets) || !s.savedTickets.every(ticket))
+    const ticket = (t: Ticket | null) => t && Number.isInteger(t.id) && t.id > 0 && Array.isArray(t.holes) && t.holes.length <= 180 && [0, 1, 2, 3, 4, 5, 6].includes(t.service) && typeof t.back === 'boolean' && (t.marks === undefined || Array.isArray(t.marks) && t.marks.length <= 12 && t.marks.every(m => m && Number.isInteger(m.service) && m.service >= 1 && m.service <= 6 && typeof m.back === 'boolean')) && (t.stamps === undefined || Array.isArray(t.stamps) && t.stamps.length <= 6 && t.stamps.every(n => Number.isInteger(n) && n >= 1 && n <= 6)) && t.holes.every(h => Number.isInteger(h.column) && h.column >= 0 && h.column < 5 && nodes.includes(h.node) && (h.tool === undefined || [0, 1, 2].includes(h.tool)) && ['white', 'black'].includes(h.side));
+    if (s.draft !== null && !ticket(s.draft) || s.mounted !== null && !ticket(s.mounted) || !Array.isArray(s.savedTickets) || !s.savedTickets.every(ticket))
         return null;
     if (s.locations.phone !== undefined && s.locations.phone !== 'inventory')
         return null;
@@ -692,5 +712,43 @@ export function restore(value: unknown): State | null {
     if (!s.values.bellChannel && (train.position !== 'absent' || locations.lamp === 'signal' || locations.spareLamp === 'signal'))
         s = { ...s, values: { ...s.values, bellChannel: [1] } };
     s = { ...s, values: { ...s.values, retainingPinRevision: [1] } };
+    if (!s.values.deskToolRevision) {
+        const tool = locations.punch === 'inventory' ? s.values.punchTool?.[0] ?? 1 : s.values.toolSelected?.[0] ?? s.values.punchTool?.[0];
+        const values = { ...s.values, deskToolRevision: [1] };
+        delete values.punchTool;
+        if (tool !== undefined) values.toolSelected = [tool];
+        locations.punch = 'toolBench';
+        s = { ...s, values };
+    } else if (s.values.deskToolRevision.length !== 1 || s.values.deskToolRevision[0] !== 1 || locations.punch !== 'toolBench' || s.values.punchTool !== undefined) return null;
+    let draft = s.draft, mounted = s.mounted, savedTickets = [...s.savedTickets];
+    if (savedVersion === 2) {
+        // Legacy mounting spawned a second blank automatically. Preserve meaningful work,
+        // but leave exactly one active physical ticket and keep the stack on the desk.
+        if (mounted) {
+            if (draft && JSON.stringify(draft) !== JSON.stringify(mounted) && (draft.holes.length || draft.service || draft.marks?.length || draft.stamps?.length)) savedTickets.push(draft);
+            draft = null;
+        } else if (locations.paper !== 'inventory' && locations.ticket !== 'inventory') {
+            if (draft && (draft.holes.length || draft.service || draft.marks?.length || draft.stamps?.length)) savedTickets.push(draft);
+            draft = null;
+        }
+        locations.paper = 'toolBench';
+        if (mounted) locations.ticket = 'reader';
+        else if (draft) locations.ticket = 'inventory';
+        else delete locations.ticket;
+        // Repair old independently-created ticket IDs without throwing any contents away.
+        const active = [...(draft ? [draft] : []), ...(mounted ? [mounted] : [])];
+        const used = new Map(active.map(t => [t.id, t]));
+        let next = Math.max(0, ...used.keys(), ...savedTickets.map(t => t.id)) + 1;
+        savedTickets = savedTickets.flatMap(t => {
+            const previous = used.get(t.id);
+            if (previous && JSON.stringify(previous) === JSON.stringify(t)) return [];
+            const result = previous ? { ...t, id: next++ } : t;
+            used.set(result.id, result); return [result];
+        });
+    }
+    if (locations.paper !== 'toolBench' || draft && mounted || (draft !== null) !== (locations.ticket === 'inventory') || (mounted !== null) !== (locations.ticket === 'reader') || locations.ticket !== undefined && !['inventory', 'reader'].includes(locations.ticket)) return null;
+    const tickets = [...(draft ? [draft] : []), ...(mounted ? [mounted] : []), ...savedTickets];
+    if (new Set(tickets.map(t => t.id)).size !== tickets.length) return null;
+    s = { ...s, version: 3, draft, mounted, savedTickets, values: { ...s.values, ...(savedVersion === 2 && (s.values.readerDepth !== undefined || mounted) ? { readerDepth: [mounted ? 1 : 0] } : {}) } };
     return { ...s, signals, train, notes, values: s.values.toolDie && !s.values.ticketDie ? { ...s.values, ticketDie: s.values.toolDie } : s.values, locations };
 }

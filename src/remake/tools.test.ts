@@ -43,8 +43,8 @@ it('持ち替えても過去の孔は変わらず、券の実際の開口で判�
     s.room = 'office';
     s.route = [0, 1, 0, 1, 1, 1];
     const holes = expectedHoles(s.route);
-    s.draft = { id: 1, service: 2, back: false, holes: holes.slice(1) };
     s = reduce(s, { type: 'take', item: 'paper' });
+    s.draft = { id: 1, service: 2, back: false, holes: holes.slice(1) };
     s = reduce(s, { type: 'toolTake', tool: 0 });
     s = reduce(s, { type: 'punch', hole: holes[0] });
     expect(validTicket(s, s.draft)).toBe(false);

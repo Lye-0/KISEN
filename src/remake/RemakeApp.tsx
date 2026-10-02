@@ -98,8 +98,8 @@ function seed() {
     }
     if (group === 'ticket') {
         s.room = 'office';
-        s.locations.punch = 'inventory';
-        s.locations.paper = 'inventory';
+        s.locations.punch = 'toolBench'; s.values.toolSelected = [1];
+        s.locations.ticket = 'inventory'; s.draft = { id: 1, holes: [], service: 0, back: false };
         s.values.ticketDie = [0];
     }
     if (group === 'photos') {
@@ -117,12 +117,13 @@ function seed() {
         s.locations.spareLamp = 'inventory';
         s.locations.hood = 'inventory';
         s.locations.retainingPin = 'inventory';
-        s.locations.paper = 'inventory';
-        s.locations.punch = 'inventory';
+        s.locations.ticket = 'inventory'; s.draft = { id: 1, holes: [], service: 0, back: false };
+        s.locations.punch = 'toolBench'; s.values.toolSelected = [1];
         s.route = [0, 1, 0, 1, 1, 1];
     }
     if (fixture !== null)
         s.started = true;
+    if (s.mounted) { s.draft = null; s.locations.ticket = 'reader'; }
     s.visited = [s.room + ':' + s.camera];
     return s;
 }
@@ -134,8 +135,8 @@ function load() {
         return seed();
     }
 }
-const labels: Record<Item, string> = { phone: '携帯電話', retainingPin: '保持ピン', cargoDocket: '経路控', spareLamp: '交換灯具', photos: '写真', receipt: '受取票', envelope: '封筒', ownTicket: '到着券', officeKey: '駅務室の鍵', knob: '黒いつまみ', hook: '鉤付き棒', pin: '薄い片', support: '支え', lamp: '灯具', punch: '鋏', paper: '用紙', fragments: '券の断片', hood: '覆い', ticket: '切符', counterRecords: '帳票' };
-const documentFocus: Partial<Record<Item, Focus>> = { phone: 'homePhoto', fragments: 'fragments', cargoDocket: 'cargoDocket', photos: 'photos', receipt: 'receipt', envelope: 'map', ownTicket: 'arrivalTicket', paper: 'paperView', counterRecords: 'notices' };
+const labels: Record<Item, string> = { phone: '携帯電話', retainingPin: '保持ピン', cargoDocket: '経路控', spareLamp: '交換灯具', photos: '写真', receipt: '受取票', envelope: '封筒', ownTicket: '到着券', officeKey: '駅務室の鍵', knob: '黒いつまみ', hook: '鉤付き棒', pin: '薄い片', support: '支え', lamp: '灯具', punch: '鋏', paper: '紙の束', fragments: '券の断片', hood: '覆い', ticket: '切符', counterRecords: '帳票' };
+const documentFocus: Partial<Record<Item, Focus>> = { phone: 'homePhoto', fragments: 'fragments', cargoDocket: 'cargoDocket', photos: 'photos', receipt: 'receipt', envelope: 'map', ownTicket: 'arrivalTicket', ticket: 'paperView', counterRecords: 'notices' };
 function recordTitle(id: string) {
     if (id === 'crossing-observation-bridge') return '跨線橋から見た線路';
     if (id === 'crossing-observation-window') return '地下の踊り場から見た線路';
@@ -157,6 +158,10 @@ export default function RemakeApp() {
         focus: Focus;
         trail: Focus[];
     }>({ focus: initialFocus, trail: [] }), [panel, setPanel] = useState<'settings' | 'notes' | 'hints' | 'places' | null>(null), [targets, setTargets] = useState(false), [message, setMessage] = useState(''), [selected, setSelected] = useState<Item | null>(null), [trainNotice, setTrainNotice] = useState(''), [sceneZoom, setSceneZoom] = useState(false);
+    const [hintLevels, setHintLevels] = useState<Record<string, number>>({});
+    useEffect(() => {
+        if (s.version !== 3 || !s.values.deskToolRevision) { const migrated = restore(s); if (migrated) setS(migrated); }
+    }, [s.version, s.values.deskToolRevision]);
     useEffect(() => {
         if (selected && !owns(s, selected)) setSelected(null);
     }, [s.locations, selected]);
@@ -233,7 +238,7 @@ export default function RemakeApp() {
         return () => clearInterval(id);
     }, [s.started, s.ended, dispatch]);
     const exportSave = () => { const url = URL.createObjectURL(new Blob([JSON.stringify(s)], { type: 'application/json' })); const a = document.createElement('a'); a.href = url; a.download = 'KISEN-remake.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 500); };
-    const inv = (Object.keys(s.locations) as Item[]).filter(i => owns(s, i)), views = availableViews[s.room] ?? [];
+    const inv = (Object.keys(s.locations) as Item[]).filter(i => i !== 'paper' && i !== 'punch' && owns(s, i)), views = availableViews[s.room] ?? [];
     const currentHint = panel === 'hints' ? getProgressHint(s, focus) : null;
     const showSelected = selected && owns(s, selected) && focus !== (documentFocus[selected] ?? 'item');
     const world = <World s={s} dispatch={dispatch} inspect={inspect} say={say} selected={selected}/>;
@@ -242,20 +247,22 @@ export default function RemakeApp() {
     if (s.ended)
         return <Ending s={s} review={() => dispatch({ type: 'returnReview' })} exportSave={exportSave}/>;
     return <SceneBackContext.Provider value={registerBack}><main id="rm-game" className={[targets ? 'rm-targets' : '', sceneZoom && !focus ? 'rm-scene-zoomed' : ''].join(' ')}><BellAudio s={s}/>
+ <div className="rm-play-layer" inert={panel !== null}>
  <div className={'rm-stage ' + (focus === 'bag' ? 'rm-close' : '')}>{focus ? <><div className="rm-focus-backdrop" aria-hidden="true" inert><SceneBackContext.Provider value={null}>{world}</SceneBackContext.Provider></div><div className="rm-focused-scene"><FocusView focus={focus} s={s} dispatch={dispatch} say={say} selected={selected} onSelect={setSelected} close={close} inspect={inspect}/></div></> : world}</div>
  {!focus && s.room !== 'passage' && s.room !== 'tunnel' && s.room !== 'return' && views.length > 1 && <nav className="rm-world-nav" aria-label="周囲を見る"><button aria-label="左を見る" onClick={() => dispatch({ type: 'look', camera: turnCamera(s.room, s.camera, -1, views.length) })}>‹</button><button aria-label="右を見る" onClick={() => dispatch({ type: 'look', camera: turnCamera(s.room, s.camera, 1, views.length) })}>›</button></nav>}
  <div className="rm-top">{focus || localBackCount > 0 ? <div className="rm-location-controls"><button onClick={close} aria-label="前の場面へ戻る">〈 戻る</button><span className="rm-area-name">{roomLabels[s.room]}</span></div> : <div><span className="rm-wordmark">帰線</span><span className="rm-area-name">{roomLabels[s.room]}</span></div>}<div>{!focus && <button className="rm-scene-zoom-toggle" aria-label={sceneZoom ? '景色の全体へ' : '景色を大きく'} aria-pressed={sceneZoom} onClick={() => setSceneZoom(!sceneZoom)}>{sceneZoom ? '全景' : '拡大'}</button>}{s.room !== 'return' && <button aria-label="訪れた場所へ移動" onClick={() => setPanel('places')}>移動</button>}<button className="rm-hint-trigger" onClick={() => setPanel('hints')}>ヒント</button><button onClick={() => setPanel('notes')}>記録</button><button onClick={() => setPanel('settings')} aria-label="設定と保存">⋯</button></div></div>
  {showSelected && <div className="rm-held-item"><div className="rm-held-icon"><ItemImage item={selected} state={s}/></div><span className="rm-held-name">{labels[selected]}</span><button aria-label="選んだ持ち物を見る" onClick={() => inspect(documentFocus[selected] ?? 'item')}>見る</button><span className="rm-held-help">もう一度選ぶとしまう</span></div>}
  <div className="rm-bottom"><div className="rm-inventory" aria-label="持ち物">{inv.map(item => <button key={item} aria-label={labels[item]} className={selected === item ? 'selected' : ''} aria-pressed={selected === item} onClick={() => {
                 const document = documentFocus[item];
-                if (document) { setSelected(null); inspect(document); } else setSelected(selected === item ? null : item);
+                if (document && item !== 'ticket') { setSelected(null); inspect(document); } else setSelected(selected === item ? null : item);
             }}><span className="rm-inventory-art"><ItemImage item={item} state={s}/></span><span>{labels[item]}</span></button>)}</div><button className="rm-target-toggle" aria-pressed={targets} onClick={() => setTargets(!targets)}>調べる場所</button></div>
  {trainNotice && s.room === 'north' && <div className="rm-train-observation" role="status"><span>{trainNotice}</span><button aria-label="列車の気配の表示を閉じる" onClick={() => setTrainNotice('')}>×</button></div>}
  {message && <div className="rm-feedback" role="status">{message}</div>}
+ </div>
  {panel && <div ref={panelRef} className="rm-scrim" onClick={e => {
                 if (e.target === e.currentTarget)
                     setPanel(null);
-            }}><section className={'rm-panel' + (panel === 'notes' ? ' rm-notes-panel' : panel === 'hints' ? ' rm-hints-panel' : panel === 'places' ? ' rm-places-panel' : '')} role="dialog" aria-modal="true" aria-label={panel === 'settings' ? '設定' : panel === 'hints' ? 'ヒント' : panel === 'places' ? '訪れた場所' : '記録'}><header><h2>{panel === 'settings' ? '設定' : panel === 'hints' ? 'ヒント' : panel === 'places' ? '訪れた場所' : '記録'}</h2><button onClick={() => setPanel(null)} aria-label="閉じる">×</button></header>{panel === 'places' ? <PlacesPanel s={s} travel={room => { dispatch({ type: 'travel', room }); setPanel(null); setSelected(null); }}/> : panel === 'hints' && currentHint ? <HintPanel key={currentHint.id} hint={currentHint}/> : panel === 'settings' ? <><label><input type="checkbox" checked={s.sound} onChange={() => dispatch({ type: 'sound' })}/>音を鳴らす</label><label><input type="checkbox" checked={targets} onChange={e => setTargets(e.target.checked)}/>調べる場所を示す</label><button onClick={exportSave}>記録を書き出す</button><button onClick={() => file.current?.click()}>記録を読み込む</button><input ref={file} hidden type="file" accept="application/json" onChange={async (e) => {
+            }}><section className={'rm-panel' + (panel === 'notes' ? ' rm-notes-panel' : panel === 'hints' ? ' rm-hints-panel' : panel === 'places' ? ' rm-places-panel' : '')} role="dialog" aria-modal="true" aria-label={panel === 'settings' ? '設定' : panel === 'hints' ? 'ヒント' : panel === 'places' ? '訪れた場所' : '記録'}><header><h2>{panel === 'settings' ? '設定' : panel === 'hints' ? 'ヒント' : panel === 'places' ? '訪れた場所' : '記録'}</h2><button onClick={() => setPanel(null)} aria-label="閉じる">×</button></header>{panel === 'places' ? <PlacesPanel s={s} travel={room => { dispatch({ type: 'travel', room }); setPanel(null); setSelected(null); }}/> : panel === 'hints' && currentHint ? <HintPanel key={currentHint.id} hint={currentHint} level={hintLevels[currentHint.id] ?? 0} onLevelChange={level => setHintLevels(previous => ({ ...previous, [currentHint.id]: level }))}/> : panel === 'settings' ? <><label><input type="checkbox" checked={s.sound} onChange={() => dispatch({ type: 'sound' })}/>音を鳴らす</label><label><input type="checkbox" checked={targets} onChange={e => setTargets(e.target.checked)}/>調べる場所を示す</label><button onClick={exportSave}>記録を書き出す</button><button onClick={() => file.current?.click()}>記録を読み込む</button><input ref={file} hidden type="file" accept="application/json" onChange={async (e) => {
                     const f = e.target.files?.[0];
                     if (!f)
                         return;
@@ -266,6 +273,7 @@ export default function RemakeApp() {
                         if (!next)
                             throw Error();
                         setS(next);
+                        setHintLevels({});
                         setTrainNotice('');
                         setPanel(null);
                         setView({ focus: initialFocus, trail: [] });
@@ -275,6 +283,6 @@ export default function RemakeApp() {
                         say('この記録は読み込めません。');
                     }
                     e.target.value = '';
-                }}/><button onClick={() => { setS(seed()); setTrainNotice(''); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>最初から始める</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}><details><summary>{recordTitle(n.id)}</summary><div className="rm-record-body">{n.id === 'routeSketch' ? <SketchNote values={n.values}/> : n.id.startsWith('crossing-observation-') ? <CrossingNote values={n.values}/> : n.id === 'homePhoto' ? <HomePhone /> : n.id === 'fragmentPhoto' ? <FragmentPhoto /> : n.id === 'fragments' ? <FragmentLayout values={n.values}/> : n.id === 'receiptTray' ? <ReceiptNote values={n.values}/> : n.id === 'clockChecks' ? <ClockChecks s={{ ...s, values: { ...s.values, clockAdjust: n.values } }} dispatch={() => { }} say={() => { }} readOnly/> : n.id.startsWith('bell-record-') ? <BellNote values={n.values}/> : n.id.startsWith('lamp-observation-') ? <LampNote values={n.values}/> : n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id.startsWith('dispatch-record-') ? <DispatchNote values={n.values}/> : n.id.startsWith('glass-observation-') ? <GlassNote values={n.values}/> : n.id === 'freight' ? <FreightNote /> : n.id === 'noticeBoard' ? <NoticeBoardNote values={n.values}/> : n.id === 'posters' ? <PosterNote values={n.values}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</div></details></article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
+                }}/><button onClick={() => { setS(seed()); setHintLevels({}); setTrainNotice(''); setView({ focus: initialFocus, trail: [] }); setPanel(null); setSelected(null); }}>最初から始める</button></> : <>{s.notes.length ? s.notes.map(n => <article key={n.id}><details><summary>{recordTitle(n.id)}</summary><div className="rm-record-body">{n.id === 'routeSketch' ? <SketchNote values={n.values}/> : n.id.startsWith('crossing-observation-') ? <CrossingNote values={n.values}/> : n.id === 'homePhoto' ? <HomePhone /> : n.id === 'fragmentPhoto' ? <FragmentPhoto /> : n.id === 'fragments' ? <FragmentLayout values={n.values}/> : n.id === 'receiptTray' ? <ReceiptNote values={n.values}/> : n.id === 'clockChecks' ? <ClockChecks s={{ ...s, values: { ...s.values, clockAdjust: n.values } }} dispatch={() => { }} say={() => { }} readOnly/> : n.id.startsWith('bell-record-') ? <BellNote values={n.values}/> : n.id.startsWith('lamp-observation-') ? <LampNote values={n.values}/> : n.id.startsWith('toolTrial') ? <TrialSheet cuts={n.values} annotate/> : n.id === 'recordings' ? <RecordingStrips offset={n.values[0]} heard={[n.values[1], n.values[2]]}/> : n.id.startsWith('dispatch-record-') ? <DispatchNote values={n.values}/> : n.id.startsWith('glass-observation-') ? <GlassNote values={n.values}/> : n.id === 'freight' ? <FreightNote /> : n.id === 'noticeBoard' ? <NoticeBoardNote values={n.values}/> : n.id === 'posters' ? <PosterNote values={n.values}/> : n.id === 'cargoDockets' ? <CargoDocketsNote /> : n.id === 'arrivalPhotos' ? <PhotoRecord order={n.values}/> : n.id === 'serviceRecords' ? <ServiceRecordNote ids={n.values}/> : n.id.startsWith("point-observation-") ? <PointNote values={n.values}/> : n.id.startsWith("journey-record-") ? <JourneyRecordNote values={n.values}/> : <p>観察記録</p>}</div></details></article>) : <p>観察したものが、ここに残ります。</p>}</>}</section></div>}
  </main></SceneBackContext.Provider>;
 }

@@ -29,8 +29,8 @@ export function ItemImage({ item, state }: {
         return <img className="rm-item-image" src={root + 'parts/inventory-photos.png'} alt="" draggable={false}/>;
     if (item === 'receipt')
         return <ReceiptPaper />;
-    if (item === 'ownTicket' || item === 'ticket')
-        return <TicketPaper ticket={item === 'ownTicket' ? arrivalTicket : state.mounted ?? state.draft}/>;
+    if (item === 'ownTicket') return <TicketPaper ticket={arrivalTicket}/>;
+    if (item === 'ticket') return state.draft ? <TicketPaper ticket={state.draft}/> : null;
     if (item === 'paper')
         return <img className="rm-item-image" src={root + 'parts/inventory-paper.png'} alt="" draggable={false}/>;
     if (item === 'hood')

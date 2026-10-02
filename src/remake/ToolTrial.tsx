@@ -126,13 +126,11 @@ export function ToolTrial({ s, dispatch, say, openTicket, records }: {
                         setDetail('paper');
                 }
             }}/>)}
-    {(!compact || detail === 'wide') && <Touch name="用紙を手に取る" rect={[86, 17, 12, 21]} act={() => {
-                if (!owns(s, 'paper')) {
-                    dispatch({ type: 'take', item: 'paper' });
-                    say('用紙を手に取った。');
-                }
-                else
-                    say('用紙は手元にある。');
+    {!s.mounted && (!compact || detail === 'wide') && <Touch name="紙の束から切符を一枚取る" rect={[86, 17, 12, 21]} act={() => {
+                if (pressed) return;
+                dispatch({ type: 'newTicket' });
+                setAim(null);
+                openTicket();
             }}/>} 
     {compact && detail === 'wide' && <><Touch name="三本の鋏を近くで見る" rect={[10, 25, 75, 21]} act={() => setDetail('tools')}/><Touch name="試し紙を近くで見る" rect={[19, 49, 65, 38]} act={() => setDetail('paper')}/><Touch name="試す刃を近くで見る" rect={[28, 3, 37, 21]} act={() => setDetail('dies')}/></>}
     {(!compact || detail === 'wide') && <Touch name="乗車券控を見る" rect={[0, 18, 10, 42]} act={records}/>}

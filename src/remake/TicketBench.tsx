@@ -62,8 +62,8 @@ export function TicketBench({ s, dispatch, say, records, tools }: {
     records: () => void;
     tools: () => void;
 }) {
-    const compact = useCompact(), hasPaper = owns(s, 'paper'), hasTool = owns(s, 'punch'), hasDie = s.values.ticketDie !== undefined;
-    const [detail, setDetail] = useState<'wide' | 'paper' | 'dies' | 'stamp'>('wide');
+    const compact = useCompact(), hasPaper = owns(s, 'ticket') && s.draft !== null, hasTool = owns(s, 'punch'), hasDie = s.values.ticketDie !== undefined;
+    const [detail, setDetail] = useState<'wide' | 'paper' | 'dies' | 'stamp'>(s.draft ? 'paper' : 'wide');
     const crop: [
         number,
         number,
@@ -81,7 +81,7 @@ export function TicketBench({ s, dispatch, say, records, tools }: {
     }, []);
     const die = s.values.ticketDie?.[0] ?? 0, stamp = s.values.stampSetting?.[0] ?? 1;
     const paperY = s.values.ticketPaperY?.[0] ?? 420;
-    const point = aim ? { x: 430 + 80 + (s.draft.back ? 4 - aim.column : aim.column) * 160, y: paperY + (aim.side === 'white' ? 35 : 200) } : null;
+    const point = aim ? { x: 430 + 80 + (s.draft?.back ? 4 - aim.column : aim.column) * 160, y: paperY + (aim.side === 'white' ? 35 : 200) } : null;
     const toolTransform = point ? `translate(${point.x} ${point.y}) rotate(${aim!.side === 'white' ? -90 : 90}) scale(.33) translate(-142 -230)` : 'translate(1240 590) scale(.25)';
     const clipId = useId().replaceAll(':', '');
     function cut() {
@@ -96,13 +96,13 @@ export function TicketBench({ s, dispatch, say, records, tools }: {
  {hasTool && hasDie && <Patch src="/assets/remake/ticket/empty-rack.webp" rect={[28.3 + die * 5.88, 4, 6.1, 12]}/>}
  <Patch src="/assets/remake/ticket/empty-stamp.webp" rect={[71.2, 0, 10.3, 30]}/><svg className="rm-ticket-work" viewBox="0 0 1672 941"><defs><clipPath id={clipId}><path d="M0 0H1536V1024H480V425L20 290V245H0Z"/></clipPath></defs>
  {point && tool()}
- {hasPaper && <foreignObject x="426" y={paperY - 4} width="808" height="243"><TicketPaper ticket={s.draft} aim={!hasTool || !hasDie || compact && detail !== 'paper' ? undefined : (column, side) => {
+ {hasPaper && s.draft && <foreignObject x="426" y={paperY - 4} width="808" height="243"><TicketPaper ticket={s.draft} aim={!hasTool || !hasDie || compact && detail !== 'paper' ? undefined : (column, side) => {
                 if (!squeezed) {
                     dispatch({ type: 'values', id: 'ticketPaperY', values: [side === 'white' ? 480 : 235] });
                     setAim({ column, side });
                 }
             }}/></foreignObject>}
- <TicketChads tickets={[...s.savedTickets, ...(s.mounted ? [s.mounted] : []), s.draft]}/>
+ <TicketChads tickets={[...s.savedTickets, ...(s.mounted ? [s.mounted] : []), ...(s.draft ? [s.draft] : [])]}/>
  {tool(true)}
  <BenchStamp service={stamp} transform={stamping ? `translate(-55 ${paperY - 70})` : undefined}/>
  {point && (!compact || detail === 'paper') && <g role="button" tabIndex={0} aria-label="鋏を握る" className="rm-punch-grip" onClick={cut} onKeyDown={e => {
@@ -133,12 +133,13 @@ export function TicketBench({ s, dispatch, say, records, tools }: {
                 dispatch({ type: 'ticketService', service: stamp });
                 timer.current = setTimeout(() => { setStamping(false); say('便印を押した。'); }, 320);
             }}/></>}
- {(!compact || detail === 'wide') && <Touch name="新しい用紙を取る" rect={[86, 17, 12, 21]} act={() => {
+ {!s.mounted && (!compact || detail === 'wide') && <Touch name="紙の束から切符を一枚取る" rect={[86, 17, 12, 21]} act={() => {
                 if (!squeezed && !stamping) {
-                    dispatch(hasPaper ? { type: 'newTicket' } : { type: 'take', item: 'paper' });
+                    if (s.mounted) { say('切符は切符受けにある。'); return; }
+                    dispatch({ type: 'newTicket' });
                     setDetail('paper');
                     setAim(null);
                 }
             }}/>}
- {compact && detail === 'wide' && <><Touch name="用紙を近くで見る" rect={[25, 40, 52, 38]} act={() => setDetail('paper')}/><Touch name="刃置き場を近くで見る" rect={[28, 3, 37, 21]} act={() => setDetail('dies')}/><Touch name="便印を近くで見る" rect={[71, 0, 12, 31]} act={() => setDetail('stamp')}/></>}{(!compact || detail === 'wide') && <Touch name="乗車券控を見る" rect={[0, 23, 12, 45]} act={records}/>} </Photo>{archive && <div ref={archiveRef} className="rm-ticket-archive" role="dialog" aria-modal="true" aria-label="切った券の比較"><div>{[...s.savedTickets, s.draft].map(t => <figure key={t.id}><TicketPaper ticket={t}/><figcaption>{t.id === s.draft.id ? '手元の券' : '前に切った券'}</figcaption></figure>)}</div><div className="rm-document-controls"><button onClick={() => setArchive(false)}>机へ戻す</button></div></div>}<div className="rm-ticket-actions">{hasPaper && (!compact || detail === 'paper') && <button disabled={squeezed || stamping} onClick={() => { dispatch({ type: 'flipTicket' }); setAim(null); }}>券を裏返す</button>}{(s.savedTickets.length > 0 || s.draft.holes.length > 0) && <button onClick={() => setArchive(true)}>切った券を見る</button>}<span className="rm-tool-state">鋏：{hasTool ? toolNames[s.values.punchTool?.[0] ?? 1] : '机上'}　刃：{hasDie ? dieNames[die] : '未装着'}</span></div></section>;
+ {compact && detail === 'wide' && <><Touch name="切符を近くで見る" rect={[25, 40, 52, 38]} act={() => setDetail('paper')}/><Touch name="刃置き場を近くで見る" rect={[28, 3, 37, 21]} act={() => setDetail('dies')}/><Touch name="便印を近くで見る" rect={[71, 0, 12, 31]} act={() => setDetail('stamp')}/></>}{(!compact || detail === 'wide') && <Touch name="乗車券控を見る" rect={[0, 23, 12, 45]} act={records}/>} </Photo>{archive && <div ref={archiveRef} className="rm-ticket-archive" role="dialog" aria-modal="true" aria-label="切った券の比較"><div>{[...s.savedTickets, ...(s.draft ? [s.draft] : [])].map(t => <figure key={t.id}><TicketPaper ticket={t}/><figcaption>{t.id === s.draft?.id ? '手元の券' : '前に切った券'}</figcaption></figure>)}</div><div className="rm-document-controls"><button onClick={() => setArchive(false)}>机へ戻す</button></div></div>}<div className="rm-ticket-actions">{hasPaper && (!compact || detail === 'paper') && <button disabled={squeezed || stamping} onClick={() => { dispatch({ type: 'flipTicket' }); setAim(null); }}>券を裏返す</button>}{(s.savedTickets.length > 0 || (s.draft?.holes.length ?? 0) > 0) && <button onClick={() => setArchive(true)}>切った券を見る</button>}<span className="rm-tool-state">鋏：{hasTool ? toolNames[s.values.punchTool?.[0] ?? 1] : '机上'}　刃：{hasDie ? dieNames[die] : '未装着'}</span></div></section>;
 }
