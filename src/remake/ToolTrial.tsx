@@ -1,3 +1,5 @@
+import { useSceneBack } from './SceneBack';
+import { DeskTabs } from './DeskTabs';
 import { BenchFixtures } from './BenchFixtures';
 import type { CSSProperties } from 'react';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -67,7 +69,11 @@ export function ToolTrial({ s, dispatch, say, openTicket, records }: {
     const carried = owns(s, 'punch') ? s.values.punchTool?.[0] ?? 1 : -1;
     const [detail, setDetail] = useState<'wide' | 'paper' | 'tools' | 'dies'>('wide');
     const [paperHalf, setPaperHalf] = useState(0);
+    const [heldTrialTool, setHeldTrialTool] = useState<number | null>(s.values.toolSelected?.[0] ?? null);
+    const handTool = heldTrialTool ?? (carried >= 0 ? carried : null);
     const [aim, setAim] = useState<number | null>(null), [pressed, setPressed] = useState(false);
+    useSceneBack(aim !== null && !pressed, () => setAim(null), 35);
+    useSceneBack(compact && detail !== 'wide', () => { setAim(null); setDetail('wide'); });
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
     useEffect(() => () => {
         if (timer.current)
@@ -79,7 +85,7 @@ export function ToolTrial({ s, dispatch, say, openTicket, records }: {
         number,
         number,
         number
-    ] | undefined = !compact || detail === 'wide' ? undefined : detail === 'paper' ? [300 + paperHalf * 560, 420, 570, 430] : detail === 'dies' ? [460, 20, 640, 210] : [145, 245, 1265, 200];
+    ] | undefined = !compact || detail === 'wide' ? undefined : detail === 'paper' ? [300 + paperHalf * 560, 280, 570, 700] : detail === 'dies' ? [460, 20, 640, 210] : [145, 245, 1265, 200];
     function cut() {
         if (aim === null || pressed)
             return;
@@ -91,20 +97,22 @@ export function ToolTrial({ s, dispatch, say, openTicket, records }: {
         setPressed(true);
         timer.current = setTimeout(() => { setPressed(false); setAim(null); }, 260);
     }
-    return <section className="rm-tool-trial" style={{ '--trial-ratio': view ? view[2] / view[3] : 1672 / 941 } as CSSProperties}><Photo src="/assets/remake/ticket/bench.webp" label="三本の鋏と試し紙" view={view}><Patch src="/assets/remake/ticket/empty-stamp.webp" rect={[71.2, 0, 10.3, 30]}/>
+    return <section className="rm-tool-trial" style={{ '--trial-ratio': view ? view[2] / view[3] : 1672 / 941 } as CSSProperties}><DeskTabs active="tools" disabled={pressed} change={next => { if (next === 'ticket') openTicket(); }}/><Photo src="/assets/remake/ticket/bench.webp" label="三本の鋏と試し紙" view={view}><Patch src="/assets/remake/ticket/empty-stamp.webp" rect={[71.2, 0, 10.3, 30]}/>
     <svg className="rm-object-overlay" viewBox="0 0 1672 941">
-      <BenchFixtures die={hasDie ? die : -1} service={s.values.stampSetting?.[0] ?? 1}/><ToolTools s={s} lifted={point ? selected : undefined}/>
+      <BenchFixtures die={hasDie ? die : -1} service={s.values.stampSetting?.[0] ?? 1}/><ToolTools s={s} lifted={point ? selected : handTool ?? undefined}/>
       <foreignObject x="330" y="480" width="1080" height="300"><TrialSheet cuts={cuts} half={compact ? paperHalf : undefined} aim={hasDie && (!compact || detail === 'paper') ? slot => {
             if (!pressed) {
                 setAim(slot);
                 setDetail('paper');
             }
         } : undefined}/></foreignObject>
-      {point ? <PunchGraphic tool={selected} closed={pressed} transform={`translate(${point.x} ${point.y}) rotate(${aim! < 6 ? -90 : 90}) scale(.25) translate(-142 -230)`}/> : carried >= 0 && <PunchGraphic tool={carried} transform="translate(1150 680) scale(.2)"/>}
+      {point ? <PunchGraphic tool={selected} closed={pressed} transform={`translate(${point.x} ${point.y}) rotate(${aim! < 6 ? -90 : 90}) scale(.25) translate(-142 -230)`}/> : handTool !== null && <PunchGraphic tool={handTool} transform="translate(1150 680) scale(.2)"/>}
+      {point && <g role="button" tabIndex={0} aria-label="鋏を握る" className="rm-punch-grip" onClick={cut} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cut(); } }}><circle cx={point.x + (aim! < 6 ? 53 : -53)} cy={point.y + (aim! < 6 ? -136 : 136)} r="62" fill="transparent"/></g>}
     </svg>
-    {(!compact || detail === 'tools') && toolX.map((x, i) => i !== carried && <Touch key={i} name={`${toolNames[i]}の鋏を選ぶ`} rect={[(x + 30) / 1672 * 100, 27, 20, 20]} act={() => {
+    {(!compact || detail === 'tools') && toolX.map((x, i) => i !== carried && i !== handTool && <Touch key={i} name={`${toolNames[i]}の鋏を選ぶ`} rect={[(x + 30) / 1672 * 100, 27, 20, 20]} act={() => {
                 if (!pressed) {
                     dispatch({ type: 'values', id: 'toolSelected', values: [i] });
+                    setHeldTrialTool(i);
                     setAim(null);
                     if (compact)
                         setDetail('paper');
@@ -124,19 +132,16 @@ export function ToolTrial({ s, dispatch, say, openTicket, records }: {
                     say('用紙を手に取った。');
                 }
                 else
-                    openTicket();
+                    say('用紙は手元にある。');
             }}/>} 
     {compact && detail === 'wide' && <><Touch name="三本の鋏を近くで見る" rect={[10, 25, 75, 21]} act={() => setDetail('tools')}/><Touch name="試し紙を近くで見る" rect={[19, 49, 65, 38]} act={() => setDetail('paper')}/><Touch name="試す刃を近くで見る" rect={[28, 3, 37, 21]} act={() => setDetail('dies')}/></>}
     {(!compact || detail === 'wide') && <Touch name="乗車券控を見る" rect={[0, 18, 10, 42]} act={records}/>}
-    {carried >= 0 && !point && (!compact || detail === 'wide' || detail === 'paper' && paperHalf === 1) && <Touch name="手元の鋏を選ぶ" rect={[68, 72, 22, 22]} act={() => dispatch({ type: 'values', id: 'toolSelected', values: [carried] })}/>}
+    {handTool !== null && !point && (!compact || detail === 'wide' || detail === 'paper' && paperHalf === 1) && <Touch name="手元の鋏を選ぶ" rect={[68, 72, 22, 22]} act={() => dispatch({ type: 'values', id: 'toolSelected', values: [handTool] })}/>}
   </Photo><div className="rm-document-controls rm-tool-controls">
-    {compact && detail !== 'wide' && <button onClick={() => { setAim(null); setDetail('wide'); }}>机の全体へ</button>}
     {compact && detail === 'paper' && <button onClick={() => { setAim(null); setPaperHalf(1 - paperHalf); }}>{paperHalf ? '紙の左側' : '紙の右側'}</button>}
-    {point && <><button onClick={cut} disabled={pressed}>鋏を握る</button><button onClick={() => setAim(null)} disabled={pressed}>鋏を引く</button></>}
     <span className="rm-tool-state">鋏：{toolNames[selected]}　刃：{hasDie ? dieNames[die] : '未装着'}</span>
-    {carried < 0 ? <button disabled={pressed} onClick={() => { dispatch({ type: 'toolTake', tool: selected }); setAim(null); say('鋏を手に取った。'); }}>{toolNames[selected]}の鋏を持つ</button> : <button disabled={pressed} onClick={() => { dispatch({ type: 'toolReturn' }); setAim(null); }}>鋏を机へ戻す</button>}
+    {carried < 0 ? <button disabled={pressed} onClick={() => { dispatch({ type: 'toolTake', tool: selected }); setHeldTrialTool(null); setAim(null); say('鋏を手に取った。'); }}>{toolNames[selected]}の鋏を持つ</button> : <button disabled={pressed} onClick={() => { dispatch({ type: 'toolReturn' }); setHeldTrialTool(null); setAim(null); }}>鋏を机へ戻す</button>}
     <button disabled={pressed || !cuts.length} onClick={() => { dispatch({ type: 'newTrialPaper' }); setAim(null); }}>新しい試し紙</button>
     <button disabled={!cuts.length} onClick={() => { dispatch({ type: 'record', id: 'toolTrial', values: cuts }); say('試し切りを記録した。'); }}>記録に残す</button>
-    <button disabled={pressed} onClick={openTicket}>切符の作業面へ</button>
-  </div><p className="rm-operation-note">紙の縁を押して鋏を差す。孔の形を見比べる</p></section>;
+  </div><p className="rm-operation-note">紙の縁に鋏を差し、持ち手を押して切る。引くときは「戻る」</p></section>;
 }

@@ -1345,24 +1345,24 @@
   },
   {
     "id": "crossing/bridge",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ad875dbb-e2d6-4c8d-ac21-6e63592fd6fc.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-a5ef96b4-1e46-4a05-a357-474441866738.png",
     "file": "public/assets/remake/crossing/bridge.webp",
-    "status": "representative-review",
-    "method": "built-in image_gen; WebP encoding only"
+    "status": "revised visual review 2026-10-02",
+    "method": "built-in image_gen; common crossing geometry guides; WebP encoding only"
   },
   {
     "id": "crossing/window",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-462a6431-5729-4b1c-9f12-0b7d041ab73b.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-d51c16bc-3119-4e8e-9c4c-79a75e35d5ed.png",
     "file": "public/assets/remake/crossing/window.webp",
-    "status": "representative-review",
-    "method": "built-in image_gen; WebP encoding only"
+    "status": "revised visual review 2026-10-02",
+    "method": "built-in image_gen; common crossing geometry guides; WebP encoding only"
   },
   {
     "id": "crossing/north",
-    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-4c344db4-670d-48f7-b954-cfc2c4245862.png",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-2970b7e7-969e-4700-8e1d-cbd0736551fa.png",
     "file": "public/assets/remake/crossing/north.webp",
-    "status": "representative-review",
-    "method": "built-in image_gen; WebP encoding only"
+    "status": "revised visual review 2026-10-02",
+    "method": "built-in image_gen; common crossing geometry guides; WebP encoding only"
   },
   {
     "id": "journeys/e-white-c-0",
@@ -1377,5 +1377,12 @@
     "file": "public/assets/remake/journeys/e-white-c-1.webp",
     "status": "representative-review",
     "method": "built-in image_gen; WebP encoding only"
+  },
+  {
+    "id": "signal/optical-backplate-v2",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-ed408a3b-8d53-4931-a4d5-2ef7da395041.png",
+    "file": "public/assets/remake/signal/optical-backplate-v2.png",
+    "status": "representative-review",
+    "method": "built-in image_gen; native two-state atlas; runtime viewport registration only"
   }
 ]

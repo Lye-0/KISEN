@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useState } from 'react';
 import { Photo, Touch } from './Photo';
 import { useCompact } from './useCompact';
@@ -15,6 +16,7 @@ export function CounterDrawer({ s, dispatch, say }: {
     say: (m: string) => void;
 }) {
     const compact = useCompact(), [detail, setDetail] = useState(false);
+    useSceneBack(detail, () => setDetail(false));
     const open = s.values.drawerOpen?.[0] === 1, values = s.values.drawerDigits ?? [0, 0, 0, 0];
     const centres = open ? [724, 777, 830, 883] : [734, 782, 830, 878];
     const crop: [
@@ -34,5 +36,5 @@ export function CounterDrawer({ s, dispatch, say }: {
  {!open && compact && !detail && <Touch name="時刻の輪を近くで見る" rect={[38.5, 40, 19.5, 20]} act={() => setDetail(true)}/>}
  {(!compact || !detail) && <Touch name={open ? '受付の引出しを押し戻す' : '受付の引出しを引く'} rect={open ? [35, 53, 33, 9] : [75, 42, 10, 23]} act={pull} drag={pull}/>}
  {open && s.locations.knob === 'cashDrawer' && <><Touch name="引出しの黒いつまみ" rect={[54, 41, 10, 10]} act={() => { dispatch({ type: 'take', item: 'knob' }); say('黒いつまみを取った。'); }}/></>}
- </Photo>{compact && detail && !open && <button className="rm-close-back" onClick={() => setDetail(false)}>引出し全体へ</button>}</section>;
+ </Photo></section>;
 }

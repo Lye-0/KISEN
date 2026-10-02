@@ -5,9 +5,9 @@ const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-
 const entries=[
  ['journeys/e-white-c-0','354dad08-070f-4024-82a7-2714520aaf3f'],
  ['journeys/e-white-c-1','f8c42c3f-8c9e-4025-9001-49e75e71cf2d'],
- ['crossing/bridge','ad875dbb-e2d6-4c8d-ac21-6e63592fd6fc'],
- ['crossing/window','462a6431-5729-4b1c-9f12-0b7d041ab73b'],
- ['crossing/north','4c344db4-670d-48f7-b954-cfc2c4245862'],
+ ['crossing/bridge','a5ef96b4-1e46-4a05-a357-474441866738'],
+ ['crossing/window','d51c16bc-3119-4e8e-9c4c-79a75e35d5ed'],
+ ['crossing/north','2970b7e7-969e-4700-8e1d-cbd0736551fa'],
  ['train/near-door-open','a0949aab-4840-4bbc-ad4b-0d513714715a'],
  ['platform/train-open','7318379c-0780-41c5-81c6-9b04cdb45181'],
  ['return/home','cff60d45-39c1-4d9e-9134-7b6ef95ceacd'],

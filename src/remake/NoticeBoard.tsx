@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useState } from 'react';
 import { Touch } from './Photo';
 import { Poster } from './PosterFragments';
@@ -34,6 +35,7 @@ export function NoticeBoard({ s, dispatch, say, posters }: {
     posters: () => void;
 }) {
     const [near, setNear] = useState(false);
+    useSceneBack(near, () => setNear(false));
     const rect = (x: number, y: number, w: number, h: number): [
         number,
         number,
@@ -41,7 +43,7 @@ export function NoticeBoard({ s, dispatch, say, posters }: {
         number
     ] => near ? [(x - 440) / 540 * 100, (y - 190) / 650 * 100, w / 540 * 100, h / 650 * 100] : [(x - 386) / 900 * 100, (y - 140) / 730 * 100, w / 900 * 100, h / 730 * 100];
     const lift = s.values.noticeLift ?? [0, 0], toggle = (i: number) => dispatch({ type: 'values', id: 'noticeLift', values: lift.map((v, k) => k === i ? 1 - v : v) });
-    return <section className="rm-notice-board"><div className={"rm-notice-face" + (near ? " rm-notice-near" : "")}><NoticeBoardSurface lift={lift} near={near}/><Touch name={lift[0] ? '手前の紙を下ろす' : '手前の紙の端を持ち上げる'} rect={rect(518, lift[0] ? 329 : 725, 435, 75)} act={() => toggle(0)}/>{lift[0] === 1 && <Touch name={lift[1] ? '中の紙を下ろす' : '中の紙の端を持ち上げる'} rect={rect(485, lift[1] ? 296 : 721, 465, 70)} act={() => toggle(1)}/>}{!near && <Touch name="右側の四枚の破れた紙を比べる" rect={[68, 12, 25, 78]} act={posters}/>}</div><div className="rm-document-controls"><button onClick={() => setNear(!near)}>{near ? "掲示板の全体へ" : "紙を近くで見る"}</button><button onClick={() => toggle(0)}>{lift[0] ? '手前の紙を下ろす' : '手前の紙を持ち上げる'}</button>{lift[0] === 1 && <button onClick={() => toggle(1)}>{lift[1] ? '中の紙を下ろす' : '中の紙を持ち上げる'}</button>}<button onClick={() => { dispatch({ type: 'record', id: 'noticeBoard', values: lift }); say('掲示の重なりを記録した。'); }}>記録に残す</button><button onClick={posters}>右の紙を比べる</button></div></section>;
+    return <section className="rm-notice-board"><div className={"rm-notice-face" + (near ? " rm-notice-near" : "")}><NoticeBoardSurface lift={lift} near={near}/>{!near && <Touch name="紙を近くで見る" rect={rect(530, 440, 380, 240)} act={() => setNear(true)}/>}<Touch name={lift[0] ? '手前の紙を下ろす' : '手前の紙の端を持ち上げる'} rect={rect(518, lift[0] ? 329 : 725, 435, 75)} act={() => toggle(0)}/>{lift[0] === 1 && <Touch name={lift[1] ? '中の紙を下ろす' : '中の紙の端を持ち上げる'} rect={rect(485, lift[1] ? 296 : 721, 465, 70)} act={() => toggle(1)}/>}{!near && <Touch name="右側の四枚の破れた紙を比べる" rect={[68, 12, 25, 78]} act={posters}/>}</div><div className="rm-document-controls"><button onClick={() => { dispatch({ type: 'record', id: 'noticeBoard', values: lift }); say('掲示の重なりを記録した。'); }}>記録に残す</button></div></section>;
 }
 export function NoticeBoardNote({ values }: {
     values: number[];

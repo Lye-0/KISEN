@@ -11,3 +11,26 @@ describe('lamp through the physical window and canopy', () => {
         expect(beamAt(opticalTarget, false, [0, 0]).lit).toBe(false);
     });
 });
+
+// The first view must show the beam hitting a visible surface, not darkness.
+describe('initial lamp feedback', () => {
+    it('lights a visible canopy patch before and after each first adjustment at either stand height', async () => {
+        const { initialLampAim, opticalBarriers } = await import('./lampOptics');
+        const { project } = await import('./geometry');
+        for (const braced of [false, true]) {
+            for (const [dx, dy] of [[0, 0], [.5, 0], [-.5, 0], [0, .5], [0, -.5]]) {
+                let visible = 0;
+                for (const wall of opticalBarriers) {
+                    for (let x = wall.minX; x < wall.maxX; x += .2) {
+                        for (let z = wall.low; z < wall.high; z += .08) {
+                            const point: [number, number, number] = [x + .1, wall.y - .002, z + .04];
+                            const screen = project(point, opticalCameras.field);
+                            if (screen.depth > 0 && screen.x > 40 && screen.x < 1632 && screen.y > 40 && screen.y < 901 && beamAt(point, braced, [initialLampAim[0] + dx, initialLampAim[1] + dy]).lit) visible++;
+                        }
+                    }
+                }
+                expect(visible).toBeGreaterThan(0);
+            }
+        }
+    });
+});

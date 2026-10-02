@@ -2,18 +2,19 @@ import { Photo } from './Photo';
 import { encounterFor, encounterCamera, markerPosition } from './journeyEncounterGeometry';
 import { project } from './geometry';
 import type { Node, Side } from './model';
-export function JourneyPhoto({ node, side, incoming, frame, label }: {
+export function JourneyPhoto({ node, side, incoming, frame, label, zoomable = true }: {
     node: Node;
     side: Side;
     incoming: string;
     frame: 0 | 1;
     label: string;
+    zoomable?: boolean;
 }) {
     const e = encounterFor(node, side, incoming);
     if (!e)
         return null;
     const camera = encounterCamera(e, frame);
-    return <Photo src={'/assets/remake/journeys/' + e.id + '-' + frame + '.webp'} label={label} zoomable limitZoomToSource>
+    return <Photo src={'/assets/remake/journeys/' + e.id + '-' + frame + '.webp'} label={label} zoomable={zoomable} limitZoomToSource>
  <svg className="rm-object-overlay" viewBox="0 0 1672 941" aria-hidden="true">{(['white', 'black'] as const).slice().sort((a, b) => project(markerPosition(e, b), camera).depth - project(markerPosition(e, a), camera).depth).map(color => {
             const p = markerPosition(e, color), base = project(p, camera), top = project([p[0], p[1], 2.1], camera);
             if (base.depth <= .2 || top.depth <= .2)

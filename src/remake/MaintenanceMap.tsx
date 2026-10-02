@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useState } from 'react';
 import { poles, towerCameras, tower } from './geometry';
 const xy = (x: number, y: number) => [190 + x * 8, 285 - y * 8];
@@ -49,6 +50,7 @@ export function MaintenanceMap({ embedded = false, sketch }: {
     sketch?: () => void;
 }) {
     const [detail, setDetail] = useState<number | null>(null);
+    useSceneBack(detail !== null, () => setDetail(null), 30);
     return <section className={'rm-maintenance-map' + (embedded ? ' rm-map-embedded' : '')}>
     <div className="rm-map-sheet"><svg viewBox={detail === null ? '0 0 1200 760' : `${detail * 400} 105 400 560`} role="group" aria-label="北を上にした保守略図。塔、踏切、坑口と点検位置">
       <image href="/assets/remake/parts/photo-back.webp" width="1200" height="760" preserveAspectRatio="none"/>
@@ -66,6 +68,6 @@ export function MaintenanceMap({ embedded = false, sketch }: {
         <Site index={i}/>{detail === null && <rect x="15" y="10" width="370" height="540" fill="transparent"/>}
       </g>)}
     </svg></div>
-    <div className="rm-map-controls">{sketch && <button onClick={sketch}>路線の略図を見る</button>}{detail !== null && <button aria-label="前の図" onClick={() => setDetail((detail + 2) % 3)}>〈</button>}<button onClick={() => setDetail(detail === null ? 0 : null)}>{detail === null ? '拡大する' : '全体を見る'}</button>{detail !== null && <button aria-label="次の図" onClick={() => setDetail((detail + 1) % 3)}>〉</button>}</div>
+    <div className="rm-map-controls">{sketch && <button onClick={sketch}>路線の略図を見る</button>}</div>
   </section>;
 }

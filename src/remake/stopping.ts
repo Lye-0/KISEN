@@ -35,6 +35,11 @@ export const shutterSlotCenters = (plate: number, step: number) => [10 - plate *
 export function illuminatedPorts(s: SignalState, hoodInstalled: boolean): boolean[] {
     return lightPorts.map(port => hoodInstalled && s.shutters.every((step, plate) => shutterSlotCenters(plate, step).some(slot => Math.abs(slot - port) <= 1)));
 }
+/** Alignment is mechanical; transmitted light additionally requires supply power. */
+export function shutterOptics(s: SignalState, installed: boolean, powered: boolean) {
+    const aligned = illuminatedPorts(s, installed);
+    return { powered, aligned, transmitted: aligned.map(open => powered && open) };
+}
 export function litCenters(s: SignalState, hoodInstalled: boolean): number[] {
     const light = illuminatedPorts(s, hoodInstalled);
     return s.mounts.flatMap((mark, i) => mark !== null && light[i] ? [mark] : []).sort((a, b) => a - b);

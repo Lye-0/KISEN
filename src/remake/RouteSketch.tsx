@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useCompact } from './useCompact';
 import { useState } from 'react';
 import { sketchPlaces, sketchPositions, sketchPrintedEdges } from './sketchGraph';
@@ -38,7 +39,8 @@ export function RouteSketch({ s, dispatch, say }: {
         dispatch({ type: 'sketch', a: first, b: i, kind });
         setFirst(null);
     };
-    return <section className={'rm-route-sketch' + (close ? ' close' : '')}><div className="rm-sketch-scroll"><SketchPaper edges={edges} selected={first} onChoose={choose}/></div><div className="rm-document-controls">{kinds.map((label, i) => <button key={label} aria-pressed={kind === i} onClick={() => { setKind(i); setFirst(null); }}>{label}</button>)}<button onClick={() => setClose(!close)}>{close ? '全体を見る' : '図を広げる'}</button><button onClick={() => { dispatch({ type: 'record', id: 'routeSketch', values: edges }); say('略図への書き込みを記録した。'); }}>記録する</button></div></section>;
+    useSceneBack(close, () => setClose(false));
+    return <section className={'rm-route-sketch' + (close ? ' close' : '')}><div className="rm-sketch-scroll"><SketchPaper edges={edges} selected={first} onChoose={choose}/></div><div className="rm-document-controls"><label className="rm-sketch-kind">書き込み <select aria-label="書き込みの種類" value={kind} onChange={e => { setKind(Number(e.target.value)); setFirst(null); }}>{kinds.map((label, i) => <option key={label} value={i}>{label}</option>)}</select></label>{!close && <button onClick={() => setClose(true)}>図を広げる</button>}<button onClick={() => { dispatch({ type: 'record', id: 'routeSketch', values: edges }); say('略図への書き込みを記録した。'); }}>記録する</button></div></section>;
 }
 export function SketchNote({ values }: {
     values: number[];

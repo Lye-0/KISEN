@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useId, useRef, useState } from 'react';
 import type { PointerEvent, KeyboardEvent } from 'react';
 import { CutShape } from './CutShape';
@@ -43,6 +44,7 @@ export function FragmentBoard({ s, dispatch, say, photos }: {
         pose: number[];
         current: number[];
     } | null>(null);
+    useSceneBack(zoom, () => setZoom(false));
     if (!owns(s, 'fragments'))
         return null;
     function point(e: PointerEvent) { const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(svg.current!.getScreenCTM()!.inverse()); return p; }
@@ -64,7 +66,7 @@ export function FragmentBoard({ s, dispatch, say, photos }: {
     const order = [0, 1, 2, 3, 4, 5].filter(id => id !== selected);
     if (selected !== null)
         order.push(selected);
-    return <section className="rm-fragment-board"><div className="rm-fragment-toolbar"><button onClick={() => setZoom(!zoom)} aria-pressed={zoom}>{zoom ? '全体を見る' : '紙片を拡大'}</button><div className="rm-fragment-selected"><button disabled={selected === null} onClick={() => { if (selected === null) return; const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], 1 - p[2], p[3]]); }}>半回転</button><button disabled={selected === null} onClick={() => { if (selected === null) return; const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], p[2], 1 - p[3]]); }}>裏返す</button></div><button onClick={() => { dispatch({ type: 'record', id: 'fragments', values: poses }); say('紙片の配置の写しを記録した。'); }}>配置の写しを残す</button></div>
+    return <section className="rm-fragment-board"><div className="rm-fragment-toolbar">{!zoom && <button onClick={() => setZoom(true)}>紙片を拡大</button>}{selected !== null && <div className="rm-fragment-selected"><button disabled={selected === null} onClick={() => { if (selected === null) return; const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], 1 - p[2], p[3]]); }}>半回転</button><button disabled={selected === null} onClick={() => { if (selected === null) return; const p = poses.slice(selected * 4, selected * 4 + 4); update(selected, [p[0], p[1], p[2], 1 - p[3]]); }}>裏返す</button></div>}<button onClick={() => { dispatch({ type: 'record', id: 'fragments', values: poses }); say('紙片の配置の写しを記録した。'); }}>配置の写しを残す</button></div>
     <div className={'rm-fragment-viewport' + (zoom ? ' is-zoomed' : '')}><svg ref={svg} viewBox="0 0 1100 734" className="rm-fragment-surface" aria-label="六枚の紙片を並べる比較台" onPointerMove={e => {
             const d = drag.current;
             if (!d)

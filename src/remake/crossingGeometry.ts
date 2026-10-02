@@ -2,9 +2,9 @@ import { sites, railLines } from './routeGeometry.ts';
 import { passageCameras } from './passageGeometry.ts';
 import type { Camera, Vec3 } from './geometry';
 export const crossingCameras: Record<'bridge' | 'window' | 'north', Camera> = {
-    bridge: { position: [-6, -1, 6.5], target: [-42, 30, 1.7], focal: 1500, width: 1672, height: 941 },
-    window: { ...passageCameras.landing, target: [-42, 30, 1.7], focal: 2800 },
-    north: { position: [16.5, 8.8, 1.65], target: [-42, 30, 1.7], focal: 2800, width: 1672, height: 941 },
+    bridge: { position: [-6, -1, 6.5], target: [-45, 29, 1.5], focal: 1800, width: 1672, height: 941 },
+    window: { ...passageCameras.landing, target: [-45, 29, 1.5], focal: 4500 },
+    north: { position: [16.5, 8.8, 1.65], target: [-45, 29, 1.5], focal: 4500, width: 1672, height: 941 },
 };
 export const northRoof = { west: -18, east: 18, south: 7, north: 10, top: 4.5, bottom: 4.25 };
 export function oldRailPoint(y: number): Vec3 { const a = sites.C, b = sites.X, t = (y - a.y) / (b.y - a.y); return [a.x + t * (b.x - a.x), y, a.z + t * (b.z - a.z)]; }

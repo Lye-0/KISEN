@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useState } from 'react';
 import { Photo, Touch } from './Photo';
 import type { State, Action } from './model';
@@ -9,6 +10,7 @@ export function RouteCase({ s, dispatch, say }: {
     say: (m: string) => void;
 }) {
     const [close, setClose] = useState(false);
+    useSceneBack(close, () => setClose(false));
     const wheels = s.values.caseWheels ?? [0, 0, 0, 0], open = s.values.caseOpen?.[0] === 1;
     const src = '/assets/remake/case/' + (open ? (s.locations.officeKey === 'inventory' ? 'empty' : 'open') : 'closed') + '.webp';
     function turn(index: number, d = 1) { dispatch({ type: 'values', id: 'caseWheels', values: wheels.map((v, i) => i === index ? (v + d + 4) % 4 : v) }); }
@@ -35,7 +37,7 @@ export function RouteCase({ s, dispatch, say }: {
                     release();
                 }
             }}><rect x="220" y="730" width="280" height="525" fill="transparent"/></g>
- </svg><button onClick={() => setClose(false)}>箱の全体へ</button></div> : <Photo view={[400, 0, 1220, 941]} src={src} label={open ? '開いた乗務員用書類箱' : '乗務員用書類箱'}>
+ </svg></div> : <Photo view={[400, 0, 1220, 941]} src={src} label={open ? '開いた乗務員用書類箱' : '乗務員用書類箱'}>
  {!open && <svg className="rm-surface-ink" viewBox="0 0 1672 941">{engraving()}</svg>}
  {!open ? <Touch name="書類箱の輪と留め" rect={[33, 35, 12, 23]} act={() => setClose(true)}/> : <><Touch name="書類箱を閉める" rect={[73, 20, 18, 64]} act={release}/>{s.locations.officeKey !== 'inventory' && <Touch name="駅務室の鍵" rect={[47, 27, 10, 27]} act={() => { dispatch({ type: 'take', item: 'officeKey' }); say('駅務室の鍵を取った。'); }}/>}</>}
  </Photo>}</section>;

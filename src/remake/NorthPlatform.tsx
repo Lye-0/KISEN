@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { firstDoorAt } from './dispatchEvidence';
 import { useBell } from './Bell';
 import { useId, useState } from 'react';
@@ -6,7 +7,7 @@ import { Surface } from './Surface';
 import { planeMatrix } from './plane';
 import { ShutterImage } from './Shutter';
 import { platformPoint, platformPolygon, carriageSideY, lampRowY } from './platformGeometry';
-import { illuminatedPorts, mounts, planks, services, stopAt, doorCenters, boardingGeometry } from './stopping';
+import { shutterOptics, mounts, planks, services, stopAt, doorCenters, boardingGeometry } from './stopping';
 import { signalReady, liveCircuit, validTicket, trace } from './model';
 import type { Action, State, Item } from './model';
 import type { Focus } from './World';
@@ -67,9 +68,10 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
     say: (m: string) => void;
 }) {
     const id = useId().replace(/:/g, ''), [detail, setDetail] = useState(false), [boardIndex, setBoardIndex] = useState(0);
+    useSceneBack(detail, () => setDetail(false));
     const center = platformPoint(boardIndex === 0 ? 7 : 11, carriageSideY);
     const visible = (x: number) => !detail || Math.abs(platformPoint(x, carriageSideY).x - center.x) < 210;
-    const light = illuminatedPorts(s.signals, signalReady(s) && liveCircuit(s));
+    const light = shutterOptics(s.signals, signalReady(s), liveCircuit(s)).transmitted;
     const bell = useBell(s, false), beacon = platformPoint(5, 8, 1.3), foot = platformPoint(5, 8, 0), beaconHeight = (foot.y - beacon.y) / .85;
     const lampIndex = selected === 'lamp' ? 0 : selected === 'spareLamp' ? 1 : null;
     return <div className="rm-north"><Photo src="/assets/remake/north/platform.webp" label="北ホームの二つの踏み板と停車灯の取付列" viewScaleLimit={1.5} view={detail ? [center.x - 210, 400, 420, 365] : undefined}>
@@ -111,5 +113,5 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
                         dispatch({ type: 'board' });
                 }}/>;
         })}
- </Photo><div className="rm-document-controls"><button onClick={() => setDetail(!detail)}>{detail ? 'ホーム全体を見る' : '踏み板を近くで見る'}</button>{detail && <button onClick={() => setBoardIndex(1 - boardIndex)}>もう一方の踏み板</button>}{s.train.position === 'stopped' && <button onClick={() => dispatch({ type: 'releaseTrain' })}>列車を送り出す</button>}</div></div>;
+ </Photo><div className="rm-document-controls">{!detail && <button onClick={() => setDetail(true)}>踏み板を近くで見る</button>}{detail && <button onClick={() => setBoardIndex(1 - boardIndex)}>もう一方の踏み板</button>}{s.train.position === 'stopped' && <button onClick={() => dispatch({ type: 'releaseTrain' })}>列車を送り出す</button>}</div></div>;
 }

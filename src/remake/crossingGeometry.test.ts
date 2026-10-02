@@ -39,3 +39,20 @@ describe('同じ交差を三つの実在する観測点から見る', () => {
         expect(z).toBeLessThan(1.65);
     } });
 });
+
+it('keeps the unknown ground connection separated at the closer observation framing', () => {
+    for (const name of ['window', 'north'] as const) {
+        const camera = crossingCameras[name];
+        const e = project([sites.E.x, sites.E.y, .04], camera);
+        const f = project([sites.F.x, sites.F.y, .04], camera);
+        const end = project(oldBuffer, camera);
+        expect(Math.abs(e.x - f.x)).toBeGreaterThan(360);
+        expect(Math.abs(end.y - (e.y + f.y) / 2)).toBeGreaterThan(230);
+        for (const p of [e, f, end]) {
+            expect(p.x).toBeGreaterThan(100);
+            expect(p.x).toBeLessThan(1572);
+            expect(p.y).toBeGreaterThan(100);
+            expect(p.y).toBeLessThan(841);
+        }
+    }
+});

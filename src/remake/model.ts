@@ -1,3 +1,4 @@
+import { visitedPlaces } from './visitedPlaces';
 import { changeSketch, validSketch } from './sketchGraph';
 import { validDispatchRecord } from './dispatchEvidence';
 import { validGlassRecord } from './glassGeometry';
@@ -226,6 +227,9 @@ export type Action = {
     type: 'look';
     camera: number;
 } | {
+    type: 'travel';
+    room: Room;
+} | {
     type: 'move';
     room: Room;
     camera?: number;
@@ -447,6 +451,11 @@ export function reduce(s: State, a: Action): State {
             if (s.room === 'passage' && !([[1], [0, 2], [3], [0, 2]][s.camera]).includes(camera))
                 return s;
             return { ...s, camera, visited: append(s.visited, s.room + ':' + camera) };
+        }
+        case 'travel': {
+            const place = visitedPlaces(s).find(p => p.room === a.room);
+            if (!place || place.current || !place.reachable) return s;
+            return { ...s, room: place.room, camera: place.camera };
         }
         case 'move': {
             if (a.room === 'tunnel' && (s.room !== 'north' || s.camera !== 1) || s.room === 'tunnel' && (a.room !== 'north' || (a.camera ?? 0) !== 1))

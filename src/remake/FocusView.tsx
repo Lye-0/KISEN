@@ -66,7 +66,9 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'cargoChest': return <CargoChest s={s} dispatch={dispatch} say={say} inspectDockets={() => inspect('cargoDockets')} inspectDocket={() => inspect('cargoDocket')}/>;
         case 'cargoDockets': return <CargoDocketsView dispatch={dispatch} say={say}/>;
         case 'cargoDocket': return <CargoDocketSheet />;
-        case 'points': return <PointControls s={s} dispatch={dispatch} say={say}/>;
+        case 'points': return <PointControls s={s} dispatch={dispatch} say={say} inspect={inspect}/>;
+        case 'pointDetail': return <PointControls s={s} dispatch={dispatch} say={say} inspect={inspect} detail/>;
+        case 'pointSlip': return <PointControls s={s} dispatch={dispatch} say={say} inspect={inspect} slipOnly/>;
         case 'passageWindow': return <CrossingView view='window' dispatch={dispatch} say={say}/>;
         case 'crossing': return <CrossingView view='bridge' dispatch={dispatch} say={say}/>;
         case 'northTracks': return <CrossingView view='north' dispatch={dispatch} say={say}/>;
@@ -80,7 +82,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'recorder': return <Recorder s={s} dispatch={dispatch} say={say} selected={selected} onSelect={onSelect}/>;
         case 'case': return <RouteCase s={s} dispatch={dispatch} say={say}/>;
         case 'map': return <MaintenanceMap sketch={() => inspect('routeSketch')}/>;
-        case 'ticket': return <TicketBench s={s} dispatch={dispatch} say={say} records={() => inspect('journeyRecords')}/>;
+        case 'ticket': return <TicketBench s={s} dispatch={dispatch} say={say} records={() => inspect('journeyRecords')} tools={() => inspect('tools')}/>;
         case 'journeyRecords': return <JourneyRecords s={s} dispatch={dispatch} say={say} sketch={() => inspect('routeSketch')}/>;
         case 'reader': return <TicketReader s={s} dispatch={dispatch} say={say}/>;
         case 'hatch': return <Hatch s={s} dispatch={dispatch} say={say}/>;

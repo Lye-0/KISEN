@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useState } from 'react';
 import type { Action, State } from './model';
 export function RecordCard({ id, inkOnly = false }: {
@@ -17,8 +18,9 @@ export function ServiceRecords({ s, dispatch, say }: {
     say: (m: string) => void;
 }) {
     const ids = s.locations.counterRecords === 'inventory' ? [0, 1, 2, 3] : [0, 1];
-    const [index, setIndex] = useState(0), [compare, setCompare] = useState(false), [zoom, setZoom] = useState(false);
-    return <section className={'rm-service-records ' + (compare ? 'rm-record-grid' : '') + (zoom ? ' rm-record-zoom' : '')}><div className="rm-service-sheets">{(compare ? ids : [ids[index % ids.length]]).map(id => <figure key={id}><RecordCard id={id}/></figure>)}</div><div className="rm-document-controls">{!compare && <><button aria-label="前の紙" onClick={() => setIndex((index + ids.length - 1) % ids.length)}>〈</button><button aria-label="次の紙" onClick={() => setIndex((index + 1) % ids.length)}>〉</button></>}<button onClick={() => setCompare(!compare)}>{compare ? '一枚ずつ見る' : '並べて見る'}</button><button onClick={() => setZoom(!zoom)}>{zoom ? '全体を見る' : '拡大する'}</button><button onClick={() => { dispatch({ type: 'record', id: 'serviceRecords', values: ids }); say('帳票を記録した。'); }}>記録に残す</button></div></section>;
+    const [index, setIndex] = useState(0), [compare, setCompare] = useState(true);
+    useSceneBack(!compare, () => setCompare(true));
+    return <section className={'rm-service-records ' + (compare ? 'rm-record-grid' : '')}><div className="rm-service-sheets">{(compare ? ids : [ids[index % ids.length]]).map(id => <figure key={id}><button className="rm-service-open" aria-label={["八月の受付時刻表", "臨時運休の掲示", "九月の受付時刻表", "窓口の日付票"][id] + "を大きく見る"} onClick={() => { setIndex(ids.indexOf(id)); setCompare(false); }}><RecordCard id={id}/></button></figure>)}</div><div className="rm-document-controls"><button onClick={() => { dispatch({ type: 'record', id: 'serviceRecords', values: ids }); say('帳票を記録した。'); }}>記録に残す</button></div></section>;
 }
 export function ServiceRecordNote({ ids }: {
     ids: number[];

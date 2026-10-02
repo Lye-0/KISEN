@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { boardingGeometry, freshSignals, illuminatedPorts, mounts, services, stopAt, supportedDoors } from './stopping';
+import { shutterOptics, boardingGeometry, freshSignals, illuminatedPorts, mounts, services, stopAt, supportedDoors } from './stopping';
 import { expectedHoles, newState, reduce, restore } from './model';
 it('進入と退去の途中で保存再開しても呼び直しや停止位置を混同しない', () => {
     let s = reduce(ready(), { type: 'call', service: 2 });
@@ -141,3 +141,22 @@ it('重複取付や所在のない取付、汎用の移動操作による設置�
     expect(reduce(empty, { type: 'signalHood' })).toBe(empty);
 });
 it('現在の回線へ接続していなければ、同じ灯具と路線でも通過する', () => { let s = ready(); s.values.bellChannel = [0]; s = reduce(reduce(s, { type: 'call', service: 2 }), { type: 'trainArrive' }); expect(s.train.position).toBe('passing'); const old = ready(); delete old.values.bellChannel; expect(restore(old)?.values.bellChannel).toEqual([1]); });
+
+it('穴の重なり・光路開通・通電を別々に扱う', () => {
+    const s = freshSignals();
+    s.shutters = [1, 2];
+    expect(shutterOptics(s, true, true).transmitted).toEqual([false, false]);
+    s.shutters = [2, 3];
+    expect(shutterOptics(s, true, true)).toEqual({ powered: true, aligned: [true, true], transmitted: [true, true] });
+    expect(shutterOptics(s, true, false)).toEqual({ powered: false, aligned: [true, true], transmitted: [false, false] });
+    expect(shutterOptics(s, false, true).transmitted).toEqual([false, false]);
+});
+
+it('重なりだけ・光路まで開通・未通電で列車の通過と停止も一致する', () => {
+    for (const [shutters, power, position] of [[[1, 2], 1, 'passing'], [[2, 3], 1, 'stopped'], [[2, 3], 0, 'passing']] as const) {
+        let s = ready(); s.signals.shutters = [...shutters]; s.values.bellChannel = [power];
+        s = reduce(s, { type: 'call', service: 2 });
+        s = reduce(s, { type: 'trainArrive' });
+        expect(s.train.position).toBe(position);
+    }
+});

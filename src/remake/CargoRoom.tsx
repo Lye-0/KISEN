@@ -46,11 +46,11 @@ export function CargoRoom({ s, dispatch, say, leave, descend, inspectChest }: {
             return <div key={box.id}>
                 <img className={'rm-cargo-prop' + (active === index ? ' selected' : '')} src={'/assets/remake/cargo/' + (index === 1 ? 'wide-crate-' + (s.values.cargoOpen?.[0] === 1 ? 'open' : 'locked') : item.image) + '.png'} draggable={false} alt="" aria-hidden="true" style={{ left: r.x / 16.72 + '%', top: r.y / 9.41 + '%', width: r.w / 16.72 + '%', height: r.h / 9.41 + '%', zIndex: depth }}/>
                 {index === 1 && s.values.cargoOpen?.[0] === 1 && <svg className="rm-cargo-prop" viewBox="0 0 1400 1087" preserveAspectRatio="none" aria-hidden="true" style={{ left: r.x / 16.72 + '%', top: r.y / 9.41 + '%', width: r.w / 16.72 + '%', height: r.h / 9.41 + '%', zIndex: depth }}>{s.locations.spareLamp === 'cargoChest' && <image href="/assets/remake/parts/marker-lamp.png" x="580" y="320" width="150" height="200" style={{ filter: 'brightness(.7) sepia(.12)' }}/>}{s.locations.cargoDocket === 'cargoChest' && <image href="/assets/remake/parts/photo-back.webp" x="1000" y="448" width="180" height="75" transform="skewX(-6)" style={{ filter: 'brightness(.6)' }}/>}</svg>}
-                <Touch name={item.name} rect={[r.x / 16.72, r.y / 9.41, r.w / 16.72, r.h / 9.41]} act={() => setActive(index)} drag={(dx, dy) => {
+                <Touch name={item.name} rect={[r.x / 16.72, r.y / 9.41, r.w / 16.72, r.h / 9.41]} act={() => { setActive(index); if (index === 1) inspectChest(); }} onKeyDown={e => { const keys = item.axis === 'side' ? ['ArrowLeft', 'ArrowRight'] : ['ArrowDown', 'ArrowUp']; const direction = keys.indexOf(e.key); if (direction >= 0) { e.preventDefault(); setActive(index); attempt(index, direction === 0 ? -1 : 1); } }} drag={(dx, dy) => {
                     setActive(index);
                     attempt(index, item.axis === 'side' ? dx > 0 ? 1 : -1 : dy < 0 ? 1 : -1);
                 }} style={{ zIndex: depth + 1 }}/>
             </div>;
         })}
-    </Photo><div className="rm-cargo-footer"><button className="rm-cargo-return" aria-label="駅務室へ戻る" onClick={leave}>〈</button>{active === 1 && <button onClick={inspectChest}>木箱の蓋と錠を見る</button>}{active !== null && <div className="rm-cargo-controls" aria-label={objects[active].name + 'を動かす'}><span>{objects[active].name}</span><button onClick={() => attempt(active, -1)}>{objects[active].axis === 'side' ? '← 左へ' : '↓ 手前へ'}</button><button onClick={() => attempt(active, 1)}>{objects[active].axis === 'side' ? '右へ →' : '奥へ ↑'}</button></div>}</div></div>;
+    </Photo><p className="rm-operation-note">荷を溝に沿ってドラッグする。選択中は矢印キーでも動かせる。</p></div>;
 }

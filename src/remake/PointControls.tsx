@@ -1,17 +1,19 @@
 import { PointConnection } from './PointConnection';
-import { useId, useRef, useState } from 'react';
-import { Photo } from './Photo';
+import { useId, useRef } from 'react';
+import { Photo, Touch } from './Photo';
 import { nodes, trace } from './model';
 import type { Action, State, Node } from './model';
 import { cutPaths } from './ticketGeometry';
 import { pointBearings, pointPositions, leverY, pointNames, pointLocked } from './pointMechanics';
-import { useCompact } from './useCompact';
+import type { Focus } from './World';
 export function pointPhoto(node: Node, position: number) { return '/assets/remake/points/' + (node === 'E' ? 'wye-' : 'regular-') + position + '.webp'; }
-function PointBank({ s, dispatch, say, only }: {
+function PointBank({ s, dispatch, say, only, inspectLever, inspectWhole }: {
     s: State;
     dispatch: (a: Action) => void;
     say: (v: string) => void;
     only?: number;
+    inspectLever?: (index: number) => void;
+    inspectWhole?: () => void;
 }) {
     const id = useId().replaceAll(':', '');
     const drag = useRef<{
@@ -26,6 +28,7 @@ function PointBank({ s, dispatch, say, only }: {
             say('留め金が下りている。');
             return;
         }
+        dispatch({ type: 'values', id: 'pointSelected', values: [index] });
         dispatch({ type: 'route', index, value: Math.max(0, Math.min(pointPositions(nodes[index]) - 1, value)) });
     };
     const selected = only === undefined ? nodes.map((_, i) => i) : [only];
@@ -40,7 +43,7 @@ function PointBank({ s, dispatch, say, only }: {
                     <image href="/assets/remake/parts/point-shaft.png" x={x - 7} y={y + 20} width="14" height={582 - y - 20} preserveAspectRatio="none" style={{ filter: 'brightness(.65) blur(.18px)' }}/>
    <image href="/assets/remake/parts/point-grip.png" x={x - 53} y={y - 19} width="106" height="40" preserveAspectRatio="none" style={{ filter: 'brightness(.7) drop-shadow(3px 4px 2px #0009)' }}/>
    {locked && <g><g transform={`translate(${x - 58} 560) rotate(-90)`}><image href="/assets/remake/parts/point-shaft.png" x="-8" y="0" width="16" height="116" preserveAspectRatio="none" style={{ filter: 'brightness(.65) drop-shadow(-2px 2px 1px #000b)' }}/></g><defs><clipPath id={id + 'lock' + index}><circle cx={x + 62} cy="560" r="12"/></clipPath></defs><image href="/assets/remake/points/bank.webp" x={x + 62 - 416} y={560 - 316} width="1672" height="941" clipPath={'url(#' + id + 'lock' + index + ')'}/></g>}
-   <g role="slider" tabIndex={0} className="rm-point-grip" aria-label={pointNames[node] + 'の分岐レバー'} aria-valuemin={0} aria-valuemax={max} aria-valuenow={value} aria-valuetext={['Ⅰ', 'Ⅱ', 'Ⅲ'][value]} aria-disabled={locked} onKeyDown={e => {
+   {!inspectWhole && <g role="slider" tabIndex={0} className="rm-point-grip" aria-label={pointNames[node] + 'の分岐レバー'} aria-orientation="vertical" aria-valuemin={0} aria-valuemax={max} aria-valuenow={value} aria-valuetext={['Ⅰ', 'Ⅱ', 'Ⅲ'][value]} aria-disabled={locked} onKeyDown={e => {
                     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
                         e.preventDefault();
                         change(index, e.key === 'Home' ? 0 : e.key === 'End' ? max : value + (['ArrowUp', 'ArrowLeft'].includes(e.key) ? -1 : 1));
@@ -58,44 +61,34 @@ function PointBank({ s, dispatch, say, only }: {
                         change(index, d.position + Math.round((e.clientY - d.y) / ((node === 'E' ? 56 : 112) * d.scale)));
                 }} onPointerUp={() => { drag.current = null; }} onPointerCancel={() => { drag.current = null; }}>
     <rect x={x - 75} y="335" width="150" height="275" fill="transparent"/>
-   </g>
+   </g>}
+   {inspectLever && <g role="button" tabIndex={0} className="rm-point-base" aria-label={pointNames[node] + 'のレバーを詳しく見る'} onClick={() => inspectLever(index)} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inspectLever(index); } }}><rect x={x - 100} y="615" width="200" height="200" fill="transparent"/></g>}
   </g>;
         })}
- </svg></Photo>;
+ </svg>{inspectWhole && <Touch name="分岐操作器を調べる" rect={[13, 29, 76, 63]} act={inspectWhole}/>}</Photo>;
 }
-export function PointControls({ s, dispatch, say }: {
+export function PointBankScene({ s, inspect }: { s: State; inspect: () => void }) {
+    return <PointBank s={s} dispatch={() => {}} say={() => {}} inspectWhole={inspect}/>;
+}
+export function PointControls({ s, dispatch, say, inspect, detail = false, slipOnly = false }: {
     s: State;
     dispatch: (a: Action) => void;
     say: (v: string) => void;
+    inspect: (focus: Focus) => void;
+    detail?: boolean;
+    slipOnly?: boolean;
 }) {
-    const compact = useCompact(), index = s.values.pointSelected?.[0] ?? 0, node = nodes[index];
-    const [close, setClose] = useState(compact), [observe, setObserve] = useState(false), [railDetail, setRailDetail] = useState(-1), [slip, setSlip] = useState(false), [slipNear, setSlipNear] = useState(false);
-    const value = s.route[index], used = trace(s.route).path, locked = pointLocked(s, index, used);
-    const views: [
-        number,
-        number,
-        number,
-        number
-    ][] = node === 'E' ? [[180, 475, 500, 350], [1050, 475, 500, 350], [680, 0, 330, 290]] : [[625, 300, 430, 450]];
-    const change = (n: number) => {
-        if (locked) {
-            say('留め金が下りている。');
-            return;
-        }
-        dispatch({ type: 'route', index, value: Math.max(0, Math.min(pointPositions(node) - 1, n)) });
-    };
-    return <section className={'rm-points' + (observe ? ' observing' : '')} aria-label="北ホームの分岐操作器">
-  <nav className="rm-point-tabs" aria-label="レバーを選ぶ">{nodes.map((n, i) => <button key={n} aria-label={pointNames[n] + 'のレバーを見る'} aria-pressed={i === index} onClick={() => { dispatch({ type: 'values', id: 'pointSelected', values: [i] }); setClose(true); setRailDetail(-1); }}><svg viewBox="-24 -24 48 48" aria-hidden="true"><path d={cutPaths[n]} fill="currentColor"/></svg></button>)}</nav>
-  <div className="rm-point-layout">{slip && <div className={"rm-point-slip" + (slipNear ? " near" : "")}><div><PointConnection node={node} position={value}/></div></div>}<div className={"rm-point-bank" + (close || observe ? " close" : "")}><PointBank s={s} dispatch={dispatch} say={say} only={close || observe ? index : undefined}/></div>
-  {observe && <div className="rm-point-rail" style={railDetail >= 0 ? { width: `min(${views[railDetail][2]}px,65vw)` } : undefined}><Photo src={pointPhoto(node, value)} view={railDetail < 0 ? undefined : views[railDetail]} label="分岐のレールと現在の舌レール"/></div>}</div>
-  <div className="rm-document-controls">
-   {(close || observe) && <><button onClick={() => change(value - 1)} disabled={value === 0}>レバーを引く</button><button onClick={() => change(value + 1)} disabled={value === pointPositions(node) - 1}>押し戻す</button></>}
-   {!observe && <button onClick={() => setClose(!close)}>{close ? '六本を見る' : '選んだレバーへ寄る'}</button>}
-   {slip && compact && <button onClick={() => setSlipNear(!slipNear)}>{slipNear ? "操作札の全体を見る" : "操作札を広げる"}</button>}<button aria-pressed={slip} onClick={() => setSlip(!slip)}>{slip ? '操作札をしまう' : '操作札を見る'}</button><button onClick={() => { setObserve(!observe); setRailDetail(-1); }}>{observe ? '操作器だけ見る' : 'レールを見る'}</button>
-   {observe && <><button onClick={() => setRailDetail(railDetail < 0 ? 0 : -1)}>{railDetail < 0 ? '接触部へ寄る' : '分岐全体を見る'}</button>{node === 'E' && railDetail >= 0 && <button onClick={() => setRailDetail((railDetail + 1) % 3)}>次の接触部</button>}</>}
-   <button onClick={() => { dispatch({ type: 'record', id: 'point-observation-' + index, values: [index, value] }); say('操作器の位置を記録した。'); }}>記録に残す</button><button onClick={() => dispatch({ type: "look", camera: 0 })}>ホームの灯へ</button>
-  </div>
- </section>;
+    const index = s.values.pointSelected?.[0] ?? 0, node = nodes[index], value = s.route[index];
+    if (slipOnly) return <section className="rm-point-sheet-view"><PointConnection node={node} position={value}/></section>;
+    const select = (i: number) => { dispatch({ type: 'values', id: 'pointSelected', values: [i] }); inspect('pointDetail'); };
+    return <section className={'rm-points-direct' + (detail ? ' is-detail' : '')} aria-label="北ホームの分岐操作器">
+        {detail ? <div className="rm-point-direct-layout">
+            <div className="rm-direct-lever"><PointBank s={s} dispatch={dispatch} say={say} only={index}/></div>
+            <button className="rm-direct-sheet" aria-label="操作札を大きく見る" onClick={() => inspect('pointSlip')}><PointConnection node={node} position={value}/></button>
+            <div className="rm-direct-rail"><Photo src={pointPhoto(node, value)} label="選んだレバーにつながるレールの現在の状態" zoomable limitZoomToSource/></div>
+        </div> : <div className="rm-point-overview"><PointBank s={s} dispatch={dispatch} say={say} inspectLever={select}/></div>}
+        <div className="rm-document-controls"><button onClick={() => { dispatch({ type: 'record', id: 'point-observation-' + index, values: [index, value] }); say('操作器の位置を記録した。'); }}>記録に残す</button></div>
+    </section>;
 }
 export function PointNote({ values }: {
     values: number[];

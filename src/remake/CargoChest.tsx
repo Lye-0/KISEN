@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useEffect, useRef, useState } from 'react';
 import { Photo, Touch } from './Photo';
 import type { State, Action } from './model';
@@ -22,6 +23,7 @@ export function CargoDocketsView({ dispatch, say }: {
     say: (m: string) => void;
 }) {
     const [active, setActive] = useState<number | null>(null);
+    useSceneBack(active !== null, () => setActive(null));
     const selected = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (active !== null)
@@ -38,6 +40,7 @@ export function CargoChest({ s, dispatch, say, inspectDockets, inspectDocket }: 
     inspectDocket: () => void;
 }) {
     const [macro, setMacro] = useState(false);
+    useSceneBack(macro, () => setMacro(false));
     const digits = s.values.cargoDigits ?? [0, 0, 0, 0], open = s.values.cargoOpen?.[0] === 1;
     const turn = (i: number, d = 1) => dispatch({ type: 'values', id: 'cargoDigits', values: digits.map((v, k) => k === i ? (v + d + 10) % 10 : v) });
     const release = () => {
@@ -58,5 +61,5 @@ export function CargoChest({ s, dispatch, say, inspectDockets, inspectDocket }: 
                 else
                     inspectDocket();
             }}/></>}
- </Photo><div className="rm-document-controls">{macro && !open && <button onClick={() => setMacro(false)}>箱の全体へ</button>}<button onClick={inspectDockets}>荷札を手に取る</button>{open && <button onClick={release}>蓋を閉める</button>}</div></section>;
+ </Photo><div className="rm-document-controls">{(macro || open) && <button onClick={inspectDockets}>荷札を手に取る</button>}</div></section>;
 }

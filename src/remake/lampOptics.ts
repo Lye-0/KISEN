@@ -47,6 +47,8 @@ export function lampDirection(aim: number[]): Vec3 {
     return [Math.cos(pitch) * Math.cos(yaw), Math.cos(pitch) * Math.sin(yaw), Math.sin(pitch)];
 }
 export const validAim = (v: number[]) => v.length === 2 && v.every(n => Number.isFinite(n) && n >= -9 && n <= 9 && Math.round(n * 2) === n * 2);
+// Begin with a visible patch on the canopy, before aiming toward the tracks.
+export const initialLampAim = [4, 6.5];
 export const beamHalfAngle = 1.8 * Math.PI / 180;
 export function beamAt(point: Vec3, braced: boolean, aim: number[]) { const source = lampSource(braced), line = unit(sub(point, source)), direction = lampDirection(aim), angle = Math.acos(Math.max(-1, Math.min(1, dot(line, direction)))); return { angle, obstruction: rayBarrier(source, point), lit: angle < beamHalfAngle && rayBarrier(source, point) === null }; }
 export function beamEnd(braced: boolean, aim: number[]): {

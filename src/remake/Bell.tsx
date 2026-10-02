@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { Photo, Touch } from './Photo';
 import { useEffect, useId, useRef, useState } from 'react';
 import { bellPulse, bellReturns, bellRecord, bellSamples, readBellRecord } from './bellCircuit';
@@ -64,6 +65,7 @@ export function BellPanel({ s, dispatch, say }: {
     say: (m: string) => void;
 }) {
     const b = useBell(s), [wiring, setWiring] = useState(false);
+    useSceneBack(wiring, () => setWiring(false));
     return <section className="rm-bell-device"><Photo view={wiring ? [875, 325, 600, 220] : undefined} src="/assets/remake/lamp/bell.webp" label="ベル、接点の切替、二本の記録針と押しボタン" zoomable limitZoomToSource zoomButtonOnly zoomOrigin="45% 68%"><svg className="rm-object-overlay" viewBox="0 0 1672 941"><BellImage channel={b.channel} reply={b.reply}/><svg x="476" y="535" width="555" height="198"><BellTrace inputs={b.inputs} returns={b.returns} now={b.now} start={b.inputs[0] ?? 0} inkOnly/></svg></svg><Touch name="接点Ⅰに合わせる" rect={[48, 9, 10, 27]} act={() => dispatch({ type: 'bellChannel', channel: 0 })}/><Touch name="接点Ⅱに合わせる" rect={[58, 9, 10, 27]} act={() => dispatch({ type: 'bellChannel', channel: 1 })}/><Touch name="ベルの押しボタン" rect={[78, 59, 12, 19]} act={() => {
             if (b.inputs.length >= 32) {
                 say('紙の端に達した。');
@@ -71,7 +73,7 @@ export function BellPanel({ s, dispatch, say }: {
             }
             b.ring();
             dispatch({ type: 'bellStrike', time: Date.now() });
-        }}/><Touch name="記録紙を送る" rect={[68, 78, 6, 11]} act={() => dispatch({ type: 'bellReset' })}/></Photo><div className="rm-document-controls rm-bell-controls"><button onClick={() => setWiring(!wiring)}>{wiring ? '装置の全体へ' : '配線の刻印を見る'}</button><button disabled={!b.inputs.length} onClick={() => dispatch({ type: 'bellReset' })}>新しい記録紙を送る</button><button disabled={!b.inputs.length} onClick={() => { dispatch({ type: 'record', id: 'bell-record-' + b.inputs[0], values: bellRecord(b.inputs[0], b.inputs, b.channel, Date.now()) }); say('紙に残った間隔を記録した。'); }}>記録する</button></div>{wiring && <p className="rm-operation-note">応答灯と二つの停車灯は、同じ切替接点へつながっている。</p>}</section>;
+        }}/>{!wiring && <Touch name="配線の刻印を見る" rect={[71, 34, 16, 21]} act={() => setWiring(true)}/>}<Touch name="記録紙を送る" rect={[68, 78, 6, 11]} act={() => dispatch({ type: 'bellReset' })}/></Photo><div className="rm-document-controls rm-bell-controls"><button disabled={!b.inputs.length} onClick={() => { dispatch({ type: 'record', id: 'bell-record-' + b.inputs[0], values: bellRecord(b.inputs[0], b.inputs, b.channel, Date.now()) }); say('紙に残った間隔を記録した。'); }}>記録する</button></div>{wiring && <p className="rm-operation-note">応答灯と二つの停車灯は、同じ切替接点へつながっている。</p>}</section>;
 }
 export function BellNote({ values }: {
     values: number[];

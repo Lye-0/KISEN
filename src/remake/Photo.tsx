@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode, CSSProperties } from 'react';
 const cache = new Map<string, Promise<void>>();
@@ -9,9 +10,10 @@ export function decode(src: string) {
     }
     return p;
 }
-export function Photo({ src, label, children, zoomable = false, zoomOrigin, limitZoomToSource = false, zoomButtonOnly = false, view, dimensions, limitViewToSource = false, viewScaleLimit = 2 }: {
+export function Photo({ src, label, children, zoomable = false, zoomOrigin, limitZoomToSource = false, zoomButtonOnly = false, view, dimensions, limitViewToSource = false, viewScaleLimit = 2, onInspect }: {
     src: string;
     label: string;
+    onInspect?: () => void;
     limitViewToSource?: boolean;
     viewScaleLimit?: number;
     dimensions?: readonly [
@@ -32,6 +34,7 @@ export function Photo({ src, label, children, zoomable = false, zoomOrigin, limi
 }) {
     const [loaded, setLoaded] = useState(''), [error, setError] = useState(false);
     const [zoom, setZoom] = useState(false), [origin, setOrigin] = useState('50% 50%'), [zoomScale, setZoomScale] = useState(2.7);
+    useSceneBack(zoom, () => setZoom(false), 40);
     useEffect(() => {
         let active = true;
         setError(false);
@@ -52,6 +55,7 @@ export function Photo({ src, label, children, zoomable = false, zoomOrigin, limi
     const [sourceWidth, sourceHeight] = dimensions ?? [1672, 941];
     const [x, y, w, h] = view ?? [0, 0, sourceWidth, sourceHeight];
     return <div className="rm-photo" aria-busy={loaded !== src} style={{ "--photo-ratio": w / h, aspectRatio: `${w}/${h}`, maxWidth: view ? `min(calc(var(--rm-scene-height, 100dvh) * ${w / h}), ${w * (limitViewToSource ? 1 : viewScaleLimit)}px)` : undefined } as CSSProperties}><div className="rm-photo-content" style={{ left: `${-x / w * 100}%`, top: `${-y / h * 100}%`, width: `${sourceWidth / w * 100}%`, height: `${sourceHeight / h * 100}%`, transform: zoom ? 'scale(' + zoomScale + ')' : undefined, transformOrigin: origin }}><img src={loaded || src} alt={label} draggable={false}/>{loaded === src && children}</div>{loaded === src ? <>{zoomable && <button className={"rm-photo-zoom" + (zoomButtonOnly ? " rm-zoom-button-only" : "")} aria-label={zoom ? '写真の全体を見る' : '写真を拡大する'} onClick={e => {
+                    if (onInspect) { onInspect(); return; }
                     const r = e.currentTarget.getBoundingClientRect();
                     if (limitZoomToSource) {
                         const bounds = e.currentTarget.closest('.rm-photo')!.getBoundingClientRect();
@@ -70,7 +74,7 @@ export function Patch({ src, rect }: {
         number
     ];
 }) { const [x, y, w, h] = rect; return <img className="rm-patch" src={src} draggable={false} alt="" aria-hidden="true" style={{ clipPath: `inset(${y}% ${100 - x - w}% ${100 - y - h}% ${x}%)` }}/>; }
-export function Touch({ name, rect, act, drag, className = '', style }: {
+export function Touch({ name, rect, act, drag, className = '', style, onKeyDown }: {
     name: string;
     rect: [
         number,
@@ -80,6 +84,7 @@ export function Touch({ name, rect, act, drag, className = '', style }: {
     ];
     act: () => void;
     drag?: (dx: number, dy: number) => void;
+    onKeyDown?: React.KeyboardEventHandler<HTMLButtonElement>;
     className?: string;
     style?: CSSProperties;
 }) {
@@ -88,7 +93,7 @@ export function Touch({ name, rect, act, drag, className = '', style }: {
         number
     ] | null>(null), moved = useRef(false);
     const [x, y, w, h] = rect;
-    return <button className={`rm-touch ${drag ? 'rm-drag-target' : ''} ${className}`} aria-label={name} style={{ left: x + '%', top: y + '%', width: w + '%', height: h + '%', ...style }} onPointerDown={e => {
+    return <button className={`rm-touch ${drag ? 'rm-drag-target' : ''} ${className}`} aria-label={name} onKeyDown={onKeyDown} style={{ left: x + '%', top: y + '%', width: w + '%', height: h + '%', ...style }} onPointerDown={e => {
             origin.current = [e.clientX, e.clientY];
             moved.current = false;
             if (drag)

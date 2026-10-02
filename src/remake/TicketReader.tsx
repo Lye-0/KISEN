@@ -1,3 +1,4 @@
+import { useSceneBack } from './SceneBack';
 import { useCompact } from './useCompact';
 import { Photo, Patch, Touch } from './Photo';
 import { Surface } from './Surface';
@@ -12,6 +13,7 @@ export function TicketReader({ s, dispatch, say }: {
 }) {
     const compact = useCompact();
     const open = s.values.readerClamp?.[0] === 1, depth = s.mounted ? 1 : s.values.readerDepth?.[0] ?? 0;
+    useSceneBack(!s.mounted && depth > 0, () => dispatch({ type: 'values', id: 'readerDepth', values: [0] }));
     const seated: [
         Point2,
         Point2,
@@ -65,5 +67,5 @@ export function TicketReader({ s, dispatch, say }: {
             else if (dy < 0 && !s.mounted || dy > 0 && s.mounted)
                 slide();
         }}/>
- </Photo><div className="rm-reader-actions">{!s.mounted && <><button onClick={() => dispatch({ type: 'flipTicket' })} disabled={depth > 0}>券を裏返す</button>{depth > 0 && <button onClick={() => dispatch({ type: 'values', id: 'readerDepth', values: [0] })}>券を手前へ戻す</button>}</>}</div></section>;
+ </Photo><div className="rm-reader-actions">{!s.mounted && depth === 0 && <><button onClick={() => dispatch({ type: 'flipTicket' })} disabled={depth > 0}>券を裏返す</button></>}</div></section>;
 }
