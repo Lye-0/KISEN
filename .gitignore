@@ -6,3 +6,6 @@ dist/
 .kilo/
 test-results/
 tmp/
+
+# Regenerable geometry intermediates; referenced PNG guides remain versioned.
+/docs/remake/geometry/**/*.svg

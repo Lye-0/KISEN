@@ -6,7 +6,7 @@ import { cargoOfficeDoor, cargoStairDoor, cargoVisualBounds, projectedBounds } f
 import type { Action, State } from './model';
 const objects = [
     { name: '長い木箱', image: 'long-crate', axis: 'depth' },
-    { name: '幅広い木箱', image: 'wide-crate', axis: 'side' },
+    { name: '幅広い木箱', image: 'wide-crate-locked', axis: 'side' },
     { name: '空の台車', image: 'trolley', axis: 'side' },
     { name: '車輪付きの棚', image: 'shelf', axis: 'depth' },
 ] as const;

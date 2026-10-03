@@ -55,7 +55,6 @@ const entries=[
  ['cargo/wide-crate-open','bc704120-fe02-4c59-a109-6b493f58f880'],
  ['cargo/chest-closed','db96a3a1-c8c3-48f0-b7d6-e12760186396'],
  ['cargo/chest-open','bbebcd1a-09b7-463d-ab51-db62e05c87c6'],
- ['cargo/chest-mechanism','3bfd3fcc-3049-46e1-be86-d25082b87e6f'],
  ['points/bank','1aa85615-65c2-4b86-b975-b6ad9e50e43c'],
  ['parts/point-grip','2eb37888-8f26-4639-9bdf-671b124b385e'],
  ['parts/point-shaft','2ed591d1-c535-4781-a3ed-eb3e0dfbe4bf'],
@@ -78,7 +77,6 @@ const entries=[
  ['journeys/c-black-1','d892e597-7535-4253-a027-b1f91628622b'],
  ['passage/landing','9dd85c16-6023-40b7-8a72-5f5f196c14ec'],
  ['passage/landing-closed','f9615e54-6091-4467-955d-91c9f6009d62'],
- ['passage/window','80039a5f-e71b-4f17-9882-385b0503618c'],
  ['passage/entry','d723f684-42d9-4af6-a752-32c060159d7e'],
  ['passage/north','5764d308-eb2e-435e-b605-c54821c734b8'],
  ['passage/south','e739f5e3-c54e-40f8-904a-a8819863fcfb'],
@@ -89,7 +87,6 @@ const entries=[
  ['cargo/south','8025c160-f979-4aa9-835a-9e01af4e050f'],
  ['cargo/shelf','c3c35c15-c261-4aa9-82cf-37011ac190c3'],
  ['cargo/long-crate','2e1d0f0e-38ee-4dd6-9be2-7524bc1054e0'],
- ['cargo/wide-crate','a413e599-09cd-4582-b435-d13e71d0f94c'],
  ['cargo/trolley','375c1055-ade9-41dd-bd7b-38178b8895d1'],
  ['bridge/gate-mechanism-open-empty','d6b6a1ac-6fcd-4496-b993-8c64ddeafe85'],
  ['bridge/gate-mechanism-empty','78ca52c0-8b3c-4502-9110-d5ceb2c872b7'],
@@ -110,15 +107,12 @@ const entries=[
  ['office/hook-ring-turned','e9024297-05af-4b14-9b65-aab99b7a40b5'],
  ['office/hook-empty','6c490743-0022-4dbd-8755-158c342b006c'],
  ['parts/maintenance-hook','96eead91-99ef-4e32-bd48-4145dd3438ee'],
- ['north/west-bridge','c7c19d71-dee0-4558-86fc-12197fefd8eb'],
- ['north/west-bridge-open','2a8b6849-f603-4a29-8b08-f5e01b8d2f12'],
  ['bridge/north-gate-braced','e28beca1-3cfb-4557-ab99-260cd4888ffb'],
  ['bridge/north-gate-released','aac363c9-445b-4add-8b7f-294743dba002'],
  ['bridge/north-gate-open','669b2356-2477-4fcf-bc87-82eab6087150'],
  ['bridge/gate-mechanism-braced','ce074082-7cdd-4e40-90a1-41e7449cf403'],
  ['bridge/gate-mechanism-released','e6de3e5e-3266-4b83-a85e-fe3372bfbfc5'],
  ['bridge/gate-mechanism-open','eb55a745-6cfe-4704-b36e-97001723478f'],
- ['bridge/east-tracks','860632e4-b85d-49fc-a36b-fbb0cf18044b'],
  ['bridge/north-gate','8c07032d-4619-41b8-a376-13c0a229533f'],
  ['bridge/gate-mechanism','76ce73a1-7e5a-407d-bf2c-2cd714e7f365'],
  ['bridge/west-roof','0e4265e1-16ff-45f5-9081-59f5d97cd05e'],
@@ -146,12 +140,10 @@ const entries=[
  ["train/east-seats-11","3ec965df-8927-4e40-b1ff-addcb2f20f24"],
  ["parts/seat-envelope","72033350-688a-40cb-9153-0fd9d40d1f8e"],
  ["platform/station","cfc023be-0a8c-4e1c-b4a8-23159901f338"],
- ["platform/train","677b7ce9-1fab-4d7b-baa0-189619196a5a"],
  ["waiting/south","77b632f7-03c7-4100-bc82-d654112392c8"],
  ["waiting/east","741bded1-918e-43d4-90c5-14c0547137d0"],
  ["waiting/north","dcbf649d-8801-494f-9257-e9400c8a97cb"],
  ["forecourt/station","aad0858a-f1a2-4407-986a-8b02ff0d1862"],
- ["office/north","0fe8e8ab-893a-4eb7-8025-674c4f1cef02"],
  ["office/lock","751945e3-5d64-4dde-84d4-e9f3ab0357cd"],
  ["hatch/closed","907db059-d89a-489d-881a-07e26ad50396"],
  ["hatch/raised","1b23a1f4-acc5-4563-aa14-80ca1b8c1498"],
@@ -201,7 +193,7 @@ const entries=[
 ];
 const requested=new Set(process.argv.slice(2));
 const manifest=[];
-for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/field-posts','parts/response-beacon','parts/lamp-rear','parts/balance-weights','parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='parts/phone'||id==='parts/dispatch-pocket'||id==='parts/glass-tower'||id==='parts/retaining-pin'||id==='parts/balance-beam'||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/wide-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');if(!requested.size||requested.has(id)){await mkdir(path.dirname(file),{recursive:true});if(id==='parts/retaining-pin')await sharp(source).trim().png().toFile(file);else if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);}manifest.push({id,source,file,status:'representative-review',method:id==='parts/retaining-pin'?'built-in image_gen; alpha preserved, trim only':rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
+for(const [id,uuid] of entries){const source=path.join(generated,'exec-'+uuid+'.png');const rawAlpha=['parts/field-posts','parts/response-beacon','parts/lamp-rear','parts/balance-weights','parts/inventory-paper','parts/inventory-photos','parts/shutter-blade','parts/marker-lamp','parts/return-car','parts/return-car-closed','parts/return-car-gap6-closed','parts/maintenance-hook','parts/maintenance-tab','parts/folding-support'].includes(id)||id.startsWith('parts/punch-')||id==='parts/office-key';const transparent=rawAlpha||id==='parts/phone'||id==='parts/dispatch-pocket'||id==='parts/glass-tower'||id==='parts/retaining-pin'||id==='parts/balance-beam'||id==='cargo/wide-crate-locked'||id==='cargo/wide-crate-open'||['parts/point-grip','parts/point-shaft','cargo/shelf','cargo/long-crate','cargo/trolley','parts/paper-strip','parts/service-stamp','parts/reel-cap','parts/counter-folder','parts/seat-envelope'].includes(id);const file='public/assets/remake/'+id+(transparent?'.png':'.webp');if(!requested.size||requested.has(id)){await mkdir(path.dirname(file),{recursive:true});if(id==='parts/retaining-pin')await sharp(source).trim().png().toFile(file);else if(rawAlpha)await sharp(source).png().toFile(file);else if(transparent)await sharp(source).trim().resize({width:1400,withoutEnlargement:true}).png().toFile(file);else await sharp(source).webp({quality:94,effort:5}).toFile(file);}manifest.push({id,source,file,status:'representative-review',method:id==='parts/retaining-pin'?'built-in image_gen; alpha preserved, trim only':rawAlpha?'built-in image_gen; alpha and canvas preserved':transparent?'built-in image_gen; alpha preserved, trim and resize':'built-in image_gen; WebP encoding only'});}
 for(const tape of ['A','B'])manifest.push({id:`audio/tape-${tape}`,source:'src/remake/recordings.ts',file:`public/assets/remake/audio/tape-${tape}.wav`,status:'representative-review',method:'deterministic original WAV; scripts/prepare-recordings.mjs'});
 let previous=[];try{previous=JSON.parse(await readFile('docs/remake/assets.json','utf8'));}catch{}
 const previousIndex=new Map(previous.map((v,i)=>[v.id,i]));const previousById=new Map(previous.map(v=>[v.id,v]));
