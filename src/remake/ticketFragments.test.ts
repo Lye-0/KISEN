@@ -5,8 +5,10 @@ import { fragmentOutlines } from './ticketFragments';
 import { insideCut } from './ticketGeometry';
 describe('surviving ticket fragments', () => {
     it('leaves the lower fragment ambiguous by hole shape, while the upper hole distinguishes sheets', () => {
+        // Parse each fixed outline once, not once for every sampled pixel.
+        const outlines = fragmentOutlines.map(outline => outline.split(' ').map(point => point.split(',').map(Number)));
         const polygon = (part: number, x: number, y: number) => {
-            const p = fragmentOutlines[part].split(' ').map(s => s.split(',').map(Number));
+            const p = outlines[part];
             let inside = false;
             for (let i = 0, j = p.length - 1; i < p.length; j = i++)
                 if ((p[i][1] > y) !== (p[j][1] > y) && x < (p[j][0] - p[i][0]) * (y - p[i][1]) / (p[j][1] - p[i][1]) + p[i][0])
