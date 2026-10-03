@@ -53,8 +53,8 @@ function Carriage({ s }: {
         ];
         return <div key={key} style={{ position: 'absolute', width: b - a, height: 724, transformOrigin: '0 0', transform: 'matrix3d(' + planeMatrix(b - a, 724, quad).join(',') + ')', overflow: 'hidden', filter: `brightness(${shade})` }}><img src={image} style={{ position: 'absolute', left: -a, width: 2172, height: 724, maxWidth: 'none' }} alt=""/><svg viewBox="0 0 2172 724" style={{ position: "absolute", left: -a, top: 0, width: 2172, height: 724 }} aria-hidden="true"><rect x="1050" y="220" width="180" height="32" rx="3" fill="#d7ceae"/><text x="1140" y="244" fontFamily="serif" fontSize="24" textAnchor="middle" fill="#373b32">{car.direction === 'return' ? '白沢' : '山上'}</text></svg></div>;
     };
-    const closed = '/assets/remake/parts/' + (longGap ? 'return-car-gap6-closed' : 'return-car-closed') + '.png';
-    const current = !longGap && s.train.position === 'stopped' ? '/assets/remake/parts/return-car.png' : closed;
+    const closed = './assets/remake/parts/' + (longGap ? 'return-car-gap6-closed' : 'return-car-closed') + '.png';
+    const current = !longGap && s.train.position === 'stopped' ? './assets/remake/parts/return-car.png' : closed;
     return <Surface>
         {projectPiece(0, 750, westEnd + .3, westEnd + .3 - 750 / pxPerMetre, closed, .58, 'coupled-car')}
         {projectPiece(0, 2172, first + doorPixel / pxPerMetre, westEnd, current, .64, 'board-car')}
@@ -74,17 +74,17 @@ export function NorthPlatform({ s, dispatch, inspect, selected, say }: {
     const light = shutterOptics(s.signals, signalReady(s), liveCircuit(s)).transmitted;
     const bell = useBell(s, false), beacon = platformPoint(5, 8, 1.3), foot = platformPoint(5, 8, 0), beaconHeight = (foot.y - beacon.y) / .85;
     const lampIndex = selected === 'lamp' ? 0 : selected === 'spareLamp' ? 1 : null;
-    return <div className="rm-north"><Photo src="/assets/remake/north/platform.webp" label="北ホームの二つの踏み板と停車灯の取付列" viewScaleLimit={1.5} view={detail ? [center.x - 210, 400, 420, 365] : undefined}>
+    return <div className="rm-north"><Photo src="./assets/remake/north/platform.webp" label="北ホームの二つの踏み板と停車灯の取付列" viewScaleLimit={1.5} view={detail ? [center.x - 210, 400, 420, 365] : undefined}>
  <Carriage s={s}/><svg className="rm-object-overlay" viewBox="0 0 1672 941"><defs><clipPath id={id + 'front'}><rect x="0" y={platformPoint(7, 7).y} width="1672" height={941 - platformPoint(7, 7).y}/>{planks.map(([a, b]) => <polygon key={a} points={platformPolygon([[a, 6.22, .04], [b, 6.22, .04], [b, 7.1, .04], [a, 7.1, .04]])}/>)}</clipPath><radialGradient id={id + 'glow'}><stop stopColor="#fff1b7" stopOpacity=".75"/><stop offset="1" stopColor="#ddbc73" stopOpacity="0"/></radialGradient></defs>
- <image href="/assets/remake/north/platform.webp" width="1672" height="941" clipPath={'url(#' + id + 'front)'}/>
+ <image href="./assets/remake/north/platform.webp" width="1672" height="941" clipPath={'url(#' + id + 'front)'}/>
  {s.signals.mounts.map((mark, i) => { const p = mark === null ? { x: 1190 - i * 26, y: 754 } : platformPoint(mark, lampRowY); const d = `M1280,750 C1180,778 ${p.x + 150},${p.y + 55} ${p.x},${p.y}`; return <g key={'cable' + i}><path d={d} fill="none" stroke="#000" strokeOpacity=".55" strokeWidth="5" transform="translate(1 2)"/><path d={d} fill="none" stroke="#262c27" strokeWidth="2.5"/></g>; })}
  {s.signals.mounts.map((mark, i) => {
             if (mark === null)
                 return null;
             const p = platformPoint(mark, lampRowY), top = platformPoint(mark, lampRowY, .48), h = p.y - top.y, w = h * 1024 / 1536;
-            return <g key={i}><ellipse cx={p.x} cy={p.y} rx={w * .26} ry="3" fill="#020504" opacity=".65"/><image href="/assets/remake/parts/marker-lamp.png" x={p.x - w / 2} y={p.y - h * .97} width={w} height={h}/>{light[i] && <ellipse cx={p.x} cy={p.y - h * .53} rx={w * .29} ry={h * .19} fill={'url(#' + id + 'glow)'}/>}</g>;
+            return <g key={i}><ellipse cx={p.x} cy={p.y} rx={w * .26} ry="3" fill="#020504" opacity=".65"/><image href="./assets/remake/parts/marker-lamp.png" x={p.x - w / 2} y={p.y - h * .97} width={w} height={h}/>{light[i] && <ellipse cx={p.x} cy={p.y - h * .53} rx={w * .29} ry={h * .19} fill={'url(#' + id + 'glow)'}/>}</g>;
         })}
- <image href="/assets/remake/parts/response-beacon.png" x={beacon.x - beaconHeight * .3} y={beacon.y - beaconHeight * .15} width={beaconHeight * .6} height={beaconHeight}/>{bell.reply && <ellipse cx={beacon.x} cy={beacon.y} rx="40" ry="38" fill={'url(#' + id + 'glow)'}/>}<svg x="1200" y="624" width="240" height="135" viewBox="0 0 1672 941"><defs><clipPath id={id + 'housing'}><path d="M195 115Q205 80 270 80H1400Q1467 80 1467 140V630Q1467 695 1400 695H1340V854H1460V941H200V854H325V695H265Q195 695 195 630Z"/></clipPath></defs><g clipPath={'url(#' + id + 'housing)'}><image href="/assets/remake/signal/housing.webp" width="1672" height="941"/><ShutterImage s={s}/></g></svg>
+ <image href="./assets/remake/parts/response-beacon.png" x={beacon.x - beaconHeight * .3} y={beacon.y - beaconHeight * .15} width={beaconHeight * .6} height={beaconHeight}/>{bell.reply && <ellipse cx={beacon.x} cy={beacon.y} rx="40" ry="38" fill={'url(#' + id + 'glow)'}/>}<svg x="1200" y="624" width="240" height="135" viewBox="0 0 1672 941"><defs><clipPath id={id + 'housing'}><path d="M195 115Q205 80 270 80H1400Q1467 80 1467 140V630Q1467 695 1400 695H1340V854H1460V941H200V854H325V695H265Q195 695 195 630Z"/></clipPath></defs><g clipPath={'url(#' + id + 'housing)'}><image href="./assets/remake/signal/housing.webp" width="1672" height="941"/><ShutterImage s={s}/></g></svg>
  </svg>
  {mounts.filter(visible).map(mark => {
             const p = platformPoint(mark, lampRowY), i = s.signals.mounts.indexOf(mark);

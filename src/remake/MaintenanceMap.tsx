@@ -53,7 +53,7 @@ export function MaintenanceMap({ embedded = false, sketch }: {
     useSceneBack(detail !== null, () => setDetail(null), 30);
     return <section className={'rm-maintenance-map' + (embedded ? ' rm-map-embedded' : '')}>
     <div className="rm-map-sheet"><svg viewBox={detail === null ? '0 0 1200 760' : `${detail * 400} 105 400 560`} role="group" aria-label="北を上にした保守略図。塔、踏切、坑口と点検位置">
-      <image href="/assets/remake/parts/photo-back.webp" width="1200" height="760" preserveAspectRatio="none"/>
+      <image href="./assets/remake/parts/photo-back.webp" width="1200" height="760" preserveAspectRatio="none"/>
       <g fill="#454b3e" fontFamily="serif"><text x="55" y="65" fontSize="30">沿線保守　見取図</text><text x="55" y="720" fontSize="18">位置照合用　／　縮尺不同</text><text x="1000" y="720" fontSize="18">保線係　控</text></g>
       <path d="M40 88H1160M40 679H1160M400 120V650M800 120V650" stroke="#73745a" strokeWidth="1" fill="none"/>
       {titles.map((title, i) => <g key={title} aria-hidden={detail !== null && detail !== i} transform={`translate(${i * 400} 105)`} className={detail === null ? 'rm-map-inset' : undefined} role={detail === null ? 'button' : undefined} tabIndex={detail === null ? 0 : undefined} aria-label={detail === null ? title + 'の図を近くで見る' : undefined} onClick={() => {

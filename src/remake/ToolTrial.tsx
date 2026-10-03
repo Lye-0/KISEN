@@ -18,7 +18,7 @@ export function PunchGraphic({ tool, transform, closed = false }: {
     transform: string;
     closed?: boolean;
 }) {
-    return <g data-desk-tool={tool} transform={transform} style={{ filter: 'drop-shadow(2px 4px 2px #0009)' }}><image href={'/assets/remake/parts/punch-' + (closed ? 'closed' : 'open') + '.png'} width="1536" height="1024"/>
+    return <g data-desk-tool={tool} transform={transform} style={{ filter: 'drop-shadow(2px 4px 2px #0009)' }}><image href={'./assets/remake/parts/punch-' + (closed ? 'closed' : 'open') + '.png'} width="1536" height="1024"/>
     <text x="440" y="355" fontFamily="serif" fontSize="150" fill="#35332c" transform="rotate(13 440 355)">{toolNames[tool]}</text>
   </g>;
 }
@@ -43,7 +43,7 @@ export function TrialSheet({ cuts, onCut, annotate = false, busy = false }: {
             const p = slotPoint(cut.slot);
             return <g key={i} transform={`translate(${p.x} ${p.y}) scale(1.7)`}><CutShape cut={{ node: dieOrder[cut.die], tool: cut.tool }} fill="black"/></g>;
         })}</mask></defs>
-    <image href="/assets/remake/parts/photo-back.webp" width="1080" height="300" preserveAspectRatio="none" mask={`url(#${id})`}/>
+    <image href="./assets/remake/parts/photo-back.webp" width="1080" height="300" preserveAspectRatio="none" mask={`url(#${id})`}/>
     {Array.from({ length: 12 }, (_, slot) => {
             const p = slotPoint(slot), used = [...new Set(entries.filter(e => e.slot === slot).map(e => toolNames[e.tool]))];
             return <g key={slot}>
@@ -83,7 +83,7 @@ export function ToolTrial({ s, dispatch, say, openTicket, records }: {
     }
     return <section className="rm-tool-trial" data-selected-tool={selected ?? ''} style={{ '--trial-ratio': view ? view[2] / view[3] : 1672 / 941 } as CSSProperties}>
     <DeskTabs active="tools" disabled={busy} change={next => { if (next === 'ticket') openTicket(); }}/>
-    <Photo src="/assets/remake/ticket/bench.webp" label="三本の鋏と試し紙" view={view}><Patch src="/assets/remake/ticket/empty-stamp.webp" rect={[71.2, 0, 10.3, 30]}/>
+    <Photo src="./assets/remake/ticket/bench.webp" label="三本の鋏と試し紙" view={view}><Patch src="./assets/remake/ticket/empty-stamp.webp" rect={[71.2, 0, 10.3, 30]}/>
     <svg className="rm-object-overlay" viewBox="0 0 1672 941">
         <BenchFixtures die={selected !== null && hasDie ? die : -1} service={s.values.stampSetting?.[0] ?? 1}/><ToolTools s={s} lifted={point && selected !== null ? selected : undefined} largeLabels={compact && detail === 'tools'}/>
         <foreignObject x="330" y="560" width="1080" height="300"><TrialSheet cuts={cuts} busy={busy} onCut={selected !== null && hasDie && (!compact || detail === 'paper') ? cut : undefined}/></foreignObject>

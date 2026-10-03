@@ -13,7 +13,7 @@ export function PointConnection({ node, position }: { node: Node; position: numb
     const observations = ports.map(port => `${portName(node, port)}から入る線には${approachBands[node][port]}本帯の標柱`).join('。');
     const label = `${pointNames[node]}の分岐。位置${['Ⅰ', 'Ⅱ', 'Ⅲ'][position]}。${portName(node, connected[0])}と${portName(node, connected[1])}が、この分岐を通ってつながっている。${observations}。`;
     return <svg viewBox="0 0 800 520" className="rm-point-connection" role="img" aria-label={label}>
-        <image href="/assets/remake/parts/photo-back.webp" width="800" height="520" preserveAspectRatio="none"/>
+        <image href="./assets/remake/parts/photo-back.webp" width="800" height="520" preserveAspectRatio="none"/>
         <g fontFamily="serif" fill="#514d3c">
             <path d={cutPaths[node]} transform="translate(52 37) scale(.85)"/>
             <text x="83" y="46" fontSize="27">分岐</text>

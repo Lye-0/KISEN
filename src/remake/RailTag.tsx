@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Photo, Touch, decode } from './Photo';
 import { owns } from './model';
 import type { Action, Item, State } from './model';
-const root = '/assets/remake/bridge/';
+const root = './assets/remake/bridge/';
 function stage(s: State) { return owns(s, 'pin') ? 'empty' : s.values.tagDepth?.[0] === 2 ? s.values.tagCaught?.[0] === 1 ? 'caught' : 'extended' : s.values.tagDepth?.[0] === 1 ? 'inserted' : 'initial'; }
 export function RailTagWide({ s, inspect, observe }: {
     s: State;

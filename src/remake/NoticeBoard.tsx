@@ -12,7 +12,7 @@ function Paper({ index, lifted = false }: {
     return <g transform={`translate(${p.x} ${p.y})`}>
  <path d={`M5 8L${p.w + 4} 4L${p.w + 8} ${lifted ? 94 : p.h + 7}L6 ${lifted ? 111 : p.h + 11}Z`} fill="#070909" opacity=".6"/>
  <g transform={lifted ? 'scale(1 .15)' : undefined}>
- <image href="/assets/remake/parts/photo-back.webp" width={p.w} height={p.h} preserveAspectRatio="none"/>
+ <image href="./assets/remake/parts/photo-back.webp" width={p.w} height={p.h} preserveAspectRatio="none"/>
  <path d={`M0 0H${p.w}V${p.h - 9}L${p.w - 25} ${p.h - 14}L${p.w - 35} ${p.h}H0Z`} fill={index === 0 ? '#59452d' : index === 1 ? '#917952' : '#b19a70'} opacity=".19"/>
  <path d={`M16 37H${p.w - 17}M20 ${p.h - 106}H${p.w - 20}`} stroke="#796747" strokeWidth="2"/>
  <g visibility={lifted ? "hidden" : undefined} fill="#514331" fontFamily="Yu Mincho,serif" textAnchor="middle"><text x={p.w / 2} y="220" fontSize="34">{p.title}</text><text x={p.w / 2} y="280" fontSize="27">{p.route}</text><text x={p.w - 55} y={p.h - 57} fontSize="28" textAnchor="end">{p.date}</text></g>
@@ -27,7 +27,7 @@ export function NoticeBoardSurface({ lift = [0, 0], papers = true, near = false 
     lift?: number[];
     papers?: boolean;
     near?: boolean;
-}) { return <svg width="900" height="730" viewBox={near ? "440 190 540 650" : "386 140 900 730"} role="img" aria-label={`重なる告知。${layers[lift[0] === 1 ? (lift[1] === 1 ? 0 : 1) : 2].title}、${layers[lift[0] === 1 ? (lift[1] === 1 ? 0 : 1) : 2].date}、${layers[lift[0] === 1 ? (lift[1] === 1 ? 0 : 1) : 2].route}。右側に四枚の破れた紙。`}><image href="/assets/remake/forecourt/notice-board.webp" width="1672" height="941"/>{papers && <><g aria-hidden={lift[0] !== 1 || lift[1] !== 1}><Paper index={0}/></g><g aria-hidden={lift[0] !== 1 || lift[1] === 1}><Paper index={1} lifted={lift[1] === 1}/></g><g aria-hidden={lift[0] === 1}><Paper index={2} lifted={lift[0] === 1}/></g>{[0, 1, 2, 3].map(i => <svg key={i} x={1002 + i % 2 * 109} y={230 + Math.floor(i / 2) * 267} width="103" height="244" viewBox="0 0 240 360" preserveAspectRatio="none"><Poster index={i}/></svg>)}</>}</svg>; }
+}) { return <svg width="900" height="730" viewBox={near ? "440 190 540 650" : "386 140 900 730"} role="img" aria-label={`重なる告知。${layers[lift[0] === 1 ? (lift[1] === 1 ? 0 : 1) : 2].title}、${layers[lift[0] === 1 ? (lift[1] === 1 ? 0 : 1) : 2].date}、${layers[lift[0] === 1 ? (lift[1] === 1 ? 0 : 1) : 2].route}。右側に四枚の破れた紙。`}><image href="./assets/remake/forecourt/notice-board.webp" width="1672" height="941"/>{papers && <><g aria-hidden={lift[0] !== 1 || lift[1] !== 1}><Paper index={0}/></g><g aria-hidden={lift[0] !== 1 || lift[1] === 1}><Paper index={1} lifted={lift[1] === 1}/></g><g aria-hidden={lift[0] === 1}><Paper index={2} lifted={lift[0] === 1}/></g>{[0, 1, 2, 3].map(i => <svg key={i} x={1002 + i % 2 * 109} y={230 + Math.floor(i / 2) * 267} width="103" height="244" viewBox="0 0 240 360" preserveAspectRatio="none"><Poster index={i}/></svg>)}</>}</svg>; }
 export function NoticeBoard({ s, dispatch, say, posters }: {
     s: State;
     dispatch: (a: Action) => void;

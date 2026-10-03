@@ -11,7 +11,7 @@ export function Passage({ s, dispatch, inspect }: {
     const open = s.values.northHatch?.[0] === 1;
     const photos = ['entry', 'north', 'landing' + (open ? '' : '-closed'), 'south'];
     const labels = ['荷物室の戸の先から見下ろす長い階段', '線路下を北へ通る地下横断通路', '線路の高さ近くまで上がった北の踊り場', '地下横断通路から見える荷物室側の階段'];
-    return <section className="rm-passage"><Photo src={'/assets/remake/passage/' + photos[s.camera] + '.webp'} label={labels[s.camera]}>
+    return <section className="rm-passage"><Photo src={'./assets/remake/passage/' + photos[s.camera] + '.webp'} label={labels[s.camera]}>
   {s.camera === 0 && <Touch name="階段を下りる" rect={[28, 50, 44, 44]} act={() => go(1)}/>}
   {s.camera === 1 && <Touch name="通路の奥の階段へ進む" rect={[42, 35, 16, 31]} act={() => go(2)}/>}
   {s.camera === 2 && <><Touch name="踊り場の窓を見る" rect={[4, 5, 48, 61]} act={() => inspect('passageWindow')}/><Touch name={open ? '北ホームの開いた戸から出る' : '上の蓋を押し開ける'} rect={[64, 10, 30, 69]} act={() => open ? dispatch({ type: 'move', room: 'north', camera: 2 }) : dispatch({ type: 'northHatch' })}/></>}

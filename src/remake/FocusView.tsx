@@ -38,7 +38,7 @@ import { owns } from './model';
 import { Clock } from './Clock';
 import type { Focus } from './World';
 import type { Action, Item, State } from './model';
-export const itemArt: Partial<Record<Item, string>> = { lamp: '/assets/remake/parts/marker-lamp.png', spareLamp: '/assets/remake/parts/marker-lamp.png', envelope: '/assets/remake/parts/seat-envelope.png', officeKey: '/assets/remake/parts/office-key.png', knob: '/assets/remake/parts/reel-cap.png', punch: '/assets/remake/parts/punch-open.png', counterRecords: '/assets/remake/parts/counter-folder.png' };
+export const itemArt: Partial<Record<Item, string>> = { lamp: './assets/remake/parts/marker-lamp.png', spareLamp: './assets/remake/parts/marker-lamp.png', envelope: './assets/remake/parts/seat-envelope.png', officeKey: './assets/remake/parts/office-key.png', knob: './assets/remake/parts/reel-cap.png', punch: './assets/remake/parts/punch-open.png', counterRecords: './assets/remake/parts/counter-folder.png' };
 export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, inspect }: {
     focus: Focus;
     s: State;
@@ -89,7 +89,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'counterDrawer': return <CounterDrawer s={s} dispatch={dispatch} say={say}/>;
         case 'notices': return <ServiceRecords s={s} dispatch={dispatch} say={say}/>;
         case 'receipt': return <Receipt />;
-        case 'platformClock': return <Photo src="/assets/remake/platform/station.webp" view={[935, 207, 188, 195]} label="ホームの時計"><Clock minutes={23 * 60 + 17} transform="translate(1030 302) scale(.72)"/></Photo>;
+        case 'platformClock': return <Photo src="./assets/remake/platform/station.webp" view={[935, 207, 188, 195]} label="ホームの時計"><Clock minutes={23 * 60 + 17} transform="translate(1030 302) scale(.72)"/></Photo>;
         case 'officeLock': return <OfficeLock s={s} dispatch={dispatch} say={say} selected={selected} onSelect={onSelect} enter={() => { dispatch({ type: 'move', room: 'office', camera: 0 }); close(); }}/>;
         case 'paperView': return s.draft && owns(s, 'ticket') ? <div className="rm-hand-paper"><TicketPaper ticket={s.draft}/><button onClick={() => dispatch({ type: 'flipTicket' })}>裏返す</button></div> : null;
         case 'arrivalTicket': return <div className="rm-hand-paper"><TicketPaper ticket={{ ...arrivalTicket, back: s.values.arrivalTicketBack?.[0] === 1 }}/><button onClick={() => dispatch({ type: 'values', id: 'arrivalTicketBack', values: [s.values.arrivalTicketBack?.[0] === 1 ? 0 : 1] })}>裏返す</button></div>;

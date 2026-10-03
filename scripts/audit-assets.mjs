@@ -21,7 +21,7 @@ for(const asset of remake){
 }
 for(const filename of await files('public/assets')){const url='/'+filename.replaceAll('\\','/').replace(/^public\//,'');if(!known.has(url))errors.push(`採用一覧外のファイル: ${url}`)}
 for(const filename of await files('src')){
- const source=await readFile(filename,'utf8');for(const match of source.matchAll(/["'](\/assets\/[^"'`]+\.(?:png|webp|jpg|svg))["']/g)){if(!known.has(match[1]))errors.push(`未登録の参照 ${filename}: ${match[1]}`)}
+ const source=await readFile(filename,'utf8');for(const match of source.matchAll(/["'](?:\.)?(\/assets\/[^"'`]+\.(?:png|webp|jpg|svg))["']/g)){if(!known.has(match[1]))errors.push(`未登録の参照 ${filename}: ${match[1]}`)}
 }
 // Dynamic room and terminal scene paths must also resolve.
 for(const room of ['platform','waiting','forecourt','office','lost','bridge','store','lamp','tunnel','closed','return'])if(!known.has(`/assets/scenes/${room}/main.webp`))errors.push(`全景がない: ${room}`);

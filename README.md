@@ -32,3 +32,25 @@ mise run dev
 新版197素材はpublic/assets/remake/、採用原本と加工方法はdocs/remake/assets.json、生成要求はdocs/remake/prompts/に記録しています。初回版の70素材も比較用に保持します。候補画像や作者検証のスクリーンショットを配信物へ含めません。
 
 ?remake=journeys/crossing/stopping等は作者向けの隔離した準備状態です。通常入口からの進行確認とは区別しています。初回版の検証記録はdocs/qa/、新版はdocs/remake/の各レビューを参照してください。設計と検証の資料には解答が含まれます。
+
+## GitHub Pages
+
+`main` へのプッシュで `.github/workflows/pages.yml` が起動します。Node.jsとpnpmはプロジェクトの指定版を使用し、ロックファイル固定のインストール、テスト、素材監査、ビルドが成功した場合だけ `dist/` を公開します。作業ブランチへのプッシュでは公開しません。
+
+公開先: https://lye-0.github.io/KISEN/
+
+GitHub側の Settings → Pages → Build and deployment → Source は **GitHub Actions** を使用します。公開URLのサブディレクトリはconfigure-pagesの出力から取得するため、カスタムドメインのルート公開にも対応します。個別のデプロイ用トークンは不要です。
+
+ゲーム中の画像・音声URLは `./assets/` でページのディレクトリから解決します。ルート絶対URLの `/assets/` をTS/TSXへ追加するとプロジェクトPagesで壊れるため使用しません。CSSのpublic素材URLとHTMLの入口・アイコンはViteが `BASE_PATH` に合わせて変換します。画面遷移はクエリーとアプリ内状態を使用するため、SPA用の404リダイレクトは不要です。
+
+ローカルで公開用のビルドを確認する場合（PowerShell）:
+
+```powershell
+$env:BASE_PATH = '/KISEN/'
+pnpm build
+pnpm preview --base /KISEN/
+```
+
+プレビューの入口は http://127.0.0.1:4205/KISEN/ です。既定の相対パスビルドへ戻す場合は `Remove-Item Env:BASE_PATH` を実行します。
+
+公式資料: [ViteのGitHub Pages公開](https://vite.dev/guide/static-deploy.html#github-pages)、[GitHub Pagesのカスタムワークフロー](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)。

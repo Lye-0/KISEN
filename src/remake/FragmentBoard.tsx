@@ -14,7 +14,7 @@ export function FragmentArt({ id, back = false }: {
     return <g transform={back ? 'translate(480 0) scale(-1 1)' : undefined}>
     <defs><clipPath id={key + 'edge'}><polygon points={fragmentOutlines[part]}/></clipPath><mask id={key + 'holes'} maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="235"><rect width="480" height="235" fill="white"/>{expectedHoles(fragmentRoutes[sheet]).filter(h => h.column >= 2).map(h => <g key={h.column} transform={`translate(${80 + (h.column - 2) * 160} ${h.side === 'white' ? 35 : 200})`}><CutShape cut={h} fill="black"/></g>)}</mask></defs>
     <g clipPath={'url(#' + key + 'edge)'} mask={'url(#' + key + 'holes)'}>
-      <image href="/assets/remake/parts/photo-back.webp" width="480" height="235" preserveAspectRatio="none"/>
+      <image href="./assets/remake/parts/photo-back.webp" width="480" height="235" preserveAspectRatio="none"/>
       <g stroke="#696753" fill="#565340" opacity={back ? .2 : .85} fontFamily="serif"><path d="M0 83H480M0 152H480M160 9V226M320 9V226" fill="none" strokeWidth=".8"/>{['Ⅲ', 'Ⅳ', 'Ⅴ'].map((s, i) => <text key={s} x={80 + i * 160} y="126" fontSize="24" textAnchor="middle" stroke="none">{s}</text>)}<text x="12" y="177" fontSize="12" stroke="none">再発行　0041</text></g>
       <g fill="none" stroke="#635540" opacity=".72" strokeWidth="1.5"><path d="M132 0C128 17 146 30 133 48L139 72M294 0C291 21 304 40 292 64"/>
         <path d={sheet === 0 ? 'M113 157C116 170 129 185 119 204S108 224 115 238M287 166C285 184 301 199 291 218L296 236' : 'M181 157C186 173 170 189 182 207S191 224 187 238M336 166C345 187 329 204 341 234'}/>
@@ -25,7 +25,7 @@ export function FragmentArt({ id, back = false }: {
 export function FragmentPile() { return <svg viewBox="0 0 300 160" role="img" aria-label="六枚の券の紙片"><g transform="translate(18 16) scale(.48)">{[2, 0, 4, 5, 1, 3].map((id, i) => <g key={id} transform={`translate(${i * 14} ${i * 18 - partCenters[fragmentParts[id]]}) rotate(${i % 2 ? 5 : -4} 240 117)`}><FragmentArt id={id}/></g>)}</g></svg>; }
 export function FragmentLayout({ values }: {
     values: number[];
-}) { return <svg viewBox="0 0 1100 734" className="rm-fragment-note" role="img" aria-label="記録した紙片の配置"><image href="/assets/remake/lost/table.webp" width="1100" height="734"/>{fragmentParts.map((p, id) => <g key={id} transform={`translate(${values[id * 4]} ${values[id * 4 + 1]}) rotate(${values[id * 4 + 2] * 180}) translate(-240 ${-partCenters[p]})`}><FragmentArt id={id} back={values[id * 4 + 3] === 1}/></g>)}</svg>; }
+}) { return <svg viewBox="0 0 1100 734" className="rm-fragment-note" role="img" aria-label="記録した紙片の配置"><image href="./assets/remake/lost/table.webp" width="1100" height="734"/>{fragmentParts.map((p, id) => <g key={id} transform={`translate(${values[id * 4]} ${values[id * 4 + 1]}) rotate(${values[id * 4 + 2] * 180}) translate(-240 ${-partCenters[p]})`}><FragmentArt id={id} back={values[id * 4 + 3] === 1}/></g>)}</svg>; }
 export function FragmentBoard({ s, dispatch, say, photos }: {
     s: State;
     dispatch: (a: Action) => void;
@@ -83,7 +83,7 @@ export function FragmentBoard({ s, dispatch, say, photos }: {
             drag.current = null;
             setPreview(null);
         }} onPointerCancel={() => { drag.current = null; setPreview(null); }}>
-      <image href="/assets/remake/lost/table.webp" width="1100" height="734" onPointerDown={e => {
+      <image href="./assets/remake/lost/table.webp" width="1100" height="734" onPointerDown={e => {
             if (selected !== null) {
                 const p = point(e), pose = poses.slice(selected * 4, selected * 4 + 4);
                 update(selected, [p.x, p.y, pose[2], pose[3]]);
@@ -102,5 +102,5 @@ export function FragmentPhoto({ dispatch, say }: {
     dispatch?: (a: Action) => void;
     say?: (m: string) => void;
 }) {
-    return <section className="rm-fragment-photo"><figure className="rm-print"><Photo src="/assets/remake/journeys/f-white.webp" label="紙片と同じ束に残ったトンネルと標柱の車窓写真" zoomOrigin="56% 53%" zoomable limitZoomToSource zoomButtonOnly/></figure>{dispatch && <div className="rm-document-controls"><button onClick={() => { dispatch({ type: 'record', id: 'fragmentPhoto', values: [] }); say?.('車窓の写真を記録した。'); }}>記録に残す</button></div>}</section>;
+    return <section className="rm-fragment-photo"><figure className="rm-print"><Photo src="./assets/remake/journeys/f-white.webp" label="紙片と同じ束に残ったトンネルと標柱の車窓写真" zoomOrigin="56% 53%" zoomable limitZoomToSource zoomButtonOnly/></figure>{dispatch && <div className="rm-document-controls"><button onClick={() => { dispatch({ type: 'record', id: 'fragmentPhoto', values: [] }); say?.('車窓の写真を記録した。'); }}>記録に残す</button></div>}</section>;
 }

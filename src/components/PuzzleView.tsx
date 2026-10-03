@@ -69,11 +69,11 @@ export function PuzzleView({p,s,dispatch,message,onClose,onNotes,onInspect,notic
  const swap=(index:number)=>{if(selected===null){setSelected(index);return}const a=[...v];[a[index],a[selected]]=[a[selected],a[index]];set(a);setSelected(null)};
  const mechanic={id:p.id,v,set,message};
  const render=()=>{
-  if(p.id==='P01'&&solved)return <SlidingCatch {...mechanic} imageSrc={`/assets/closeups/metal/box-${s.taken.includes(p.id)?'empty':'open'}.webp`} interactive={false}>{!s.taken.includes(p.id)&&<button className="key-in-box" aria-label="箱の中の小鍵を取る" onClick={()=>{dispatch({type:'take',id:p.id});message('小鍵を取った。')}}><span>小鍵を取る</span></button>}</SlidingCatch>;
+  if(p.id==='P01'&&solved)return <SlidingCatch {...mechanic} imageSrc={`./assets/closeups/metal/box-${s.taken.includes(p.id)?'empty':'open'}.webp`} interactive={false}>{!s.taken.includes(p.id)&&<button className="key-in-box" aria-label="箱の中の小鍵を取る" onClick={()=>{dispatch({type:'take',id:p.id});message('小鍵を取った。')}}><span>小鍵を取る</span></button>}</SlidingCatch>;
   if(p.id==='P02')return <BagCase s={s} dispatch={dispatch} message={message}/>;
   if(p.id==='P08')return <RouteCase s={s} dispatch={dispatch} message={message}/>;
   if(solved&&reward)return <RewardView id={p.id} s={s} dispatch={dispatch} message={message}/>;
-  if(p.id==='P15')return blocked.length?<ScenePreview s={s}/>:<SlidingCatch {...mechanic} imageSrc="/assets/closeups/gate/latch.webp"/>;
+  if(p.id==='P15')return blocked.length?<ScenePreview s={s}/>:<SlidingCatch {...mechanic} imageSrc="./assets/closeups/gate/latch.webp"/>;
   if(p.id==='P16')return <HiddenPlatform v={v} set={set} hasWall={s.notes.includes('wallPhoto')} wound={open(s,'P07')}/>;
   if(p.id==='P03')return <WindowPhotos order={v} setOrder={set}/>;
   if(p.id==='P06')return <ThinPlan {...mechanic} s={s} dispatch={dispatch}/>;
@@ -100,7 +100,7 @@ export function PuzzleView({p,s,dispatch,message,onClose,onNotes,onInspect,notic
   if(p.kind==='rings')return <div className="ticket-reader"><RotatingSlots {...mechanic} disabled={!!s.mountedTicket}/>{s.mountedTicket&&<div className="mounted-ticket"><p>通している券</p><PaperTicket ticket={s.mountedTicket} compact/><button onClick={()=>{dispatch({type:'remove',item:'ticket'});message('切符を抜いた。')}}>券を抜く</button></div>}</div>;
   if(p.kind==='timeline')return <div><div className="work-controls"><button disabled={!s.installed.includes('knob')&&!s.inventory.includes('knob')} onClick={()=>dispatch({type:s.installed.includes('knob')?'remove':'install',item:'knob'})}>{s.installed.includes('knob')?'つまみを外す':'つまみを付ける'}</button></div><Timeline offset={v[0]} setOffset={n=>set([n,...v.slice(1)])}/><EventLock values={v.slice(1)} set={n=>set([v[0],...n])}/></div>;
   if(p.kind==='order')return <div className={`order-workspace ${p.id==='P03'?'photographs':''}`}><p className="engraved-note">一枚を選び、入れ替える相手に触れる</p><div className="order-pieces">{v.map((n,i)=><button draggable onDragStart={()=>setSelected(i)} onDragOver={e=>e.preventDefault()} onDrop={e=>{e.preventDefault();swap(i)}} key={i} className={selected===i?'selected':''} onClick={()=>swap(i)} aria-label={`${i+1}枚目、${p.labels?.[n]??['給水槽と尾灯','遮断機が下','遮断機が上','塔と遠い貨車','塔と貨車の先頭'][n]}`}>
-    {p.id==='P03'?<><div className={`window-study frame-${n}`}><img src={`/assets/documents/window/frame-${n}.webp`} alt={['給水槽の水面に赤い尾灯','下り切った遮断機','上がった遮断機','梯子が右の塔と遠ざかる貨車','梯子が左の塔と貨車先頭'][n]}/></div><small>{['水面に赤い光','閉じた踏切','開いた踏切','遠ざかる貨車','貨車の先頭'][n]}</small></>:p.id==='P10'?<UmbrellaReceipt index={n}/>:<span>{p.labels?.[n]??n+1}</span>}
+    {p.id==='P03'?<><div className={`window-study frame-${n}`}><img src={`./assets/documents/window/frame-${n}.webp`} alt={['給水槽の水面に赤い尾灯','下り切った遮断機','上がった遮断機','梯子が右の塔と遠ざかる貨車','梯子が左の塔と貨車先頭'][n]}/></div><small>{['水面に赤い光','閉じた踏切','開いた踏切','遠ざかる貨車','貨車の先頭'][n]}</small></>:p.id==='P10'?<UmbrellaReceipt index={n}/>:<span>{p.labels?.[n]??n+1}</span>}
    </button>)}</div></div>;
   if(p.kind==='tickets'||p.kind==='ticketTrial')return <TicketStudy trial={p.kind==='ticketTrial'} v={v} set={set} message={message}/>;
   if(p.kind==='notices')return <NoticeAssembly v={v} set={set}/>;

@@ -32,7 +32,7 @@ export function TicketPaper({ ticket, onCut, view, returnMark, highlightColumn, 
     return <svg viewBox={view ? view.join(' ') : '-4 -4 808 243'} className="rm-ticket-paper" aria-label="切った孔が残る乗車券">
  <defs><PaperEdgeFilter id={id + "edge"}/><mask id={id} maskUnits="userSpaceOnUse" x="-4" y="-4" width="808" height="243"><path d={paperOutline} fill="white"/>{ticket.holes.map((h, i) => <g key={i} transform={`translate(${80 + h.column * 160} ${h.side === 'white' ? 35 : 200})`}><CutShape cut={h} fill="black"/></g>)}</mask></defs>
  <g filter={`url(#${id}edge)`}><g transform={ticket.back ? 'translate(800 0) scale(-1 1)' : undefined}>
- <g mask={`url(#${id})`}><image href="/assets/remake/parts/photo-back.webp" width="800" height="235" preserveAspectRatio="none"/>
+ <g mask={`url(#${id})`}><image href="./assets/remake/parts/photo-back.webp" width="800" height="235" preserveAspectRatio="none"/>
  <TicketDecoration id={id}/>
  <path d="M12 87H788V148H12Z" fill="#ae8152" opacity=".12"/>
 
@@ -54,7 +54,7 @@ function TicketChads({ tickets }: {
 }) {
     const id = useId().replaceAll(':', '');
     const cuts = tickets.flatMap(t => t.holes.map((h, i) => ({ hole: h, previous: t.holes.slice(0, i).filter(p => p.column === h.column && p.side === h.side) }))).slice(-8);
-    return <g>{cuts.map(({ hole, previous }, i) => <g key={i} transform={`translate(${550 + i * 49} ${845 + i % 2 * 23}) rotate(${i * 37})`} style={{ filter: 'drop-shadow(1px 2px 1px #0008)' }}><defs><mask id={id + i} x="-24" y="-24" width="48" height="48" maskUnits="userSpaceOnUse"><CutShape cut={hole} fill="white"/>{previous.map((p, j) => <CutShape key={j} cut={p} fill="black"/>)}</mask></defs><g mask={`url(#${id + i})`}><image href="/assets/remake/parts/photo-back.webp" x="-24" y="-24" width="48" height="48" preserveAspectRatio="none"/></g></g>)}</g>;
+    return <g>{cuts.map(({ hole, previous }, i) => <g key={i} transform={`translate(${550 + i * 49} ${845 + i % 2 * 23}) rotate(${i * 37})`} style={{ filter: 'drop-shadow(1px 2px 1px #0008)' }}><defs><mask id={id + i} x="-24" y="-24" width="48" height="48" maskUnits="userSpaceOnUse"><CutShape cut={hole} fill="white"/>{previous.map((p, j) => <CutShape key={j} cut={p} fill="black"/>)}</mask></defs><g mask={`url(#${id + i})`}><image href="./assets/remake/parts/photo-back.webp" x="-24" y="-24" width="48" height="48" preserveAspectRatio="none"/></g></g>)}</g>;
 }
 export function TicketBench({ s, dispatch, records, tools }: {
     s: State;
@@ -81,9 +81,9 @@ export function TicketBench({ s, dispatch, records, tools }: {
     }
     return <section className="rm-ticket-bench" data-selected-tool={selected ?? ''}>
     <DeskTabs active="ticket" disabled={busy} change={next => { if (next === 'tools') tools(); }}/>
-    <Photo view={crop} src="/assets/remake/ticket/bench.webp" label="刃と切符を置いた駅務室の机">
-    {selected !== null && hasDie && <Patch src="/assets/remake/ticket/empty-rack.webp" rect={[28.3 + die * 5.88, 4, 6.1, 12]}/>}
-    <Patch src="/assets/remake/ticket/empty-stamp.webp" rect={[71.2, 0, 10.3, 30]}/>
+    <Photo view={crop} src="./assets/remake/ticket/bench.webp" label="刃と切符を置いた駅務室の机">
+    {selected !== null && hasDie && <Patch src="./assets/remake/ticket/empty-rack.webp" rect={[28.3 + die * 5.88, 4, 6.1, 12]}/>}
+    <Patch src="./assets/remake/ticket/empty-stamp.webp" rect={[71.2, 0, 10.3, 30]}/>
     <svg className="rm-ticket-work" viewBox="0 0 1672 941"><ToolTools s={s} lifted={point && selected !== null ? selected : undefined} largeLabels={compact && detail === 'tools'}/>
         {hasPaper && s.draft && <foreignObject x="426" y={paperY - 4} width="808" height="243"><TicketPaper ticket={s.draft} busy={busy} onCut={selected !== null && hasDie && (!compact || detail === 'paper') ? cut : undefined}/></foreignObject>}
         <TicketChads tickets={[...s.savedTickets, ...(s.mounted ? [s.mounted] : []), ...(s.draft ? [s.draft] : [])]}/>

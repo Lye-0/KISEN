@@ -4,7 +4,7 @@ const numbers=['06','31','47','82'];
 const holes=[[45,160],[75,130],[45,160],[90,180]];
 function NoticePaper({number}:{number:number}){
  const n=number>=0&&number<4?number:0,id='notice-'+useId().replaceAll(':','');
- return <g><defs><mask id={id} maskUnits="userSpaceOnUse" x="0" y="0" width="180" height="220"><path d="M10 8L166 4L174 209L3 214Z" fill="white"/>{holes[n].map((y,i)=><circle key={i} cx={n===2?157:18} cy={y} r="5" fill="black"/>)}</mask></defs><g mask={`url(#${id})`}><rect width="180" height="220" fill="#c7bc93"/><image href="/assets/parts/document/paper.png" x="-20" y="-25" width="220" height="270" preserveAspectRatio="none"/><text x="90" y="140" fill="#655440" fontSize="59" textAnchor="middle">{numbers[n]}</text></g></g>;
+ return <g><defs><mask id={id} maskUnits="userSpaceOnUse" x="0" y="0" width="180" height="220"><path d="M10 8L166 4L174 209L3 214Z" fill="white"/>{holes[n].map((y,i)=><circle key={i} cx={n===2?157:18} cy={y} r="5" fill="black"/>)}</mask></defs><g mask={`url(#${id})`}><rect width="180" height="220" fill="#c7bc93"/><image href="./assets/parts/document/paper.png" x="-20" y="-25" width="220" height="270" preserveAspectRatio="none"/><text x="90" y="140" fill="#655440" fontSize="59" textAnchor="middle">{numbers[n]}</text></g></g>;
 }
 export function NoticeAssembly({v,set}:{v:number[];set?:(n:number[])=>void}){
  const left=v[0]??0,right=v[1]??1;
@@ -12,5 +12,5 @@ export function NoticeAssembly({v,set}:{v:number[];set?:(n:number[])=>void}){
 }
 export function UmbrellaReceipt({index}:{index:number}){
  const names=['赤','黒','青','透明'],times=['23:17','23:19','23:10','23:13'],places=['ホーム','ホーム','駅務室','駅務室'];
- return <div className="umbrella-receipt"><svg viewBox={`${[160,265,365,459][index]} 400 112 430`} aria-hidden="true"><image href="/assets/scenes/lost/main.webp" width="1672" height="941"/></svg><span>{names[index]}</span><time>{times[index]}</time><small>{places[index]}の時計</small></div>;
+ return <div className="umbrella-receipt"><svg viewBox={`${[160,265,365,459][index]} 400 112 430`} aria-hidden="true"><image href="./assets/scenes/lost/main.webp" width="1672" height="941"/></svg><span>{names[index]}</span><time>{times[index]}</time><small>{places[index]}の時計</small></div>;
 }

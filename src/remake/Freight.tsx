@@ -4,7 +4,7 @@ import { Photo, Touch } from './Photo';
 import { CargoDocketSheet } from './CargoChest';
 import { owns } from './model';
 import type { Action, State } from './model';
-export const freightPhotos = { wide: '/assets/remake/bridge/freight.webp', detail: '/assets/remake/bridge/freight-detail.webp' };
+export const freightPhotos = { wide: './assets/remake/bridge/freight.webp', detail: './assets/remake/bridge/freight-detail.webp' };
 export function FreightWide({ inspect }: {
     inspect: () => void;
 }) { return <Photo src={freightPhotos.wide} label="跨線橋から西に見える給水槽、鉄塔、線路上の貨車"><Touch name="西の線路に留置された貨車を見る" rect={[44, 43, 12, 22]} act={inspect}/></Photo>; }

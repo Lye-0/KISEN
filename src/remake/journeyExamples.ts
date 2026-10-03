@@ -17,7 +17,7 @@ export function examplePhoto(node: Node, side: Side, frame: 0 | 1, incoming?: st
     const e = encounterFor(node, side, incoming);
     if (!e)
         throw new Error('The excerpt has no observation for this passage');
-    return '/assets/remake/journeys/' + e.id + '-' + frame + '.webp';
+    return './assets/remake/journeys/' + e.id + '-' + frame + '.webp';
 }
 export function journeyExtractViews(back: boolean): {
     edge: [

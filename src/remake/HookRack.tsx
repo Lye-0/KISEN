@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Photo, Touch, decode } from './Photo';
 import { owns } from './model';
 import type { Action, State } from './model';
-const root = '/assets/remake/office/';
+const root = './assets/remake/office/';
 export function HookRack({ s, dispatch, say }: {
     s: State;
     dispatch: (a: Action) => void;

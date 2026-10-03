@@ -10,7 +10,7 @@ export function SlidingCatch({id,v,set,message,imageSrc,interactive=true,childre
   if(axis===0&&y===1){message('切れ目を通っている爪に、端が当たる。');return}
   n[axis]=next;set(n);
  };
- return <div className="catch-assembly"><PhotoStage className={id==='P15'?'catch-workspace gate-catch':'catch-workspace'} src={imageSrc??'/assets/closeups/metal/box.webp'} alt="荷物棚の金属箱"><svg viewBox="0 0 720 380" preserveAspectRatio={id==='P15'?'none':undefined} aria-label="重なった二つの爪。切れ目で縦の爪を通せる。">
+ return <div className="catch-assembly"><PhotoStage className={id==='P15'?'catch-workspace gate-catch':'catch-workspace'} src={imageSrc??'./assets/closeups/metal/box.webp'} alt="荷物棚の金属箱"><svg viewBox="0 0 720 380" preserveAspectRatio={id==='P15'?'none':undefined} aria-label="重なった二つの爪。切れ目で縦の爪を通せる。">
   <defs><linearGradient id="brass" x2="0" y2="1"><stop stopColor="#b6a270"/><stop offset=".25" stopColor="#82774f"/><stop offset=".5" stopColor="#d1bb7b"/><stop offset="1" stopColor="#655c40"/></linearGradient><filter id="cast-shadow"><feDropShadow dx="3" dy="5" stdDeviation="3" floodOpacity=".75"/></filter></defs>
   <path d="M90 190H630M360 50V335" stroke="#1b2424" strokeWidth="31"/><path d="M90 176H630M345 50V335" stroke="#7e8276" strokeWidth="2"/>
   <g transform={`translate(${(x-1)*105} 0)`} filter="url(#cast-shadow)"><path d="M170 165H345V180H375V165H500V214H375V199H345V214H170Z" fill="url(#brass)" stroke="#c1b085"/><path d="M205 175V204M210 175V204M215 175V204" stroke="#544e36" strokeWidth="3"/></g>

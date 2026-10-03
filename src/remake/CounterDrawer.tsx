@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { Photo, Touch } from './Photo';
 import { useCompact } from './useCompact';
 import type { State, Action } from './model';
-export function drawerPhoto(s: State) { return '/assets/remake/counter/' + (s.values.drawerOpen?.[0] === 1 ? 'open' : 'closed') + '.webp'; }
+export function drawerPhoto(s: State) { return './assets/remake/counter/' + (s.values.drawerOpen?.[0] === 1 ? 'open' : 'closed') + '.webp'; }
 export function DrawerLayers({ s }: {
     s: State;
-}) { const open = s.values.drawerOpen?.[0] === 1, values = s.values.drawerDigits ?? [0, 0, 0, 0], centres = open ? [724, 777, 830, 883] : [734, 782, 830, 878]; return <><g fill="#3d3527" textAnchor="middle" fontFamily="serif" fontSize={open ? 46 : 43}>{values.map((n, i) => <text key={i} x={centres[i]} y={open ? 704 : 476}>{n}</text>)}</g>{open && s.locations.knob === 'cashDrawer' && <image href="/assets/remake/parts/reel-cap.png" x="960" y="437" width="53" height="27" preserveAspectRatio="none" style={{ filter: 'drop-shadow(2px 3px 2px #0009)' }}/>}</>; }
+}) { const open = s.values.drawerOpen?.[0] === 1, values = s.values.drawerDigits ?? [0, 0, 0, 0], centres = open ? [724, 777, 830, 883] : [734, 782, 830, 878]; return <><g fill="#3d3527" textAnchor="middle" fontFamily="serif" fontSize={open ? 46 : 43}>{values.map((n, i) => <text key={i} x={centres[i]} y={open ? 704 : 476}>{n}</text>)}</g>{open && s.locations.knob === 'cashDrawer' && <image href="./assets/remake/parts/reel-cap.png" x="960" y="437" width="53" height="27" preserveAspectRatio="none" style={{ filter: 'drop-shadow(2px 3px 2px #0009)' }}/>}</>; }
 export function DrawerImage({ s }: {
     s: State;
 }) { return <><image href={drawerPhoto(s)} width="1672" height="941"/><DrawerLayers s={s}/></>; }

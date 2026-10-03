@@ -1,19 +1,19 @@
 import type { GameState } from '../game/model';
 import { open,gateTicketValid } from '../game/model';
 export function sceneBase(s:GameState){
- if(s.room==='closed'&&s.trainAt===2)return `/assets/scenes/closed/${gateTicketValid(s)?'boardable':'arrived'}.webp`;
- if(s.room==='forecourt'&&s.view===1)return '/assets/scenes/forecourt/loop.webp';
- if(s.room==='train')return `/assets/scenes/train/${s.trainAt>0?'stabled':'arrival'}.webp`;
- return `/assets/scenes/${s.room}/main.webp`;
+ if(s.room==='closed'&&s.trainAt===2)return `./assets/scenes/closed/${gateTicketValid(s)?'boardable':'arrived'}.webp`;
+ if(s.room==='forecourt'&&s.view===1)return './assets/scenes/forecourt/loop.webp';
+ if(s.room==='train')return `./assets/scenes/train/${s.trainAt>0?'stabled':'arrival'}.webp`;
+ return `./assets/scenes/${s.room}/main.webp`;
 }
 export function sceneLayers(s:GameState){
  const layers:{src:string;alt:string;className:string;clip?:string}[]=[];
- const patch=(condition:boolean,path:string,name:string,rect:number[])=>{if(condition){const [x,y,w,h]=rect;layers.push({src:`/assets/scenes/${path}.webp`,alt:name,className:name,clip:`inset(${y}% ${100-x-w}% ${100-y-h}% ${x}%)`})}};
+ const patch=(condition:boolean,path:string,name:string,rect:number[])=>{if(condition){const [x,y,w,h]=rect;layers.push({src:`./assets/scenes/${path}.webp`,alt:name,className:name,clip:`inset(${y}% ${100-x-w}% ${100-y-h}% ${x}%)`})}};
  if(s.room==='train'||s.room==='return'){
-  if(open(s,'P01'))layers.push({src:'/assets/scenes/train/box-open.webp',alt:'荷物棚の箱は開いている',className:'box-lid-open'});
-  if(open(s,'P02'))layers.push({src:'/assets/scenes/train/explored.webp',alt:'ふたの開いた鞄',className:'bag-open'});
-  if(s.room==='train'&&s.notes.includes('ownTicket'))layers.push({src:'/assets/scenes/train/explored.webp',alt:'切符を拾った床',className:'floor-clear'});
-  if(s.room==='return'&&!s.notes.includes('ownTicket'))layers.push({src:'/assets/scenes/train/arrival.webp',alt:'まだ床に残っている切符',className:'floor-clear'});
+  if(open(s,'P01'))layers.push({src:'./assets/scenes/train/box-open.webp',alt:'荷物棚の箱は開いている',className:'box-lid-open'});
+  if(open(s,'P02'))layers.push({src:'./assets/scenes/train/explored.webp',alt:'ふたの開いた鞄',className:'bag-open'});
+  if(s.room==='train'&&s.notes.includes('ownTicket'))layers.push({src:'./assets/scenes/train/explored.webp',alt:'切符を拾った床',className:'floor-clear'});
+  if(s.room==='return'&&!s.notes.includes('ownTicket'))layers.push({src:'./assets/scenes/train/arrival.webp',alt:'まだ床に残っている切符',className:'floor-clear'});
  }
  if(s.room==='train'||s.room==='return')patch(open(s,'P08'),'train/case-open','case-open',[86,12,14,26]);
  if(s.room==='platform'){

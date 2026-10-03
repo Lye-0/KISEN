@@ -10,7 +10,7 @@ export function PaperTicket({ticket,onPunch,compact=false}:{ticket:Ticket;onPunc
  return <svg className="paper-ticket" viewBox="0 0 600 270" role={onPunch?'group':'img'} aria-label={`切符 ${ticket.id}、${ticket.holes.length}個の孔、${ticket.service||'未選択'}便`}>
    <defs><filter id={`${id}-shadow`}><feDropShadow dx="2" dy="5" stdDeviation="4" floodOpacity=".4"/></filter><mask id={id}><path fill="white" d={ticketOutline}/>{ticket.holes.map((h,i)=><Hole key={i} shape={h.shape} x={115+h.column*88} y={h.row===0?72:202} fill="black"/>)}</mask></defs>
    <g transform={ticket.back?'translate(600 0) scale(-1 1)':undefined}>
-     <g filter={`url(#${id}-shadow)`}><g mask={`url(#${id})`}><image href="/assets/parts/ticket/paper.png" x="-25" y="-42" width="650" height="350" preserveAspectRatio="none"/><g opacity={ticket.back?.23:1}><path d="M45 95H558M45 177H558" stroke="#6a5643" strokeWidth="1"/>
+     <g filter={`url(#${id}-shadow)`}><g mask={`url(#${id})`}><image href="./assets/parts/ticket/paper.png" x="-25" y="-42" width="650" height="350" preserveAspectRatio="none"/><g opacity={ticket.back?.23:1}><path d="M45 95H558M45 177H558" stroke="#6a5643" strokeWidth="1"/>
        {Array.from({length:5},(_,c)=><g key={c}><path d={`M${115+c*88} 39V229`} stroke="#958565" strokeWidth=".7" strokeDasharray="2 6"/><text x={115+c*88} y="45" fontSize="12" fill="#716650" textAnchor="middle">{c+1}</text></g>)}
        <text x="295" y="133" textAnchor="middle" fontSize="23" fill="#524630" letterSpacing="8">通 行 券</text><text x="295" y="157" textAnchor="middle" fontSize="13" fill="#756750">帰線　　{ticket.service?`第 ${ticket.service} 便`:'＿＿便'}　　片道</text>
        <path d="M44 23H566V247H44" fill="none" stroke="#8f7b56" strokeWidth="1"/>

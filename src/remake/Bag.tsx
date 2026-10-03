@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import type { State, Action } from './model';
 import { Photo, Patch, Touch, decode } from './Photo';
-const root = '/assets/remake/bag/';
+const root = './assets/remake/bag/';
 export function bagPhoto(s: State) { return root + (s.bag.mouth ? 'open' : s.bag.clasp ? s.bag.strap > .8 ? 'unlatched' : 'clasp-only' : s.bag.strap > .8 ? 'strap-aside' : 'closed') + '.webp'; }
 export function Bag({ s, dispatch, say }: {
     s: State;

@@ -243,7 +243,7 @@ export default function RemakeApp() {
     const showSelected = selected && owns(s, selected) && focus !== (documentFocus[selected] ?? 'item');
     const world = <World s={s} dispatch={dispatch} inspect={inspect} say={say} selected={selected}/>;
     if (!s.started && fixture === null)
-        return <main id="rm-game" className="rm-title"><img src="/assets/remake/platform/train-open.webp" alt="誰もいないきさらぎ駅。列車の扉が開いている"/><div className="rm-title-copy"><p>きさらぎ駅</p><h1>帰線</h1><p className="rm-title-reading">K I S E N</p><p>帰るための線を、見つける。</p><button onClick={() => dispatch({ type: 'start' })}>{s.room === 'train' && !s.bag.mouth ? '車内へ' : '続きへ'}</button><p className="rm-title-meta">ひとりで遊ぶ脱出ゲーム<br />進行は、このブラウザに自動保存されます。</p></div></main>;
+        return <main id="rm-game" className="rm-title"><img src="./assets/remake/platform/train-open.webp" alt="誰もいないきさらぎ駅。列車の扉が開いている"/><div className="rm-title-copy"><p>きさらぎ駅</p><h1>帰線</h1><p className="rm-title-reading">K I S E N</p><p>帰るための線を、見つける。</p><button onClick={() => dispatch({ type: 'start' })}>{s.room === 'train' && !s.bag.mouth ? '車内へ' : '続きへ'}</button><p className="rm-title-meta">ひとりで遊ぶ脱出ゲーム<br />進行は、このブラウザに自動保存されます。</p></div></main>;
     if (s.ended)
         return <Ending s={s} review={() => dispatch({ type: 'returnReview' })} exportSave={exportSave}/>;
     return <SceneBackContext.Provider value={registerBack}><main id="rm-game" className={[targets ? 'rm-targets' : '', sceneZoom && !focus ? 'rm-scene-zoomed' : ''].join(' ')}><BellAudio s={s}/>

@@ -46,7 +46,7 @@ function GlassReflection({ view }: {
     }
     const path = segments.map(([a, b]) => [project(reflect(a), c), project(reflect(b), c)]).filter(v => v.every(p => p.depth > .1)).map(q => `M${q[0].x},${q[0].y}L${q[1].x},${q[1].y}`).join('');
     const ties = sleepers.map(([a, b]) => [project(reflect(a), c), project(reflect(b), c)]).filter(v => v.every(p => p.depth > .1)).map(q => `M${q[0].x},${q[0].y}L${q[1].x},${q[1].y}`).join('');
-    return <><image href="/assets/remake/parts/glass-tower.png" x={x} y={y} width={w} height={h} preserveAspectRatio="none"/><path d={ties} stroke="#82755a" strokeWidth="3" fill="none" opacity=".3"/><path d={path} stroke="#a3ac9e" strokeWidth="2.4" fill="none" opacity=".55"/></>;
+    return <><image href="./assets/remake/parts/glass-tower.png" x={x} y={y} width={w} height={h} preserveAspectRatio="none"/><path d={ties} stroke="#82755a" strokeWidth="3" fill="none" opacity=".3"/><path d={path} stroke="#a3ac9e" strokeWidth="2.4" fill="none" opacity=".55"/></>;
 }
 export function GlassView({ view, lit, children }: {
     view: number;
@@ -55,7 +55,7 @@ export function GlassView({ view, lit, children }: {
 }) {
     const id = useId().replaceAll(':', ''), c = glassCameras[view], ex = glassExposure(lit);
     const polygon = clipCameraPolygon([[glass.minX, glass.y, glass.sill], [glass.maxX, glass.y, glass.sill], [glass.maxX, glass.y, glass.head], [glass.minX, glass.y, glass.head]], c).map(p => { const q = project(p, c); return q.x + ',' + q.y; }).join(' ');
-    const source = `/assets/remake/tunnel/glass-${view}.webp`, lamp = view === 0 ? [703, 798] : [716, 756];
+    const source = `./assets/remake/tunnel/glass-${view}.webp`, lamp = view === 0 ? [703, 798] : [716, 756];
     return <Photo src={source} label="側道のガラスと、その向こうのトンネル・線路・標柱" zoomable limitZoomToSource zoomButtonOnly zoomOrigin="65% 52%">
   <svg className="rm-object-overlay" viewBox="0 0 1672 941" aria-hidden="true"><defs><clipPath id={id}><polygon points={polygon}/></clipPath></defs>
    <image href={source} width="1672" height="941" style={{ filter: `brightness(${lit ? .85 : .37})` }}/>
@@ -64,11 +64,11 @@ export function GlassView({ view, lit, children }: {
     {glassPosts.map((p, i) => {
             const q = projectedPost(i, view), h = q.base.y - q.top.y, w = h * .4 / 2.1;
             return <g key={p.id} opacity={p.reflected ? ex.reflected : 1} style={{ filter: p.reflected ? undefined : `brightness(${ex.transmitted})` }}>
-     <svg x={q.base.x - w / 2} y={q.top.y} width={w} height={h} viewBox={p.color === 'white' ? '235 18 213 1152' : '873 18 212 1152'} preserveAspectRatio="none"><image href="/assets/remake/parts/field-posts.png" width="1312" height="1199"/></svg>
+     <svg x={q.base.x - w / 2} y={q.top.y} width={w} height={h} viewBox={p.color === 'white' ? '235 18 213 1152' : '873 18 212 1152'} preserveAspectRatio="none"><image href="./assets/remake/parts/field-posts.png" width="1312" height="1199"/></svg>
      {(p.color === 'white' ? [1.4] : [1.05, 1.4]).map(z => <rect key={z} x={q.base.x - w * .46} y={project([q.at[0], q.at[1], z], c).y - h * .055 / 2.1 / 2} width={w * .89} height={h * .055 / 2.1} fill={p.color === 'white' ? '#17211e' : '#c4c1b1'}/>)}</g>;
         })}
    </g>
-   {lit && <image href="/assets/remake/parts/lamp-rear.png" x={lamp[0] - 71} y={lamp[1] - 212} width="142" height="235" style={{ filter: 'brightness(.65)' }}/>}
+   {lit && <image href="./assets/remake/parts/lamp-rear.png" x={lamp[0] - 71} y={lamp[1] - 212} width="142" height="235" style={{ filter: 'brightness(.65)' }}/>}
   </svg>{children}
  </Photo>;
 }

@@ -15,7 +15,7 @@ export const worldItems:Partial<Record<GameState['room'],Prop[]>>={
 export function WorldItems({s}:{s:GameState}){return <><svg className="scene-dynamics" viewBox="0 0 1672 941" aria-hidden="true">{(worldItems[s.room]??[]).filter(p=>p.show(s)&&itemArt[p.item]).map(p=><image key={p.item} href={itemArt[p.item]} x={p.x} y={p.y} width={p.w} height={p.h} style={{filter:'brightness(.7) drop-shadow(2px 3px 2px #0009)'}}/>)}
  {(s.room==='train'||s.room==='return')&&<>
   {s.opened.includes('P08')&&!s.taken.includes('P08')&&<image href={itemArt.officeKey} x="1515" y="212" width="32" height="88"/>}
-  {s.opened.includes('P02')&&!s.taken.includes('P02')&&<image href="/assets/documents/window/frame-2.webp" x="270" y="720" width="77" height="47" transform="rotate(-8 305 742)"/>}
+  {s.opened.includes('P02')&&!s.taken.includes('P02')&&<image href="./assets/documents/window/frame-2.webp" x="270" y="720" width="77" height="47" transform="rotate(-8 305 742)"/>}
  </>}
  {s.room==='closed'&&s.mountedTicket&&<g transform="translate(888 471) rotate(-4) scale(1 .38)"><svg width="84" height="38"><PaperTicket ticket={s.mountedTicket} compact/></svg></g>}
  {s.room==='platform'&&s.trainAt>0&&!s.taken.includes('P31')&&!s.opened.includes('P31')&&<path d="M138 671l39-9 5 21-37 10Z" fill="#b2a481" stroke="#d1bea0"/>}

@@ -4,7 +4,7 @@ import { owns } from './model';
 import { Photo, Patch, Touch, decode } from './Photo';
 import { tapes, duration } from './recordings';
 import type { Tape, EventKind } from './recordings';
-const root = '/assets/remake/recorder/';
+const root = './assets/remake/recorder/';
 const names: Record<EventKind, string> = { gate: '閉鎖', door: '扉', passing: '通過', bell: 'ベル', stop: '停止' };
 export function RecordingStrips({ offset, onOffset }: {
     offset: number;
@@ -20,7 +20,7 @@ export function RecordingStrips({ offset, onOffset }: {
         unit: number;
     } | null>(null);
     const paper = (tape: Tape, y: number, shift: number) => <g transform={`translate(${370 + shift * 28} ${y})`} key={tape}>
-  <image href="/assets/remake/parts/paper-strip.png" x="-40" y="-6" width="720" height="126" preserveAspectRatio="none" style={{ filter: 'sepia(.12) brightness(.88)' }}/>
+  <image href="./assets/remake/parts/paper-strip.png" x="-40" y="-6" width="720" height="126" preserveAspectRatio="none" style={{ filter: 'sepia(.12) brightness(.88)' }}/>
   <text x="-8" y="52" fill="#58462f" fontSize="28" fontFamily="serif">{tape}</text>
   <path d="M40 35H640" stroke="#77674d" strokeWidth="1.5" opacity=".65"/>
   {Array.from({ length: 21 }, (_, i) => <path key={i} d={`M${50 + i * 28} 29v${i % 4 === 0 ? 13 : 8}`} stroke="#796e55" strokeWidth="1" opacity=".65"/>)}
@@ -134,7 +134,7 @@ export function Recorder({ s, dispatch, say, selected, onSelect }: {
     }, [paperOpen]);
     const active = [...tapes[tape]].reverse().find(e => time >= e.at && time < e.at + 1.1);
     return <div className="rm-recorder">
-  <audio ref={player} src={`/assets/remake/audio/tape-${tape}.wav`} preload="metadata" muted={!s.sound} onLoadedMetadata={() => {
+  <audio ref={player} src={`./assets/remake/audio/tape-${tape}.wav`} preload="metadata" muted={!s.sound} onLoadedMetadata={() => {
             if (player.current)
                 player.current.currentTime = s.values['playhead' + tape]?.[0] ?? 0;
         }} onTimeUpdate={() => {

@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { Photo, Touch, decode } from './Photo';
 import { useCompact } from './useCompact';
 import type { State, Action } from './model';
-export function hatchPhoto(s: State) { const state = s.window.open ? 'empty' : s.window.latch ? (s.window.supported ? 'released-raised' : 'released') : (s.window.supported ? 'raised' : 'closed'); return '/assets/remake/hatch/' + state + '.webp'; }
+export function hatchPhoto(s: State) { const state = s.window.open ? 'empty' : s.window.latch ? (s.window.supported ? 'released-raised' : 'released') : (s.window.supported ? 'raised' : 'closed'); return './assets/remake/hatch/' + state + '.webp'; }
 export function HatchLayers({ s }: {
     s: State;
-}) { return s.window.open && s.locations.counterRecords !== 'inventory' ? <image href="/assets/remake/parts/counter-folder.png" x="748" y="666" width="201" height="76" preserveAspectRatio="none"/> : null; }
+}) { return s.window.open && s.locations.counterRecords !== 'inventory' ? <image href="./assets/remake/parts/counter-folder.png" x="748" y="666" width="201" height="76" preserveAspectRatio="none"/> : null; }
 export function HatchImage({ s }: {
     s: State;
 }) { return <><image href={hatchPhoto(s)} width="1672" height="941"/><HatchLayers s={s}/></>; }
@@ -16,7 +16,7 @@ export function Hatch({ s, dispatch, say }: {
 }) {
     const compact = useCompact();
     useEffect(() => { for (const name of ['closed', 'raised', 'released', 'released-raised', 'empty'])
-        void decode('/assets/remake/hatch/' + name + '.webp').catch(() => { }); }, []);
+        void decode('./assets/remake/hatch/' + name + '.webp').catch(() => { }); }, []);
     function lift() { if (s.window.open || s.window.latch)
         dispatch({ type: 'windowOpen' });
     else

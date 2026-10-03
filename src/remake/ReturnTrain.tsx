@@ -4,7 +4,7 @@ import { Photo, Touch } from './Photo';
 import { TicketPaper } from './TicketBench';
 import type { State, Action } from './model';
 import type { Focus } from './World';
-const root = '/assets/remake/return/';
+const root = './assets/remake/return/';
 export function ReturnTrain({ s, dispatch, inspect, say }: {
     s: State;
     dispatch: (a: Action) => void;
@@ -29,7 +29,7 @@ export function HomePhone({ dispatch, say }: {
     const [expanded, setExpanded] = useState(false);
     useSceneBack(expanded, () => setExpanded(false));
     return <section className={'rm-home-phone' + (expanded ? ' rm-phone-expanded' : '')}>
- {expanded ? <Photo src={root + 'home-photo.webp'} label="携帯に残る白沢の写真。白と青の駅名標、黄色い自転車置場、三台の自転車" zoomable zoomButtonOnly limitZoomToSource/> : <div className="rm-phone-device"><img src="/assets/remake/parts/phone.png" alt="黒い携帯電話"/><div className="rm-phone-screen"><p>保存した写真</p><button className="rm-image-open" aria-label="写真を広げる" onClick={() => setExpanded(true)}><img src={root + 'home-photo.webp'} alt="白沢の駅名標と黄色い自転車置場"/></button><p>白沢</p></div></div>}
+ {expanded ? <Photo src={root + 'home-photo.webp'} label="携帯に残る白沢の写真。白と青の駅名標、黄色い自転車置場、三台の自転車" zoomable zoomButtonOnly limitZoomToSource/> : <div className="rm-phone-device"><img src="./assets/remake/parts/phone.png" alt="黒い携帯電話"/><div className="rm-phone-screen"><p>保存した写真</p><button className="rm-image-open" aria-label="写真を広げる" onClick={() => setExpanded(true)}><img src={root + 'home-photo.webp'} alt="白沢の駅名標と黄色い自転車置場"/></button><p>白沢</p></div></div>}
  <div className="rm-document-controls">{dispatch && <button onClick={() => { dispatch({ type: 'record', id: 'homePhoto' }); say?.('写真を記録した。'); }}>記録する</button>}</div>
  </section>;
 }

@@ -34,7 +34,7 @@ export function World({ s, dispatch, inspect, selected, say }: {
     selected: Item | null;
 }) {
     const move = (room: Room, camera = 0) => dispatch({ type: 'move', room, camera });
-    const image = (src: string, label: string, children?: React.ReactNode) => <Photo src={'/assets/remake/' + src + '.webp'} label={label}>{children}</Photo>;
+    const image = (src: string, label: string, children?: React.ReactNode) => <Photo src={'./assets/remake/' + src + '.webp'} label={label}>{children}</Photo>;
     if (s.room === 'return')
         return <ReturnTrain s={s} dispatch={dispatch} inspect={inspect} say={say}/>;
     if (s.room === 'tunnel')

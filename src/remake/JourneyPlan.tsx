@@ -27,7 +27,7 @@ export function JourneyPlan({ node, side, incoming, frame }: { node: Node; side:
     const nodeAt = map({ x: 0, y: 0 });
     return <svg className="rm-journey-plan" viewBox="0 0 700 400" role="img" aria-label={`${places[node]}の撮影位置の見取図。${journeyApproach(node, incoming)}進み、1から2へ移動。上が列車の前方。標柱と線路、二つの撮影位置を描いた図。`}>
         <defs><clipPath id={id}><rect x="180" y="78" width="340" height="254"/></clipPath></defs>
-        <image href="/assets/remake/parts/photo-back.webp" width="700" height="400" preserveAspectRatio="none"/>
+        <image href="./assets/remake/parts/photo-back.webp" width="700" height="400" preserveAspectRatio="none"/>
         <g fontFamily="serif" fill="#514d3d">
             <text x="24" y="38" fontSize="28">撮影手帖　／　{places[node]}</text>
             <text x="24" y="68" fontSize="26">{journeyApproach(node, incoming)}　・　前方窓の連写</text>

@@ -21,11 +21,11 @@ export function PhotoBack({ index, onInspect }: {
     const [zoom, setZoom] = useState(false);
     useSceneBack(zoom, () => setZoom(false), 40);
     return <div className="rm-photo-back"><svg style={zoom ? { transform: 'scale(2)', transformOrigin: '50% 50%' } : undefined} viewBox="0 0 1000 563" role="img" aria-label="写真の裏に貼られた券の部分写し">
- <image href="/assets/remake/parts/photo-back.webp" width="1000" height="563" preserveAspectRatio="none"/>
+ <image href="./assets/remake/parts/photo-back.webp" width="1000" height="563" preserveAspectRatio="none"/>
  <g transform="translate(245 170) rotate(-2 250 100)" fill="#49473d" fontFamily="serif">
  <defs><PaperEdgeFilter id={id + 'edge'}/><mask id={id + 'slip'} maskUnits="userSpaceOnUse" x="-5" y="-5" width="515" height="225"><path d={slip} fill="white"/>{holes.map((hole, i) => <path key={i} transform={`translate(${hole.x} 141) scale(1.5)`} d={hole.path} fill="black"/>)}</mask></defs>
  <g filter={`url(#${id}edge)`}><g mask={`url(#${id}slip)`}>
- <image href="/assets/remake/parts/photo-back.webp" width="502" height="213" preserveAspectRatio="none"/><path d={slip} fill="#c9ac77" opacity=".18"/><TicketDecoration id={id} width={502} height={213}/>
+ <image href="./assets/remake/parts/photo-back.webp" width="502" height="213" preserveAspectRatio="none"/><path d={slip} fill="#c9ac77" opacity=".18"/><TicketDecoration id={id} width={502} height={213}/>
  <text x="250" y="35" textAnchor="middle" fontSize="19" fontWeight="bold" letterSpacing="2">普通乗車券　部分写</text>
  {columns.map((column, i) => <g key={column} transform={`translate(${25 + i * 228} 50)`}>
  <rect width="224" height="142" fill="none" stroke="#686252" strokeWidth="2"/><path d="M0 33H224" stroke="#686252"/>
@@ -36,7 +36,7 @@ export function PhotoBack({ index, onInspect }: {
 export function PhotoRecord({ order }: {
     order: number[];
 }) {
-    return <div className="rm-photo-record">{order.map((index, slot) => <figure key={index}><img src={`/assets/remake/documents/${arrivalPhotos[index].id}.webp`} alt={captions[index]}/><figcaption>{slot + 1}</figcaption></figure>)}</div>;
+    return <div className="rm-photo-record">{order.map((index, slot) => <figure key={index}><img src={`./assets/remake/documents/${arrivalPhotos[index].id}.webp`} alt={captions[index]}/><figcaption>{slot + 1}</figcaption></figure>)}</div>;
 }
 export function Photos({ s, dispatch, say }: {
     s: State;
@@ -104,7 +104,7 @@ export function Photos({ s, dispatch, say }: {
  <div className={showMap ? 'rm-photo-map-layout' : undefined}><div className={showMap ? 'rm-photo-map-photo' : undefined}><div ref={cards} className="rm-print-table">{(compare ? order.map((_, i) => i) : [selected]).map(slot => {
             const index = order[slot], back = backs.includes(index);
             return <figure key={index} data-photo-slot={slot} className={"rm-print" + (dragging === slot ? " rm-card-dragging" : "") + (picked === slot ? " rm-card-picked" : "") + (target === slot && dragging !== slot ? " rm-card-drop-target" : "")}>
- {back ? <PhotoBack index={index} onInspect={compare ? () => { setSelected(slot); setCompare(false); } : undefined}/> : <Photo src={`/assets/remake/documents/${arrivalPhotos[index].id}.webp`} label={captions[index]} zoomable onInspect={compare ? () => { setSelected(slot); setCompare(false); } : undefined}/>}
+ {back ? <PhotoBack index={index} onInspect={compare ? () => { setSelected(slot); setCompare(false); } : undefined}/> : <Photo src={`./assets/remake/documents/${arrivalPhotos[index].id}.webp`} label={captions[index]} zoomable onInspect={compare ? () => { setSelected(slot); setCompare(false); } : undefined}/>}
  <figcaption><span className="rm-photo-position">{slot + 1}</span><button onClick={() => setBacks(back ? backs.filter(n => n !== index) : [...backs, index])}>{back ? '表を見る' : '裏を見る'}</button>
  {compare && <button className="rm-card-grip" aria-label={`${slot + 1}枚目を移動`} aria-pressed={picked === slot} aria-describedby="rm-photo-move-help" onPointerDown={e => {
                     if (!e.isPrimary || e.button !== 0) return;

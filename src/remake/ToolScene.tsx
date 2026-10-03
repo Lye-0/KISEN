@@ -14,9 +14,9 @@ export function ToolScene({ s }: {
       <clipPath id={id + 'paper'}><path d="M842 660H1080L1089 679H837Z"/></clipPath>
       {die !== undefined && <clipPath id={id + 'die'}><rect x={centres[die] - 9} y="595" width="18" height="22"/></clipPath>}
     </defs>
-      <image href="/assets/remake/office/desk-clear.webp" width="1672" height="941" clipPath={`url(#${id}paper)`}/>
-      {die !== undefined && <><image href="/assets/remake/office/desk-clear.webp" width="1672" height="941" clipPath={`url(#${id}die)`}/>
-        <svg x={centres[die] - 8} y="601" width="16" height="18" viewBox="854 600 29 23" preserveAspectRatio="none"><image href="/assets/remake/office/socket-source.webp" width="1672" height="941"/></svg></>}
+      <image href="./assets/remake/office/desk-clear.webp" width="1672" height="941" clipPath={`url(#${id}paper)`}/>
+      {die !== undefined && <><image href="./assets/remake/office/desk-clear.webp" width="1672" height="941" clipPath={`url(#${id}die)`}/>
+        <svg x={centres[die] - 8} y="601" width="16" height="18" viewBox="854 600 29 23" preserveAspectRatio="none"><image href="./assets/remake/office/socket-source.webp" width="1672" height="941"/></svg></>}
       <text x="1028" y="633" fontSize="4" fill="#42382b" textAnchor="middle">{s.values.stampSetting?.[0] ?? 1}</text>
     </svg>
     <Surface><div className="rm-world-trial-paper" style={{ width: 1080, height: 300, transform: `matrix3d(${matrix.join(',')})` }}><TrialSheet cuts={s.values.toolCuts ?? []}/></div></Surface>

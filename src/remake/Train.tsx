@@ -1,7 +1,7 @@
 import { useEffect, useId } from 'react';
 import type { Action, State } from './model';
 import { Photo, Patch, Touch, decode } from './Photo';
-const root = '/assets/remake/train/';
+const root = './assets/remake/train/';
 export function trainBagPhoto(s: State) { return root + (s.bag.mouth ? 'north-bag-open' : s.bag.clasp ? s.bag.strap > .8 ? 'north-unlatched' : 'north-clasp-only' : s.bag.strap > .8 ? 'north-strap-aside' : 'north') + '.webp'; }
 function BagMasks({ s }: {
     s: State;
@@ -18,7 +18,7 @@ function NearSeatLayers({ s }: {
     return <><defs><clipPath id={id + 'seat'}><path d="M242 348L885 345Q913 350 915 387L949 654L916 731L267 731L242 633L278 530L242 402Z"/></clipPath><clipPath id={id + 'bag'}><path d={bag} clipRule="evenodd"/>{s.bag.strap > .8 && <path d="M707 552Q766 586 775 638L791 718Q775 741 750 720L740 637Q733 601 706 589Z"/>}</clipPath><clipPath id={id + 'receipt'}><path d="M640 507L672 521L663 550L633 541Z"/></clipPath><clipPath id={id + 'pocket'}><path d="M729 487Q780 511 850 489L858 565Q797 570 738 548Z"/></clipPath></defs>
  <image href={source} width="1672" height="941" clipPath={`url(#${id + 'seat'})`}/>
  <g clipPath={`url(#${id + 'bag'})`}><BagImage s={s}/></g>{s.locations.receipt !== 'inventory' && <image href={trainBagPhoto(s)} width="1672" height="941" clipPath={`url(#${id + 'receipt'})`}/>}
- {raised && s.locations.envelope === 'seat' && <><image href="/assets/remake/parts/seat-envelope.png" x="761" y="446" width="65" height="103" transform="rotate(2 793 497)" style={{ filter: 'brightness(.62) saturate(.75) blur(.5px) drop-shadow(2px 4px 3px #000b)' }}/><image href={source} width="1672" height="941" clipPath={`url(#${id + 'pocket'})`}/></>}
+ {raised && s.locations.envelope === 'seat' && <><image href="./assets/remake/parts/seat-envelope.png" x="761" y="446" width="65" height="103" transform="rotate(2 793 497)" style={{ filter: 'brightness(.62) saturate(.75) blur(.5px) drop-shadow(2px 4px 3px #000b)' }}/><image href={source} width="1672" height="941" clipPath={`url(#${id + 'pocket'})`}/></>}
  </>;
 }
 export function Train({ s, dispatch, inspect, inspectCase, inspectSeat, exit, say, closeSeat }: {

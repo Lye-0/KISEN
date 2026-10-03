@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Photo, Touch, decode } from './Photo';
 import { owns } from './model';
 import type { Action, Item, State } from './model';
-const root = '/assets/remake/bridge/';
+const root = './assets/remake/bridge/';
 function imageState(s: State) { return s.values.gateOpen?.[0] === 1 ? owns(s, 'support') ? 'open-empty' : 'open' : owns(s, 'support') ? 'empty' : s.values.gateRod?.[0] === 1 ? 'released' : s.values.gateSupport?.[0] === 1 ? 'braced' : 'closed'; }
 export function BridgeGateWide({ s, dispatch, inspect, enterNorth }: {
     s: State;
