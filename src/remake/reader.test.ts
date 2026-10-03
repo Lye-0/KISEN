@@ -31,7 +31,8 @@ it('券の四隅が受け床の四隅へ投影される', () => {
 function issued() {
     let s = newState(); s.room = 'office';
     s = reduce(s, { type: 'take', item: 'paper' });
-    s = reduce(s, { type: 'toolTake', tool: 1 });
+    s = reduce(s, { type: 'selectTool', tool: 1 });
+    s = reduce(s, { type: 'selectDie', die: 4 });
     s = reduce(s, { type: 'punch', hole: { column: 0, node: 'A', side: 'white' } });
     s = reduce(s, { type: 'ticketService', service: 2 });
     return s;
@@ -49,6 +50,7 @@ it('取得・加工・設置・回収・再加工・再設置で同じ券が移�
     expect(s.mounted).toBeNull(); expect(s.draft).toEqual(first); expect(owns(s, 'ticket')).toBe(true);
     s.room = 'office'; s = reduce(s, { type: 'flipTicket' });
     s = reduce(s, { type: 'ticketService', service: 3 });
+    s = reduce(s, { type: 'selectDie', die: 3 });
     s = reduce(s, { type: 'punch', hole: { column: 1, node: 'B', side: 'black' } });
     expect(s.draft?.id).toBe(first?.id); expect(s.draft?.marks).toEqual([{ service: 2, back: false }, { service: 3, back: true }]);
     expect(s.draft?.holes).toHaveLength(2); s = restore(JSON.parse(JSON.stringify(s)))!;

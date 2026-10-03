@@ -75,3 +75,11 @@ it('写真の現在の一覧番号で並べ替え順を示す', () => {
     expect(hint('arrival-case', s).clues[3]).toContain('2→4→1→3');
     s.values.photoOrder = [0,1,2,3]; expect(hint('arrival-case', s).clues[3]).toContain('1→2→3→4');
 });
+
+it('縁のヒントは現行の見本と観察先を案内し、別の写真並べ替えの規則を混ぜない', () => {
+    const clues = hint('ticket-derive').clues;
+    expect(clues[1]).toContain('加工済み');
+    expect(clues[2]).toContain('操作札');
+    expect(clues[2]).toContain('一つ前');
+    expect(clues.join('')).not.toContain('前後で増えた穴');
+});

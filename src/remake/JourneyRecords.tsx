@@ -1,6 +1,7 @@
 import { useSceneBack } from './SceneBack';
 import { useState } from 'react';
 import { JourneyPhoto } from './JourneyPhoto';
+import { JourneyPlan, journeyApproach } from './JourneyPlan';
 import { TicketPaper } from './TicketBench';
 import { journeyExamples, journeyExtractViews } from './journeyExamples';
 import { arrivalTicket } from './arrivalTicket';
@@ -38,17 +39,17 @@ export function JourneyRecords({ s, dispatch, say, sketch }: {
     return <section className={'rm-journey-records' + (paperOnly ? ' paper-only' : '')} aria-label="乗車券控の連続写真と部分写し">
         <div className="rm-journey-header"><span className="rm-journey-current">控え {record.id}</span>{owns(s, 'envelope') && <button className="rm-journey-map" aria-label="路線の略図を見る" onClick={sketch}>略図</button>}</div>
         <div className="rm-journey-scroll">
-        {!paperOnly && <p className="rm-operation-note">選んだ列の連続写真を、同じ列の部分写しと照合する。</p>}
         <div className="rm-journey-layout">
             {!paperOnly && <div className="rm-journey-film">
                 <nav className="rm-journey-stops" aria-label="写真の順序">{record.observed.map((col, i) => <button key={col} aria-pressed={selected === i} onClick={() => { dispatch({ type: 'values', id: 'journeyStop', values: [i] }); setFrame(null); }}>{['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ'][col]}列</button>)}</nav>
+                <p className="rm-journey-caption">{names[hole.node]}　／　{journeyApproach(hole.node, record.path[column])}</p>
                 <div className={"rm-journey-frames" + (frame !== null ? " is-single" : "")}>{(frame === null ? [0, 1] : [frame]).map(f => <figure className="rm-print" key={index + ':' + selected + ':' + f}>
                     <button className="rm-journey-photo-open" aria-label={frame === null ? `${f + 1}枚目の写真を大きく見る` : '二枚を並べる'} onClick={() => setFrame(frame === null ? f : null)}>
                         <JourneyPhoto node={hole.node} side={hole.side} incoming={record.path[column]} frame={f as 0 | 1} label={names[hole.node] + 'と標柱の連続写真'} zoomable={false}/>
                         <span className="rm-journey-photo-symbol" aria-hidden="true">{frame === null ? '＋' : '−'}</span>
                     </button><figcaption>{['Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ'][column]}-{f + 1}</figcaption>
                 </figure>)}</div>
-
+                <JourneyPlan node={hole.node} side={hole.side} incoming={record.path[column]} frame={frame}/>
             </div>}
             <div className={'rm-journey-papers' + (!paperOnly ? ' compare' : '')}>
                 {(paperOnly ? [index] : [0, 1, 2, 3]).map(i => {
@@ -76,5 +77,5 @@ export function JourneyRecordNote({ values }: {
 }) {
     const index = Math.max(0, Math.min(3, values[0] ?? 0)), stop = Math.max(0, Math.min(1, values[1] ?? 0));
     const r = journeyExamples[index], hole = r.ticket.holes[r.observed[stop]];
-    return <div className="rm-journey-note"><p>{r.id}　{r.title}</p><div>{[0, 1].map(frame => <figure key={frame}><JourneyPhoto node={hole.node} side={hole.side} incoming={r.path[r.observed[stop]]} frame={frame as 0 | 1} label={names[hole.node] + 'の連続写真 ' + (frame + 1)}/></figure>)}</div><TicketExtract ticket={r.ticket} back={values[2] === 1}/></div>;
+    return <div className="rm-journey-note"><p>{r.id}　{r.title}</p><div>{[0, 1].map(frame => <figure key={frame}><JourneyPhoto node={hole.node} side={hole.side} incoming={r.path[r.observed[stop]]} frame={frame as 0 | 1} label={names[hole.node] + 'の連続写真 ' + (frame + 1)}/></figure>)}</div><JourneyPlan node={hole.node} side={hole.side} incoming={r.path[r.observed[stop]]}/><TicketExtract ticket={r.ticket} back={values[2] === 1}/></div>;
 }

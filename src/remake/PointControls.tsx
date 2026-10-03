@@ -94,5 +94,5 @@ export function PointNote({ values }: {
     values: number[];
 }) {
     const [index, value] = values, node = nodes[index];
-    return <div className="rm-point-note"><svg viewBox="-24 -24 48 48" aria-label={pointNames[node] + 'の刻印'}><path d={cutPaths[node]} fill="currentColor"/></svg><p>{['Ⅰ', 'Ⅱ', 'Ⅲ'][value]}</p><img src={pointPhoto(node, value)} alt="記録した位置のレール"/></div>;
+    return <div className="rm-point-note"><svg viewBox="-24 -24 48 48" aria-label={pointNames[node] + 'の刻印'}><path d={cutPaths[node]} fill="currentColor"/></svg><p>{['Ⅰ', 'Ⅱ', 'Ⅲ'][value]}</p><PointConnection node={node} position={value}/><img src={pointPhoto(node, value)} alt="記録した位置のレール"/></div>;
 }

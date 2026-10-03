@@ -33,7 +33,7 @@ const toward = (node: Node, incoming: string) => {
 function branchPost(node: Node, incoming: string, distance: number, lateral: number): Vec3 { const d = toward(node, incoming), p = sites[node]; return [p.x - d[0] * distance - d[1] * lateral, p.y - d[1] * distance + d[0] * lateral, 0]; }
 export const journeyPosts: Record<'B' | 'C' | 'D' | 'E', Record<Side, Vec3>> = {
     B: { white: branchPost('B', 'A', 8, 2.1), black: branchPost('B', 'E', 8, 2.1) },
-    C: { white: branchPost('C', 'E', 8, 2.1), black: branchPost('C', 'A', 8, -2.1) },
+    C: { white: branchPost('C', 'E', 28, 2.1), black: branchPost('C', 'A', 8, -2.1) },
     D: { white: [...glassPosts[2].position], black: [...glassPosts[3].position] },
     E: { white: [...fieldMarkers[0].position], black: [...fieldMarkers[1].position] },
 };

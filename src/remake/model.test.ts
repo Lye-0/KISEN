@@ -38,7 +38,7 @@ describe('remake:現在の経路と券', () => {
         let s = newState();
         s.route = [0, 1, 0, 1, 1, 1];
         s.draft = { id: 1, holes: expectedHoles(s.route), service: 2, back: true };
-        s.locations.punch = 'inventory';
+        s.values.toolSelected = [1];
         s.locations.ticket = 'inventory'; s.room = 'north';
         s = reduce(s, { type: 'flipTicket' });
         s.values.readerClamp = [1];

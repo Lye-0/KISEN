@@ -17,7 +17,7 @@ import { RailTagDetail } from './RailTag';
 import { Shutter } from './Shutter';
 import { ItemImage } from './ItemImage';
 import { arrivalTicket } from './arrivalTicket';
-import { ToolTrial, PunchGraphic } from './ToolTrial';
+import { ToolTrial } from './ToolTrial';
 import { Train } from './Train';
 import { Bag } from './Bag';
 import { Photos } from './Photos';
@@ -96,7 +96,7 @@ export function FocusView({ focus, s, dispatch, say, selected, onSelect, close, 
         case 'bridgeGate': return <BridgeGateDetail s={s} dispatch={dispatch} say={say} selected={selected}/>;
         case 'hookRack': return <HookRack s={s} dispatch={dispatch} say={say}/>;
         case 'railTag': return <RailTagDetail s={s} dispatch={dispatch} selected={selected} say={say}/>;
-        case 'item': return <div className="rm-hand-item">{selected === 'punch' ? <svg viewBox="0 0 1536 1024" aria-label="手元の鋏"><PunchGraphic tool={s.values.punchTool?.[0] ?? 1} transform="translate(0 0)"/></svg> : selected && (itemArt[selected] ? <img src={itemArt[selected]} alt="手元の持ち物"/> : <ItemImage item={selected} state={s}/>)}</div>;
+        case 'item': return <div className="rm-hand-item">{selected && (itemArt[selected] ? <img src={itemArt[selected]} alt="手元の持ち物"/> : <ItemImage item={selected} state={s}/>)}</div>;
         default: return null;
     }
 }

@@ -714,7 +714,7 @@ export function restore(value: unknown): State | null {
     s = { ...s, values: { ...s.values, retainingPinRevision: [1] } };
     if (!s.values.deskToolRevision) {
         const tool = locations.punch === 'inventory' ? s.values.punchTool?.[0] ?? 1 : s.values.toolSelected?.[0] ?? s.values.punchTool?.[0];
-        const values = { ...s.values, deskToolRevision: [1] };
+        const values: State['values'] = { ...s.values, deskToolRevision: [1] };
         delete values.punchTool;
         if (tool !== undefined) values.toolSelected = [tool];
         locations.punch = 'toolBench';

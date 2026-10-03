@@ -1,3 +1,5 @@
+import { SurveyPost } from './SurveyPost';
+import { approachBands } from './approachEvidence';
 import { cutPaths } from './ticketGeometry';
 import { pointPorts, pointNames, physicalRailContacts } from './pointMechanics';
 import type { Node } from './model';
@@ -8,7 +10,8 @@ export function PointConnection({ node, position }: { node: Node; position: numb
     const connected = physicalRailContacts(node, position)[0];
     const ports = pointPorts[node];
     const [a, b] = connected.map(port => endpoints[ports.indexOf(port)]);
-    const label = `${pointNames[node]}の分岐。位置${['Ⅰ', 'Ⅱ', 'Ⅲ'][position]}。${portName(node, connected[0])}と${portName(node, connected[1])}が、この分岐を通ってつながっている。`;
+    const observations = ports.map(port => `${portName(node, port)}から入る線には${approachBands[node][port]}本帯の標柱`).join('。');
+    const label = `${pointNames[node]}の分岐。位置${['Ⅰ', 'Ⅱ', 'Ⅲ'][position]}。${portName(node, connected[0])}と${portName(node, connected[1])}が、この分岐を通ってつながっている。${observations}。`;
     return <svg viewBox="0 0 800 520" className="rm-point-connection" role="img" aria-label={label}>
         <image href="/assets/remake/parts/photo-back.webp" width="800" height="520" preserveAspectRatio="none"/>
         <g fontFamily="serif" fill="#514d3c">
@@ -28,6 +31,15 @@ export function PointConnection({ node, position }: { node: Node; position: numb
             <path d={cutPaths[node]} transform="scale(1.5)" fill="#41493e"/>
 
         </g>
-        {node === 'A' && <g aria-label="駅側の一つの刻みの標柱" fill="#dad0b4" stroke="#595b48" strokeWidth="2"><path d="M456 304L462 297H473L478 304V400H456Z"/><path d="M456 333H478" strokeWidth="4"/><path d="M452 401H483" fill="none"/></g>}
+        {ports.map((port, i) => {
+            const [ex, ey] = endpoints[i], x = 400 + (ex - 400) * .57, y = 290 + (ey - 290) * .57;
+            const length = Math.hypot(400 - ex, 290 - ey), dx = (400 - ex) / length, dy = (290 - ey) / length;
+            const postX = x - dy * 47, postY = y + dx * 47 - 34;
+            return <g key={'post-' + port}>
+                <path d={`M${postX} ${postY + 73}L${x} ${y}`} fill="none" stroke="#7d765d" strokeWidth="1.5"/>
+                <SurveyPost x={postX} y={postY} bands={approachBands[node][port]}/>
+            </g>;
+        })}
+        <text x="400" y="493" textAnchor="middle" fontFamily="serif" fontSize="28" fill="#59533f">各線から中央へ入る際の標柱　／　見取</text>
     </svg>;
 }

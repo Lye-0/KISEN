@@ -10,7 +10,7 @@ function office() {
 }
 function ready() {
     const s = office(); s.room = 'north'; s.visited.push('north:0');
-    Object.assign(s.locations, { fragments: 'inventory', lamp: 'signal', spareLamp: 'signal', hood: 'signal', retainingPin: 'signal', cargoDocket: 'inventory', ticket: 'reader', punch: 'inventory' });
+    Object.assign(s.locations, { fragments: 'inventory', lamp: 'signal', spareLamp: 'signal', hood: 'signal', retainingPin: 'signal', cargoDocket: 'inventory', ticket: 'reader', punch: 'toolBench' });
     s.values.shedOpen = [1]; s.values.bellChannel = [1]; s.values.readerClamp = [0]; s.values.callService = [2];
     s.route = [0,1,0,1,1,1]; s.signals = { mounts: [7,11], shutters: [2,3] };
     s.mounted = { id: 20, service: 2, back: false, holes: expectedHoles(s.route) };

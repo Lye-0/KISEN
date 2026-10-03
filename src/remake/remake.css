@@ -425,3 +425,13 @@
 
 /* Scene depth stays inside gameplay; app dialogs are a separate layer. */
 .rm-play-layer{position:absolute;inset:0;z-index:0;isolation:isolate}
+
+.rm-tool-controls{min-height:64px}
+
+/* The survey sketch and the photographs belong to the same archival observation. */
+.rm-journey-layout { align-items:start; }
+.rm-journey-caption { color:#c4b99f; font-size:14px; text-align:center; margin:0 0 10px; }
+.rm-journey-plan { display:block; width:min(100%,480px); height:auto; margin:12px auto 0; }
+.rm-journey-note>.rm-journey-plan { margin:12px auto; }
+.rm-point-note>.rm-point-connection { width:100%; height:auto; grid-column:1 / -1; }
+@media(max-width:600px) { .rm-journey-plan { width:100%; } .rm-journey-caption { font-size:13px; } }
