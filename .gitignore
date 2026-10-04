@@ -9,3 +9,8 @@ tmp/
 
 # Regenerable geometry intermediates; referenced PNG guides remain versioned.
 /docs/remake/geometry/**/*.svg
+
+# Inputs still consumed directly by annotate-crossing-guides.mjs.
+!/docs/remake/geometry/crossing-readable-2026-10-02/bridge.svg
+!/docs/remake/geometry/crossing-readable-2026-10-02/window.svg
+!/docs/remake/geometry/crossing-readable-2026-10-02/north.svg
