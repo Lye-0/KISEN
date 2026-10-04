@@ -3,6 +3,7 @@ import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 const generated='C:/Users/kawau/.codex/generated_images/01a0e252-b185-7ae0-ad60-5d3b95cedb97';
 const entries=[
+ ['cargo/chest-mechanism','3bfd3fcc-3049-46e1-be86-d25082b87e6f'],
  ['journeys/e-white-c-0','354dad08-070f-4024-82a7-2714520aaf3f'],
  ['journeys/e-white-c-1','f8c42c3f-8c9e-4025-9001-49e75e71cf2d'],
  ['crossing/bridge','a5ef96b4-1e46-4a05-a357-474441866738'],

@@ -473,7 +473,7 @@ BLIND-PLAY-REVIEW-2026-10-01.mdの最終節参照。券の実例と写真を同�
 |削除した新版素材|現行の使用先・置き換え|
 |---|---|
 |bridge/east-tracks.webp|RailTagWideのeast-tag / east-tag-empty|
-|cargo/chest-mechanism.webp|CargoChestのchest-closed / chest-open上で錠を描画|
+|cargo/chest-mechanism.webp|削除判断は誤り。ダイヤル拡大時の専用画像であり、2026-10-04に復元（下記参照）|
 |cargo/wide-crate.png|CargoRoomのwide-crate-locked / wide-crate-open|
 |north/west-bridge.webp、west-bridge-open.webp|Worldのwest-sidepath / west-sidepath-open|
 |office/north.webp|Worldのnorth-hook / north-hook-empty|
@@ -486,3 +486,10 @@ BLIND-PLAY-REVIEW-2026-10-01.mdの最終節参照。券の実例と写真を同�
 
 ユーザー指定により旧版の起動分岐、App/styles、components/game、専用テスト、public/assetsのremake以外の素材70点を削除。旧版専用の素材準備・時計測定・通し試遊・生成ログ抽出スクリプト、およびdocs/assets・design・qaの旧資料も撤去。
 src/main.tsxは現行アプリのみを読み込む。素材監査・型検査・テスト収集を残る構成に更新し、動的な写真・ポイント・窓・音声の監査を維持。作り直し版version2→3の保存移行は現行ユーザーのデータ互換性として保持。
+
+
+## 2026-10-04 — 荷物錠の接写画像を復元
+
+素材整理で未使用と誤判定した cargo/chest-mechanism.webp を元の画像のまま復元し、採用一覧・準備スクリプトへ再登録。現在の採用素材は191点。CargoChestは閉じた箱・ダイヤル拡大・開いた箱の3画像を使う。従来の動的文字列連結を明示的な画像一覧に変更し、既存の静的参照監査で3状態すべての欠落を検出できるようにした。素材の使用判断では文字列検索だけでなく、状態分岐を最後まで読み、通常操作で各画像へ遷移することを確認する。
+
+PCで箱からダイヤルをクリックして拡大、数字変更、戻る・再拡大、正解入力による解錠と開いた箱の表示を確認。390pxのタッチ画面でも拡大画像の読み込みと数字変更を確認し、画像取得エラー・実行時エラーはなし。172テスト・ビルド・191素材の監査に合格。

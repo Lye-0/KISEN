@@ -1328,5 +1328,12 @@
     "file": "public/assets/remake/signal/optical-backplate-v2.png",
     "status": "representative-review",
     "method": "built-in image_gen; native two-state atlas; runtime viewport registration only"
+  },
+  {
+    "id": "cargo/chest-mechanism",
+    "source": "C:\\Users\\kawau\\.codex\\generated_images\\01a0e252-b185-7ae0-ad60-5d3b95cedb97\\exec-3bfd3fcc-3049-46e1-be86-d25082b87e6f.png",
+    "file": "public/assets/remake/cargo/chest-mechanism.webp",
+    "status": "representative-review",
+    "method": "built-in image_gen; WebP encoding only"
   }
 ]
