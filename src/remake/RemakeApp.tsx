@@ -158,6 +158,7 @@ export default function RemakeApp() {
         focus: Focus;
         trail: Focus[];
     }>({ focus: initialFocus, trail: [] }), [panel, setPanel] = useState<'settings' | 'notes' | 'hints' | 'places' | null>(null), [targets, setTargets] = useState(false), [message, setMessage] = useState(''), [selected, setSelected] = useState<Item | null>(null), [trainNotice, setTrainNotice] = useState(''), [sceneZoom, setSceneZoom] = useState(false);
+    const [cargoSelection, selectCargo] = useState<number | null>(null);
     const [hintLevels, setHintLevels] = useState<Record<string, number>>({});
     useEffect(() => {
         if (s.version !== 3 || !s.values.deskToolRevision) { const migrated = restore(s); if (migrated) setS(migrated); }
@@ -185,6 +186,8 @@ export default function RemakeApp() {
             if (timer.current)
                 clearTimeout(timer.current);
         }
+        if (a.type === 'move' || a.type === 'travel' || a.type === 'look')
+            selectCargo(null);
         if (a.type === 'move' || a.type === 'travel')
             setView({ focus: null, trail: [] });
         setS(s => reduce(s, a));
@@ -241,7 +244,7 @@ export default function RemakeApp() {
     const inv = (Object.keys(s.locations) as Item[]).filter(i => i !== 'paper' && i !== 'punch' && owns(s, i)), views = availableViews[s.room] ?? [];
     const currentHint = panel === 'hints' ? getProgressHint(s, focus) : null;
     const showSelected = selected && owns(s, selected) && focus !== (documentFocus[selected] ?? 'item');
-    const world = <World s={s} dispatch={dispatch} inspect={inspect} say={say} selected={selected}/>;
+    const world = <World s={s} dispatch={dispatch} inspect={inspect} say={say} selected={selected} cargoSelection={cargoSelection} selectCargo={selectCargo} interactive={!focus && !panel}/>;
     if (!s.started && fixture === null)
         return <main id="rm-game" className="rm-title"><img src="./assets/remake/platform/train-open.webp" alt="誰もいないきさらぎ駅。列車の扉が開いている"/><div className="rm-title-copy"><p>きさらぎ駅</p><h1>帰線</h1><p className="rm-title-reading">K I S E N</p><p>帰るための線を、見つける。</p><button onClick={() => dispatch({ type: 'start' })}>{s.room === 'train' && !s.bag.mouth ? '車内へ' : '続きへ'}</button><p className="rm-title-meta">ひとりで遊ぶ脱出ゲーム<br />進行は、このブラウザに自動保存されます。</p></div></main>;
     if (s.ended)

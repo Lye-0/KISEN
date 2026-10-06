@@ -26,12 +26,15 @@ export const availableViews: Partial<Record<Room, string[]>> = { return: ['扉�
 function CounterObjects({ s }: {
     s: State;
 }) { const open = s.values.drawerOpen?.[0] === 1; return <svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="978" y="254" width="256" height="275" viewBox="436 166 784 632" preserveAspectRatio="none"><HatchImage s={s}/></svg><svg x={open ? 945 : 965} y={open ? 552 : 557} width={open ? 339 : 299} height={open ? 139 : 76} viewBox={open ? '55 252 1555 638' : '125 296 1415 350'} preserveAspectRatio="none"><DrawerImage s={s}/></svg><foreignObject x="690" y="275" width="100" height="195"><RecordCard id={0} inkOnly/></foreignObject><foreignObject x="800" y="310" width="72" height="141"><RecordCard id={1} inkOnly/></foreignObject></svg>; }
-export function World({ s, dispatch, inspect, selected, say }: {
+export function World({ s, dispatch, inspect, selected, say, cargoSelection, selectCargo, interactive }: {
     s: State;
     dispatch: (a: Action) => void;
     inspect: (f: Focus) => void;
     say: (m: string) => void;
     selected: Item | null;
+    cargoSelection: number | null;
+    selectCargo: (index: number) => void;
+    interactive: boolean;
 }) {
     const move = (room: Room, camera = 0) => dispatch({ type: 'move', room, camera });
     const image = (src: string, label: string, children?: React.ReactNode) => <Photo src={'./assets/remake/' + src + '.webp'} label={label}>{children}</Photo>;
@@ -68,7 +71,7 @@ export function World({ s, dispatch, inspect, selected, say }: {
     if (s.room === 'office')
         return s.camera === 1 ? image(owns(s, 'hook') ? 'office/north-hook-empty' : 'office/north-hook', '駅務室の北側の保管区画', <><svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="773" y="419" width="120" height="120" viewBox="350 0 950 941" preserveAspectRatio="none" style={{ filter: 'brightness(.58)' }}><ReceiptBoardImage s={s}/></svg></svg><Touch name="待合室へ戻る" rect={[0, 23, 16, 65]} act={() => move('waiting', 1)}/><Touch name="傘立ての鉤付き棒" rect={[39, 47, 11, 32]} act={() => inspect('hookRack')}/><Touch name="忘れ物の棚へ近づく" rect={[51, 44, 20, 37]} act={() => move('lost')}/><Touch name="荷物室へ入る" rect={[84, 13, 16, 76]} act={() => move('cargo', 0)}/></>) : image('office/south', '駅務室の机と二つの窓', <><Clock ambient /><svg className="rm-object-overlay" viewBox="0 0 1672 941"><svg x="457" y="502" width="180" height="147" viewBox="160 0 890 710" preserveAspectRatio="none"><RecorderImage s={s}/></svg></svg><ToolScene s={s}/><Touch name="机の録音機" rect={[26, 51, 20, 22]} act={() => inspect('recorder')}/><Touch name="机の鋏と用紙" rect={[44.8, 65.3, 29.5, 7.6]} act={() => inspect('tools')}/></>);
     if (s.room === 'cargo')
-        return s.camera === 1 ? image('cargo/south', '荷物室の南壁、一つの窓と両脇の柱') : <CargoRoom s={s} dispatch={dispatch} say={say} leave={() => move('office', 1)} descend={() => move('passage', 0)} inspectChest={() => inspect('cargoChest')}/>;
+        return s.camera === 1 ? image('cargo/south', '荷物室の南壁、一つの窓と両脇の柱') : <CargoRoom s={s} active={cargoSelection} select={selectCargo} interactive={interactive} dispatch={dispatch} say={say} leave={() => move('office', 1)} descend={() => move('passage', 0)} inspectChest={() => inspect('cargoChest')}/>;
     if (s.room === 'passage')
         return <Passage s={s} dispatch={dispatch} inspect={inspect}/>;
     return <p role="status">この場面はまだ用意されていません。</p>;

@@ -435,3 +435,15 @@
 .rm-journey-note>.rm-journey-plan { margin:12px auto; }
 .rm-point-note>.rm-point-connection { width:100%; height:auto; grid-column:1 / -1; }
 @media(max-width:600px) { .rm-journey-plan { width:100%; } .rm-journey-caption { font-size:13px; } }
+
+/* Load selection remains available when an open lid hides another load. */
+.rm-cargo{padding:0;gap:10px;max-width:100%;align-self:center}
+.rm-cargo>.rm-photo{width:min(100%,calc(max(220px,var(--rm-scene-height) - 190px)*1.77683));max-width:100%}
+.rm-cargo-selection{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:100%;padding:0 8px}
+#rm-game .rm-cargo-selection button,#rm-game .rm-cargo-actions button{border:1px solid #a89b7955;min-height:44px;font-size:13px;padding:8px 12px}
+#rm-game .rm-cargo-selection button[aria-pressed=true]{background:#cab58b26;border-color:#c6b58b}
+.rm-cargo-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 8px}
+.rm-cargo-actions>span{color:#b7baa8;font-size:13px}
+#rm-game .rm-cargo-actions button:disabled{opacity:.45;cursor:default}
+.rm-cargo .rm-operation-note{margin:0 8px;text-align:center}
+@media(max-width:600px){.rm-cargo-selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:390px}.rm-cargo>.rm-photo{width:min(100%,calc(max(220px,var(--rm-scene-height) - 240px)*1.77683));max-width:100%}#rm-game .rm-cargo-actions button{font-size:12px;padding:8px}.rm-cargo-actions{max-width:100%}}
